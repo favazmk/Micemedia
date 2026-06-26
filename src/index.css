@@ -1,0 +1,352 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+  --font-display: "Outfit", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+
+  --color-red-50: #fdf4f4;
+  --color-red-100: #fbe6e5;
+  --color-red-200: #f7cbca;
+  --color-red-300: #f09d9a;
+  --color-red-400: #e76a66;
+  --color-red-500: #dc4d49; /* Brand Coral-Red from the logo */
+  --color-red-550: #e46561; /* Bright glowing coral accent */
+  --color-red-600: #c53a36; /* Rich terracotta red */
+  --color-red-610: #af2d2a; /* Deep coral red */
+  --color-red-650: #3b1414; /* Rich brand dark wine-burgundy */
+  --color-red-655: #4e1b1b; /* Brighter warm burgundy */
+  --color-red-700: #2c0a0a; /* Deepest warm dark maroon */
+  --color-red-800: #1c0505; /* Dark velvet maroon */
+  --color-red-950: #0e0202; /* Absolute deepest maroon-black */
+
+  --color-red-primary: #dc4d49;
+  --color-red-bright: #e46561;
+  --color-red-glow: rgba(220, 77, 73, 0.15);
+  --color-gold-lux: #e46561; /* Cyber Coral Bright */
+  --color-gold-dark: #dc4d49; /* Coral Brand */
+}
+
+/* Base custom styles */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  body {
+    font-family: var(--font-sans);
+    background-color: #121213; /* Luxurious off-black dark charcoal base */
+    background-image: 
+      radial-gradient(circle at 50% -20%, rgba(220, 77, 73, 0.18) 0%, rgba(0, 0, 0, 0) 65%),
+      radial-gradient(circle at 10% 40%, rgba(228, 101, 97, 0.05) 0%, rgba(0, 0, 0, 0) 45%),
+      radial-gradient(circle at 90% 80%, rgba(220, 77, 73, 0.05) 0%, rgba(0, 0, 0, 0) 45%);
+    background-attachment: fixed;
+    color: #f3f4f6; /* Premium off-white text color */
+  }
+
+  /* Custom high-end scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #080808;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #262626;
+    border-radius: 4px;
+    border: 2px solid #080808;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #dc4d49;
+  }
+}
+
+/* Glassmorphism helpers */
+.glass-panel {
+  background: rgba(18, 18, 19, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.glass-panel-heavy {
+  background: rgba(14, 14, 15, 0.9);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(220, 77, 73, 0.15);
+}
+
+.glass-card {
+  background: linear-gradient(135deg, rgba(24, 24, 26, 0.6) 0%, rgba(14, 14, 15, 0.8) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-card:hover {
+  border-color: rgba(220, 77, 73, 0.3);
+  box-shadow: 0 12px 40px -12px rgba(59, 20, 20, 0.4);
+  background: linear-gradient(135deg, rgba(35, 20, 20, 0.7) 0%, rgba(14, 14, 15, 0.9) 100%);
+}
+
+/* Ambient glow text */
+.text-glow {
+  text-shadow: none;
+}
+
+.text-glow-gold {
+  text-shadow: none;
+}
+
+/* Underline effects */
+.nav-link-effect {
+  position: relative;
+}
+.nav-link-effect::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  transform: scaleX(0);
+  height: 2px;
+  bottom: -4px;
+  left: 0;
+  background-color: #dc4d49;
+  transform-origin: bottom right;
+  transition: transform 0.3s ease-out;
+}
+.nav-link-effect:hover::after, .nav-link-effect.active::after {
+  transform: scaleX(1);
+  transform-origin: bottom left;
+}
+
+/* Red Spotlight Glow Background elements */
+.spotlight-glow {
+  position: relative;
+}
+.spotlight-glow::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 150px;
+  height: 150px;
+  background: radial-gradient(circle, rgba(220, 77, 73, 0.2) 0%, rgba(0,0,0,0) 70%);
+  filter: blur(20px);
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Infinite horizontal text scrolling strip slider (ticker strip) */
+@keyframes infiniteScroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-33.3333%); }
+}
+
+.animate-ticker {
+  display: flex;
+  width: max-content;
+  animation: infiniteScroll 25s linear infinite;
+}
+
+/* Continuous brand logo slider keyframes */
+@keyframes clientScroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-client-logos {
+  display: flex;
+  width: max-content;
+  animation: clientScroll 45s linear infinite;
+  transform-style: preserve-3d;
+  transform: perspective(1000px);
+  padding: 24px 0; /* Add top/bottom padding to make space for 3D scaling and tooltip */
+}
+
+/* Interactive proximity scaling for logos */
+.logo-item {
+  position: relative;
+  flex-shrink: 0;
+  transition: 500ms cubic-bezier(0.175, 0.885, 0.32, 1.1);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Beautiful dynamic brand name tooltip */
+.logo-item::before {
+  position: absolute;
+  content: attr(data-text);
+  left: 50%;
+  bottom: 105%;
+  font-size: 9px;
+  font-family: var(--font-mono), monospace;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #ffffff;
+  background-color: #3b1414; /* Rich brand dark wine-burgundy */
+  border: 1px solid rgba(220, 77, 73, 0.25); /* Brand coral border */
+  border-radius: 6px;
+  padding: 4px 10px;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(-50%) translateY(10px);
+  transition: 500ms cubic-bezier(0.175, 0.885, 0.32, 1.1);
+  white-space: nowrap;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5), 0 0 12px rgba(220, 77, 73, 0.4);
+  z-index: 100000;
+}
+
+/* Hover scaling states */
+.logo-item:hover {
+  transform: scale(1.4) translateZ(35px);
+  z-index: 99999;
+}
+
+.logo-item:hover::before {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(-6px);
+}
+
+/* Sibling Proximity Scaling */
+.logo-item:hover + .logo-item {
+  transform: scale(1.22) translateZ(18px);
+  z-index: 9999;
+}
+
+.logo-item:hover + .logo-item + .logo-item {
+  transform: scale(1.1) translateZ(8px);
+  z-index: 999;
+}
+
+.logo-item:has(+ .logo-item:hover) {
+  transform: scale(1.22) translateZ(18px);
+  z-index: 9999;
+}
+
+.logo-item:has(+ .logo-item + .logo-item:hover) {
+  transform: scale(1.1) translateZ(8px);
+  z-index: 999;
+}
+
+/* Continuous testimonials slider keyframes */
+@keyframes testimonialScroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-testimonial-marquee {
+  display: flex;
+  width: max-content;
+  animation: testimonialScroll 35s linear infinite;
+}
+
+/* Custom styled range input */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  background: #1c1c1c;
+  height: 6px;
+  border-radius: 4px;
+  outline: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #dc4d49;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(220, 77, 73, 0.8);
+  transition: transform 0.1s ease;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+
+/* Interactive overlapping fanning cards for Portfolio section */
+.portfolio-deck-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.portfolio-deck-card {
+  position: absolute !important;
+  transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: rotate(calc(var(--r) * 1deg)) translateY(var(--ty, 0px));
+  backdrop-filter: blur(16px);
+  background: linear-gradient(rgba(255, 255, 255, 0.09), transparent);
+  box-shadow: 0 25px 45px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1.25rem;
+}
+
+/* On hover of the deck, fan them out horizontally, remove rotation, and re-arrange spacing */
+.portfolio-deck-container:hover .portfolio-deck-card {
+  transform: rotate(0deg) translate(var(--tx-hover, 0px), 0px) scale(1.02) !important;
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.65), 0 0 40px rgba(59, 20, 20, 0.25);
+}
+
+/* Custom hover state for individual cards within the container */
+.portfolio-deck-card:hover {
+  border-color: rgba(220, 77, 73, 0.6) !important;
+  background: linear-gradient(rgba(255, 255, 255, 0.14), rgba(59, 20, 20, 0.15)) !important;
+}
+
+/* Let the hovered card be on top of all others */
+.portfolio-deck-container .portfolio-deck-card:hover {
+  z-index: 40 !important;
+  transform: rotate(0deg) translate(var(--tx-hover, 0px), -12px) scale(1.08) !important;
+}
+
+.portfolio-deck-card {
+  --tx-hover: 0px;
+}
+.portfolio-deck-card:nth-child(1) {
+  --r: -12;
+  --ty: 12px;
+  --tx-hover: -105px;
+  z-index: 10;
+}
+.portfolio-deck-card:nth-child(2) {
+  --r: 2;
+  --ty: -10px;
+  --tx-hover: 0px;
+  z-index: 20;
+}
+.portfolio-deck-card:nth-child(3) {
+  --r: 14;
+  --ty: 16px;
+  --tx-hover: 105px;
+  z-index: 10;
+}
+
+@media (min-width: 640px) {
+  .portfolio-deck-card:nth-child(1) {
+    --tx-hover: -210px;
+  }
+  .portfolio-deck-card:nth-child(3) {
+    --tx-hover: 210px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .portfolio-deck-card:nth-child(1) {
+    --tx-hover: -290px;
+  }
+  .portfolio-deck-card:nth-child(3) {
+    --tx-hover: 290px;
+  }
+}
+
