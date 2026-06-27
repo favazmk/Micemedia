@@ -725,6 +725,7 @@ export default function Home({
           <motion.section
             style={isMobile ? {
               opacity: 1,
+              filter: "none",
               scale: mobileServicesScale,
               rotateX: mobileServicesRotateX,
               y: mobileServicesY,
@@ -841,6 +842,7 @@ export default function Home({
         ref={portfolioRef}
         style={isMobile ? {
           opacity: 1,
+          filter: "none",
           scale: mobilePortfolioScale,
           rotateX: mobilePortfolioRotateX,
           y: mobilePortfolioY,
