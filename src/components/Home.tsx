@@ -721,7 +721,7 @@ export default function Home({
         ref={servicesRef}
         className={`relative w-full ${isMobile ? 'h-auto' : 'h-[350vh]'}`}
       >
-        <div className={`w-full overflow-hidden flex items-center justify-center ${isMobile ? 'relative py-10 flex-col' : 'sticky top-0 h-screen'}`}>
+        <div className={`w-full flex items-center justify-center ${isMobile ? 'relative py-10 flex-col' : 'overflow-hidden sticky top-0 h-screen'}`}>
           <motion.section
             style={isMobile ? {
               scale: mobileServicesScale,
