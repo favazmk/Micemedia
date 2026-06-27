@@ -83,7 +83,7 @@ interface HomeProps {
 }
 
 // --- ServiceBackground for dynamic crossfading image sequence ---
-const ServiceBackground = ({ image, index, total, scrollYProgress }: { image?: string; index: number; total: number; scrollYProgress: any }) => {
+const ServiceBackground = ({ image, index, total, scrollYProgress }: { image?: string; index: number; total: number; scrollYProgress: any; key?: string }) => {
   // calculate when this index should be visible
   const rangeStart = (index - 0.5) / (total - 1);
   const rangeMid = index / (total - 1);
