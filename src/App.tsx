@@ -5,6 +5,7 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { MessageCircle } from 'lucide-react';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import Home from './components/Home';
@@ -101,6 +102,15 @@ export default function App() {
           </motion.div>
         </AnimatePresence>
       </main>
+
+      {/* Sticky Contact FAB */}
+      <button 
+        onClick={() => setActivePage('contact')}
+        className="fixed bottom-6 left-6 z-[100] w-12 h-12 md:w-14 md:h-14 bg-red-600 rounded-full flex items-center justify-center shadow-[0_4px_16px_rgba(220,38,38,0.5)] hover:scale-110 hover:bg-red-500 transition-all duration-300"
+        aria-label="Contact Us"
+      >
+        <MessageCircle className="w-5 h-5 md:w-6 md:h-6 text-white" />
+      </button>
 
       {/* System Footer Bar */}
       <Footer setActivePage={setActivePage} setSelectedServiceId={setSelectedServiceId} />

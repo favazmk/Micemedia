@@ -122,6 +122,21 @@ export default function Home({
   const trackRef = useRef<HTMLDivElement>(null);
   const [maxScroll, setMaxScroll] = useState(0);
 
+  // Mobile specific states
+  const [isMobile, setIsMobile] = useState(false);
+  const [activeTouchHeroCardId, setActiveTouchHeroCardId] = useState<string | null>(null);
+  const [activeTouchPortfolioId, setActiveTouchPortfolioId] = useState<string | null>(null);
+  const [activeTouchServiceId, setActiveTouchServiceId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   useEffect(() => {
     const handleResize = () => {
       if (trackRef.current && trackRef.current.parentElement) {
@@ -264,6 +279,9 @@ export default function Home({
   const bgTextY = useTransform(smoothHeroScroll, [0, 1], ["0%", "85%"]);
   const bgTextOpacity = useTransform(smoothHeroScroll, [0, 0.8], [0.07, 0.01]);
   const cardsOpacity = useTransform(smoothHeroScroll, [0, 0.5, 0.9], [1, 1, 0]);
+  const heroCard1Y = useTransform(smoothHeroScroll, [0, 1], [0, -130]);
+  const heroCard2Y = useTransform(smoothHeroScroll, [0, 1], [0, -240]);
+  const heroCard3Y = useTransform(smoothHeroScroll, [0, 1], [0, -130]);
 
   // Section 2 (About) calculations
   const { scrollYProgress: aboutScroll } = useScroll({
@@ -318,26 +336,12 @@ export default function Home({
   const testimonialsRotateY = useTransform(smoothTestimonialsScroll, [0, 0.35, 0.65, 1], [-30, 0, 0, 30]);
   const testimonialsOpacity = useTransform(smoothTestimonialsScroll, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
   
-  const [activeTouchServiceId, setActiveTouchServiceId] = useState<string | null>(null);
-  const [activeTouchPortfolioId, setActiveTouchPortfolioId] = useState<string | null>(null);
 
-  const handleServiceClick = (serviceId: string) => {
-    const isTouchDevice = window.matchMedia('(hover: none)').matches;
-    if (isTouchDevice && activeTouchServiceId !== serviceId) {
-      setActiveTouchServiceId(serviceId);
-      setActiveTouchPortfolioId(null);
-      return;
-    }
-    if (setSelectedServiceId) {
-      setSelectedServiceId(serviceId);
-    }
-    setActivePage('services');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+
+
 
   const handlePortfolioClick = (itemId: string) => {
-    const isTouchDevice = window.matchMedia('(hover: none)').matches;
-    if (isTouchDevice && activeTouchPortfolioId !== itemId) {
+    if (isMobile && activeTouchPortfolioId !== itemId) {
       setActiveTouchPortfolioId(itemId);
       setActiveTouchServiceId(null);
       return;
@@ -349,6 +353,29 @@ export default function Home({
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const handleHeroCardClick = (page: string) => {
+    if (isMobile && activeTouchHeroCardId !== page) {
+      setActiveTouchHeroCardId(page);
+      return;
+    }
+    setActivePage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleServiceClick = (itemId: string) => {
+    if (isMobile && activeTouchServiceId !== itemId) {
+      setActiveTouchServiceId(itemId);
+      setActiveTouchHeroCardId(null);
+      setActiveTouchPortfolioId(null);
+      return;
+    }
+    if (setSelectedServiceId) {
+      setSelectedServiceId(itemId);
+    }
+    setActivePage('services');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
     <div ref={containerRef} className="flex flex-col w-full relative" id="homepage-root">
       
@@ -356,7 +383,7 @@ export default function Home({
       <EventScroll scrollContainerRef={containerRef} />
 
       {/* SECTION 1: HERO CONTAINER */}
-      <section ref={heroRef} id="hero-section" className="relative min-h-screen flex items-center justify-center pt-32 pb-24 overflow-hidden [perspective:1200px]">
+      <section ref={heroRef} id="hero-section" className="relative min-h-screen flex items-center justify-center pt-32 pb-10 md:pb-24 overflow-hidden [perspective:1200px]">
         {/* Cinematic Backdrop Spotlights */}
         <div className="absolute inset-0 z-0 bg-transparent pointer-events-none">
             {/* Spotlight 1: Center-Top Red dramatic glow */}
@@ -397,7 +424,7 @@ export default function Home({
 
           {/* Majestic Layered Headline */}
           <motion.div
-            style={{ 
+            style={isMobile ? { opacity: 1, scale: 1, filter: "none", rotateX: 0, y: 0 } : { 
               opacity: headingOpacity, 
               scale: headingScale, 
               filter: headingBlur, 
@@ -423,7 +450,7 @@ export default function Home({
 
           {/* Action CTAs */}
           <motion.div 
-            style={{ 
+            style={isMobile ? { opacity: 1, scale: 1, filter: "none", rotateX: 0, y: 0 } : { 
               opacity: headingOpacity, 
               scale: headingScale, 
               filter: headingBlur, 
@@ -436,7 +463,7 @@ export default function Home({
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.45 }}
-              className="mt-12 flex flex-row gap-3 sm:gap-5 items-center justify-center w-full max-w-md relative z-40"
+              className="mt-12 flex flex-col sm:flex-row gap-3 sm:gap-5 items-center justify-center w-full max-w-md relative z-40"
               id="hero-cta-group"
             >
               <GetStartedButton
@@ -454,8 +481,8 @@ export default function Home({
 
           {/* Advanced 3D Stage Deck projection */}
           <motion.div
-            style={{ opacity: cardsOpacity }}
-            className="relative w-full max-w-4xl h-[280px] sm:h-[350px] mt-24 flex items-center justify-center [perspective:1200px]"
+            style={isMobile ? { opacity: 1 } : { opacity: cardsOpacity }}
+            className="relative w-full max-w-4xl h-[280px] sm:h-[350px] mt-16 sm:mt-24 flex items-center justify-center [perspective:1200px]"
             id="hologram-stage-canvas"
           >
             {/* Background elements removed as per user request */}
@@ -465,13 +492,13 @@ export default function Home({
               
               {/* Card 1: Left */}
               <motion.div
-                style={{
-                  y: useTransform(smoothHeroScroll, [0, 1], [0, -130])
+                style={isMobile ? { y: 0 } : {
+                  y: heroCard1Y
                 }}
                 animate={{
-                  rotateY: -20,
-                  rotateX: 6,
-                  z: 10,
+                  rotateY: isMobile ? (activeTouchHeroCardId === 'portfolio' ? 0 : -10) : -20,
+                  rotateX: isMobile ? (activeTouchHeroCardId === 'portfolio' ? 12 : 6) : 6,
+                  z: isMobile ? (activeTouchHeroCardId === 'portfolio' ? 60 : 10) : 10,
                   scale: 1
                 }}
                 whileHover={{ 
@@ -480,9 +507,11 @@ export default function Home({
                   rotateX: 12, 
                   z: 100
                 }}
-                onClick={() => setActivePage('portfolio')}
+                onClick={() => handleHeroCardClick('portfolio')}
                 transition={{ type: "spring", stiffness: 350, damping: 25 }}
-                className="w-[105px] sm:w-[220px] h-[180px] sm:h-[280px] bg-neutral-900/90 hover:bg-[#171717]/95 rounded-2xl border border-white/20 hover:border-red-500/60 p-3 sm:p-5 flex flex-col justify-between shadow-2xl shadow-black text-left cursor-pointer transition-colors duration-150"
+                className={`w-[105px] sm:w-[220px] h-[180px] sm:h-[280px] bg-neutral-900/90 rounded-2xl border p-3 sm:p-5 flex flex-col justify-between shadow-2xl shadow-black text-left cursor-pointer transition-colors duration-150 ${
+                  activeTouchHeroCardId === 'portfolio' ? 'bg-[#171717]/95 border-red-500/60 z-50' : 'hover:bg-[#171717]/95 border-white/20 hover:border-red-500/60'
+                }`}
               >
                 <div>
                   <span className="font-mono text-[8px] sm:text-[10px] text-red-500 uppercase tracking-widest font-bold">01 / EXPERIENCE</span>
@@ -495,12 +524,12 @@ export default function Home({
 
               {/* Card 2: Center (Featured Card popping forward) */}
               <motion.div
-                style={{
-                  y: useTransform(smoothHeroScroll, [0, 1], [0, -240])
+                style={isMobile ? { y: 0 } : {
+                  y: heroCard2Y
                 }}
                 animate={{
-                  rotateX: 12,
-                  z: 60,
+                  rotateX: isMobile ? (activeTouchHeroCardId === 'services' ? 12 : 12) : 12,
+                  z: isMobile ? (activeTouchHeroCardId === 'services' ? 140 : 60) : 60,
                   scale: 1
                 }}
                 whileHover={{ 
@@ -508,9 +537,11 @@ export default function Home({
                   rotateX: 12, 
                   z: 140
                 }}
-                onClick={() => setActivePage('services')}
+                onClick={() => handleHeroCardClick('services')}
                 transition={{ type: "spring", stiffness: 350, damping: 25 }}
-                className="w-[125px] sm:w-[240px] h-[210px] sm:h-[310px] bg-neutral-900/95 hover:bg-[#171717]/95 rounded-2xl border border-red-500/25 hover:border-red-500/60 p-3 sm:p-5 flex flex-col justify-between shadow-2xl shadow-red-950/30 relative overflow-hidden text-left cursor-pointer transition-colors duration-150"
+                className={`w-[125px] sm:w-[240px] h-[210px] sm:h-[310px] bg-neutral-900/95 rounded-2xl border p-3 sm:p-5 flex flex-col justify-between shadow-2xl shadow-red-950/30 relative overflow-hidden text-left cursor-pointer transition-colors duration-150 ${
+                  activeTouchHeroCardId === 'services' ? 'bg-[#171717]/95 border-red-500/60 z-50' : 'hover:bg-[#171717]/95 border-red-500/25 hover:border-red-500/60'
+                }`}
               >
                 <div className="absolute -top-12 -right-12 w-24 h-24 bg-red-650/10 rounded-full blur-xl pointer-events-none"></div>
                 <div>
@@ -532,13 +563,13 @@ export default function Home({
 
               {/* Card 3: Right */}
               <motion.div
-                style={{
-                  y: useTransform(smoothHeroScroll, [0, 1], [0, -130])
+                style={isMobile ? { y: 0 } : {
+                  y: heroCard3Y
                 }}
                 animate={{
-                  rotateY: 20,
-                  rotateX: 6,
-                  z: 10,
+                  rotateY: isMobile ? (activeTouchHeroCardId === 'about' ? 0 : 10) : 20,
+                  rotateX: isMobile ? (activeTouchHeroCardId === 'about' ? 12 : 6) : 6,
+                  z: isMobile ? (activeTouchHeroCardId === 'about' ? 60 : 10) : 10,
                   scale: 1
                 }}
                 whileHover={{ 
@@ -547,9 +578,11 @@ export default function Home({
                   rotateX: 12, 
                   z: 100
                 }}
-                onClick={() => setActivePage('about')}
+                onClick={() => handleHeroCardClick('about')}
                 transition={{ type: "spring", stiffness: 350, damping: 25 }}
-                className="w-[105px] sm:w-[220px] h-[180px] sm:h-[280px] bg-neutral-900/90 hover:bg-[#171717]/95 rounded-2xl border border-white/20 hover:border-red-500/60 p-3 sm:p-5 flex flex-col justify-between shadow-2xl shadow-black text-left cursor-pointer transition-colors duration-150"
+                className={`w-[105px] sm:w-[220px] h-[180px] sm:h-[280px] bg-neutral-900/90 rounded-2xl border p-3 sm:p-5 flex flex-col justify-between shadow-2xl shadow-black text-left cursor-pointer transition-colors duration-150 ${
+                  activeTouchHeroCardId === 'about' ? 'bg-[#171717]/95 border-red-500/60 z-50' : 'hover:bg-[#171717]/95 border-white/20 hover:border-red-500/60'
+                }`}
               >
                 <div>
                   <span className="font-mono text-[8px] sm:text-[10px] text-red-500 uppercase tracking-widest font-bold">03 / PROMISE</span>
@@ -582,10 +615,10 @@ export default function Home({
           onPointerUp={handlePointerUp}
           onPointerCancel={handlePointerUp}
           style={{ animation: 'none' }}
-          className="uppercase font-display font-black text-xs sm:text-sm tracking-[0.2em] text-white flex items-center whitespace-nowrap gap-10 cursor-grab select-none active:cursor-grabbing touch-none"
+          className="uppercase font-display font-black text-xs sm:text-sm tracking-[0.2em] text-white flex items-center whitespace-nowrap gap-5 sm:gap-10 cursor-grab select-none active:cursor-grabbing touch-none"
         >
           {/* Block 1 */}
-          <div className="flex items-center gap-8.5 shrink-0 px-2">
+          <div className="flex items-center gap-5 sm:gap-8.5 shrink-0 px-2">
             <span>Corporate Conferences</span> <span className="text-white/40">✦</span>
             <span>Gala Dinners</span> <span className="text-white/40">✦</span>
             <span>Exhibition Builds</span> <span className="text-white/40">✦</span>
@@ -596,7 +629,7 @@ export default function Home({
             <span>Entertainment</span> <span className="text-white/40">✦</span>
           </div>
           {/* Block 2 */}
-          <div className="flex items-center gap-8.5 shrink-0 px-2">
+          <div className="flex items-center gap-5 sm:gap-8.5 shrink-0 px-2">
             <span>Corporate Conferences</span> <span className="text-white/40">✦</span>
             <span>Gala Dinners</span> <span className="text-white/40">✦</span>
             <span>Exhibition Builds</span> <span className="text-white/40">✦</span>
@@ -607,7 +640,7 @@ export default function Home({
             <span>Entertainment</span> <span className="text-white/40">✦</span>
           </div>
           {/* Block 3 */}
-          <div className="flex items-center gap-8.5 shrink-0 px-2">
+          <div className="flex items-center gap-5 sm:gap-8.5 shrink-0 px-2">
             <span>Corporate Conferences</span> <span className="text-white/40">✦</span>
             <span>Gala Dinners</span> <span className="text-white/40">✦</span>
             <span>Exhibition Builds</span> <span className="text-white/40">✦</span>
@@ -623,14 +656,14 @@ export default function Home({
       {/* SECTION 2: ABOUT SUMMARY (MINIMAL & BOLD) */}
       <motion.section
         ref={aboutRef}
-        style={{
+        style={isMobile ? { opacity: 1, scale: 1, rotateX: 0, y: 0 } : {
           scale: aboutScale,
           rotateX: aboutRotateX,
           y: aboutY,
           transformPerspective: 1200
         }}
         id="home-about"
-        className="py-20 sm:py-24 max-w-5xl mx-auto px-6 sm:px-12 relative z-10 w-full my-20 border border-white/40 rounded-[2rem] lg:rounded-[3rem] shadow-[0_0_30px_rgba(255,255,255,0.08)]"
+        className="py-10 md:py-24 max-w-5xl mx-auto px-6 sm:px-12 relative z-10 w-full my-10 md:my-20 border border-white/40 rounded-[2rem] lg:rounded-[3rem] shadow-[0_0_30px_rgba(255,255,255,0.08)]"
       >
         <div className="flex flex-col items-center text-center gap-6 drop-shadow-[0_4px_12px_rgba(0,0,0,0.8)]">
           
@@ -678,11 +711,11 @@ export default function Home({
       {/* SECTION 3: FEATURED SERVICES */}
       <div
         ref={servicesRef}
-        className="relative h-[350vh] w-full"
+        className={`relative w-full ${isMobile ? 'h-auto' : 'h-[350vh]'}`}
       >
-        <div className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center">
+        <div className={`w-full overflow-hidden flex items-center justify-center ${isMobile ? 'relative py-10 flex-col' : 'sticky top-0 h-screen'}`}>
           <motion.section
-            style={{
+            style={isMobile ? { opacity: 1, scale: 1, filter: "none", rotateY: 0 } : {
               scale: servicesScale,
               rotateY: servicesRotateY,
               opacity: servicesOpacity,
@@ -693,7 +726,7 @@ export default function Home({
             className="w-full max-w-7xl mx-auto px-6 sm:px-12 md:px-16 py-8 sm:py-12 md:py-20 relative z-10 flex flex-col justify-between border border-white/40 rounded-[2rem] lg:rounded-[3rem] mt-10 shadow-[0_0_50px_rgba(255,255,255,0.05)] overflow-hidden"
           >
             {/* Jaw-Dropping Image Sequence Backgrounds */}
-            {SERVICES_DATA.map((srv, index) => (
+            {!isMobile && SERVICES_DATA.map((srv, index) => (
               <ServiceBackground 
                 key={`bg-${srv.id}`}
                 image={srv.image}
@@ -728,21 +761,21 @@ export default function Home({
             </div>
 
             {/* Horizontal Scroll Layout with beautiful cards */}
-            <div className="overflow-hidden w-full relative z-10">
+            <div className={`w-full relative z-10 ${isMobile ? 'flex flex-col gap-6 mt-4' : 'overflow-hidden'}`}>
               <motion.div
                 ref={trackRef}
-                style={{ x: servicesX }}
-                className="flex gap-6 w-max"
+                style={isMobile ? { x: 0 } : { x: servicesX }}
+                className={isMobile ? 'flex flex-col gap-6 w-full' : 'flex gap-6 w-max'}
               >
-                {SERVICES_DATA.map((srv) => {
+                {(isMobile ? SERVICES_DATA.slice(0, 3) : SERVICES_DATA).map((srv) => {
                   const IconComponent = serviceIconMap[srv.iconName] || Sparkles;
                   return (
                     <div
                       key={srv.id}
                       onClick={() => handleServiceClick(srv.id)}
-                      className={`group relative bg-[#121212]/90 border p-8 sm:p-10 overflow-hidden rounded-3xl cursor-pointer transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] flex flex-col justify-between min-h-[320px] sm:min-h-[350px] w-[280px] sm:w-[350px] shrink-0 shadow-2xl ${
+                      className={`group relative bg-[#121212]/90 border p-8 sm:p-10 overflow-hidden rounded-3xl cursor-pointer transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] flex flex-col justify-between min-h-[320px] sm:min-h-[350px] w-[280px] sm:w-[350px] mx-auto shrink-0 shadow-2xl ${
                         activeTouchServiceId === srv.id
-                          ? 'border-[#E55B5B]/40 -translate-y-2'
+                          ? 'border-[#E55B5B]/40 -translate-y-2 z-20'
                           : 'border-white/5 hover:-translate-y-2 hover:border-[#E55B5B]/40'
                       }`}
                     >
@@ -792,7 +825,7 @@ export default function Home({
       {/* SECTION 4: RECENT PORTFOLIO EXHIBITS (3 items highlight) */}
       <motion.section
         ref={portfolioRef}
-        style={{
+        style={isMobile ? { opacity: 1, scale: 1, filter: "none", y: 0 } : {
           scale: portfolioScale,
           opacity: portfolioOpacity,
           filter: portfolioBlur,
@@ -800,7 +833,7 @@ export default function Home({
           transformPerspective: 1200
         }}
         id="home-portfolio"
-        className="py-20 md:py-24 max-w-7xl mx-auto px-6 sm:px-12 md:px-16 relative z-10 w-full my-20 border border-white/40 rounded-[2rem] lg:rounded-[3rem] shadow-[0_0_30px_rgba(255,255,255,0.08)]"
+        className="py-10 md:py-24 max-w-7xl mx-auto px-6 sm:px-12 md:px-16 relative z-10 w-full my-10 md:my-20 border border-white/40 rounded-[2rem] lg:rounded-[3rem] shadow-[0_0_30px_rgba(255,255,255,0.08)]"
       >
         {/* Ambient backlighting blobs */}
         <div className="absolute -top-24 -left-24 w-96 h-96 bg-red-650/5 rounded-full blur-[100px] pointer-events-none"></div>
@@ -833,7 +866,7 @@ export default function Home({
                     activeTouchPortfolioId === item.id 
                       ? 'scale-105 border-red-500/30' 
                       : ''
-                  }`}
+                  } ${isMobile ? 'backdrop-blur-2xl bg-black/60' : ''}`}
                 >
                   {/* Image Frame inside the glass card */}
                   <div className="relative w-[92%] h-[50%] mx-auto mt-3 rounded-xl overflow-hidden bg-neutral-950/40 border border-white/5 flex items-center justify-center">
@@ -842,8 +875,10 @@ export default function Home({
                       src={item.image}
                       alt={item.title}
                       referrerPolicy="no-referrer"
-                      className={`absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-out ${
-                        activeTouchPortfolioId === item.id ? 'scale-110' : 'group-hover/card:scale-110'
+                      className={`absolute inset-0 w-full h-full object-cover transition-all duration-500 ease-out ${
+                        activeTouchPortfolioId === item.id 
+                          ? 'scale-110 grayscale-0' 
+                          : `group-hover/card:scale-110 group-hover/card:grayscale-0 ${!isMobile ? 'grayscale' : ''}`
                       }`}
                     />
                     
@@ -898,7 +933,7 @@ export default function Home({
       </motion.section>
 
       {/* SECTION 5: CLIENT LOGOS INFINITE SCROLLER */}
-      <section id="home-partners" className="py-20 relative z-20 w-full overflow-hidden max-w-7xl mx-auto my-20 border border-white/40 rounded-[2rem] lg:rounded-[3rem] shadow-[0_0_30px_rgba(255,255,255,0.08)]">
+      <section id="home-partners" className="py-10 md:py-20 relative z-20 w-full overflow-hidden max-w-7xl mx-auto my-10 md:my-20 border border-white/40 rounded-[2rem] lg:rounded-[3rem] shadow-[0_0_30px_rgba(255,255,255,0.08)]">
         <div className="max-w-7xl mx-auto px-6 mb-10 text-center flex flex-col items-center drop-shadow-[0_4px_8px_rgba(0,0,0,0.8)]">
           <span className="text-xs font-mono tracking-[0.2em] text-red-500 uppercase font-bold mb-2 [text-shadow:0_2px_4px_rgba(0,0,0,0.8)]">
             Trusted By
@@ -925,13 +960,13 @@ export default function Home({
               <div
                 key={`slide1-${client.id}`}
                 data-text={client.name}
-                className="logo-item w-40 sm:w-48 mx-4.5 shrink-0 h-18 bg-[#dc4d49] hover:bg-[#c5413d] border border-red-400/20 hover:border-red-300/40 rounded-xl px-4 transition-all duration-300"
+                className="logo-item w-28 sm:w-48 mx-3 sm:mx-4.5 shrink-0 h-14 sm:h-18 bg-[#dc4d49] hover:bg-[#c5413d] border border-red-400/20 hover:border-red-300/40 rounded-xl px-2 sm:px-4 flex items-center justify-center transition-all duration-300"
               >
                 <img
                   src={client.logoUrl}
                   alt={client.name}
                   referrerPolicy="no-referrer"
-                  className="max-w-full max-h-12 object-contain filter drop-shadow-[0_2px_8px_rgba(0,0,0,0.15)] select-none pointer-events-none mix-blend-multiply grayscale contrast-[20]"
+                  className="max-w-full max-h-8 sm:max-h-12 object-contain filter drop-shadow-[0_2px_8px_rgba(0,0,0,0.15)] select-none pointer-events-none mix-blend-multiply grayscale contrast-[20]"
                 />
               </div>
             ))}
@@ -940,13 +975,13 @@ export default function Home({
               <div
                 key={`slide2-${client.id}`}
                 data-text={client.name}
-                className="logo-item w-40 sm:w-48 mx-4.5 shrink-0 h-18 bg-[#dc4d49] hover:bg-[#c5413d] border border-red-400/20 hover:border-red-300/40 rounded-xl px-4 transition-all duration-300"
+                className="logo-item w-28 sm:w-48 mx-3 sm:mx-4.5 shrink-0 h-14 sm:h-18 bg-[#dc4d49] hover:bg-[#c5413d] border border-red-400/20 hover:border-red-300/40 rounded-xl px-2 sm:px-4 flex items-center justify-center transition-all duration-300"
               >
                 <img
                   src={client.logoUrl}
                   alt={client.name}
                   referrerPolicy="no-referrer"
-                  className="max-w-full max-h-12 object-contain filter drop-shadow-[0_2px_8px_rgba(0,0,0,0.15)] select-none pointer-events-none mix-blend-multiply grayscale contrast-[20]"
+                  className="max-w-full max-h-8 sm:max-h-12 object-contain filter drop-shadow-[0_2px_8px_rgba(0,0,0,0.15)] select-none pointer-events-none mix-blend-multiply grayscale contrast-[20]"
                 />
               </div>
             ))}
