@@ -192,7 +192,9 @@ export default function Footer({ setActivePage, setSelectedServiceId }: FooterPr
           <div className="text-center md:text-left">
             <span>© 2026 MICE Media LLC FZ. All Rights Reserved.</span>
             <span className="mx-2 hidden md:inline">|</span>
-            <span className="text-neutral-600 block md:inline mt-1 md:mt-0">Design Inspired by Spotlight Aesthetics</span>
+            <span className="text-neutral-600 block md:inline mt-1 md:mt-0">
+              Built by <a href="https://thewebbranding.com" target="_blank" rel="noopener noreferrer" className="text-white hover:text-red-500 transition-colors">Web Branding</a>
+            </span>
           </div>
 
           <div className="flex items-center gap-6">
