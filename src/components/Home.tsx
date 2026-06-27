@@ -344,6 +344,10 @@ export default function Home({
   const testimonialsRotateY = useTransform(smoothTestimonialsScroll, [0, 0.35, 0.65, 1], [-30, 0, 0, 30]);
   const testimonialsOpacity = useTransform(smoothTestimonialsScroll, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
   
+  const mobileTestimonialsScale = useTransform(smoothTestimonialsScroll, [0, 0.45, 0.9], [0.82, 1, 0.85]);
+  const mobileTestimonialsRotateX = useTransform(smoothTestimonialsScroll, [0, 0.45, 0.9], [15, 0, -15]);
+  const mobileTestimonialsY = useTransform(smoothTestimonialsScroll, [0, 0.45, 0.9], [120, 0, -120]);
+  
 
 
 
@@ -752,8 +756,12 @@ export default function Home({
             ))}
             
             {/* Deep overlay to ensure text remains highly readable over images */}
-            <div className="absolute inset-0 z-0 bg-gradient-to-t from-black/90 via-black/60 to-black/90 mix-blend-multiply pointer-events-none"></div>
-            <div className="absolute inset-0 z-0 bg-black/40 backdrop-blur-[2px] pointer-events-none"></div>
+            {!isMobile && (
+              <>
+                <div className="absolute inset-0 z-0 bg-gradient-to-t from-black/90 via-black/60 to-black/90 mix-blend-multiply pointer-events-none"></div>
+                <div className="absolute inset-0 z-0 bg-black/40 backdrop-blur-[2px] pointer-events-none"></div>
+              </>
+            )}
 
             <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-red-650/15 rounded-full blur-[120px] pointer-events-none z-0"></div>
             
@@ -788,7 +796,7 @@ export default function Home({
                     <div
                       key={srv.id}
                       onClick={() => handleServiceClick(srv.id)}
-                      className={`group relative ${isMobile ? 'backdrop-blur-2xl bg-black/60' : 'bg-[#121212]/90'} border p-8 sm:p-10 overflow-hidden rounded-3xl cursor-pointer transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] flex flex-col justify-between min-h-[320px] sm:min-h-[350px] w-[280px] sm:w-[350px] mx-auto shrink-0 shadow-2xl ${
+                      className={`group relative bg-[#121212]/90 border p-8 sm:p-10 overflow-hidden rounded-3xl cursor-pointer transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] flex flex-col justify-between min-h-[320px] sm:min-h-[350px] w-[280px] sm:w-[350px] mx-auto shrink-0 shadow-2xl ${
                         activeTouchServiceId === srv.id
                           ? 'border-[#E55B5B]/40 -translate-y-2 z-20'
                           : 'border-white/5 hover:-translate-y-2 hover:border-[#E55B5B]/40'
@@ -823,7 +831,7 @@ export default function Home({
                       </div>
 
                       {/* Massive faint icon in background */}
-                      <div className={`absolute -right-8 -bottom-8 opacity-[0.03] text-white scale-150 transition-transform duration-700 pointer-events-none flex items-center justify-center ${
+                      <div className={`absolute -right-8 -bottom-8 ${isMobile ? 'opacity-[0.08]' : 'opacity-[0.03]'} text-white scale-150 transition-transform duration-700 pointer-events-none flex items-center justify-center ${
                         activeTouchServiceId === srv.id ? 'scale-125' : 'group-hover:scale-125'
                       }`}>
                         <IconComponent className="w-full h-full stroke-[1.2]" />
@@ -1014,7 +1022,13 @@ export default function Home({
       {/* SECTION 6: CLIENT TESTIMONIALS */}
       <motion.section
         ref={testimonialsRef}
-        style={{
+        style={isMobile ? {
+          opacity: 1,
+          scale: mobileTestimonialsScale,
+          rotateX: mobileTestimonialsRotateX,
+          y: mobileTestimonialsY,
+          transformPerspective: 1200
+        } : {
           x: testimonialsX,
           rotateY: testimonialsRotateY,
           opacity: testimonialsOpacity,
