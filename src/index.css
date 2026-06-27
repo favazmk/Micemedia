@@ -319,7 +319,7 @@ input[type="range"]::-webkit-slider-thumb:hover {
 .portfolio-deck-card:nth-child(1) {
   --r: -12;
   --ty: 12px;
-  --tx-hover: -130px;
+  --tx-hover: -90px;
   z-index: 10;
 }
 .portfolio-deck-card:nth-child(2) {
@@ -331,7 +331,7 @@ input[type="range"]::-webkit-slider-thumb:hover {
 .portfolio-deck-card:nth-child(3) {
   --r: 14;
   --ty: 16px;
-  --tx-hover: 130px;
+  --tx-hover: 90px;
   z-index: 10;
 }
 
