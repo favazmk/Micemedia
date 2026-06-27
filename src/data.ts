@@ -36,7 +36,8 @@ export const SERVICES_DATA: Service[] = [
       "Multi-Stream Presentation Management",
       "Automated Live Registration & RFID Badging",
       "Bespoke Simultaneous Translation Systems"
-    ]
+    ],
+    image: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=2000&auto=format&fit=crop"
   },
   {
     id: "gala-dinner-awards",
@@ -50,7 +51,8 @@ export const SERVICES_DATA: Service[] = [
       "Rigorous VIP Seating & Registration Protocol",
       "Cinematic Video Openers & Presentation Assets",
       "Seamless Live Entertainment Scheduling"
-    ]
+    ],
+    image: "https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?q=80&w=2000&auto=format&fit=crop"
   },
   {
     id: "product-launch-activation",
@@ -64,7 +66,8 @@ export const SERVICES_DATA: Service[] = [
       "Environmental Narrative & Scenic Styling",
       "Influencer Event Activations & PR Stunts",
       "Bespoke Spatial Fragrance & Audio Ambience"
-    ]
+    ],
+    image: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?q=80&w=2000&auto=format&fit=crop"
   },
   {
     id: "audio-visual-production",
@@ -78,7 +81,8 @@ export const SERVICES_DATA: Service[] = [
       "State-of-the-Art Robotic Stage Intelligent Lighting",
       "Dynamic Multi-Camera Broadcast & HD Streaming",
       "Full Rigging, Truss, and Ground Support Engineering"
-    ]
+    ],
+    image: "https://images.unsplash.com/photo-1520627581900-50280eb4c2bc?q=80&w=2000&auto=format&fit=crop"
   },
   {
     id: "branding",
@@ -92,7 +96,8 @@ export const SERVICES_DATA: Service[] = [
       "High-End Eco-Conscious Branded Gift Suites",
       "Premium Motion Typography & Logo Loops",
       "Integrated Event Companion App Custom UI"
-    ]
+    ],
+    image: "https://images.unsplash.com/photo-1557683316-973673baf926?q=80&w=2000&auto=format&fit=crop"
   },
   {
     id: "incentives-travel",
@@ -106,7 +111,8 @@ export const SERVICES_DATA: Service[] = [
       "Frictionless Executive Airport Fast-Track Handling",
       "Curative Masterclasses with Regional Headliners",
       "VIP Access to Regional Landmarks & Events"
-    ]
+    ],
+    image: "https://images.unsplash.com/photo-1512453979436-5a50c640e5eb?q=80&w=2000&auto=format&fit=crop"
   },
   {
     id: "team-building",
@@ -120,7 +126,8 @@ export const SERVICES_DATA: Service[] = [
       "Regional Desert Survival Navigation Rallies",
       "Corporate CSR-Aligned Philanthropic Builds",
       "Psychology-Backed Deep-Trust Workspaces"
-    ]
+    ],
+    image: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2000&auto=format&fit=crop"
   },
   {
     id: "entertainment",
@@ -134,7 +141,8 @@ export const SERVICES_DATA: Service[] = [
       "Immersive Interactive Performance Sculptures",
       "A-List Presenters, MCs, and Regional Masters",
       "Interactive Laser Harp & Tech-Arts Fusion"
-    ]
+    ],
+    image: "https://images.unsplash.com/photo-1459749411175-04bf5292ceea?q=80&w=2000&auto=format&fit=crop"
   },
   {
     id: "exhibitions",
@@ -148,7 +156,8 @@ export const SERVICES_DATA: Service[] = [
       "Integrated Audio-Visual & Touch-Screen Displays",
       "Zero-Waste Fully Modular Sustainable Booths",
       "Full Regulatory DWTC Submission & Permit Handlings"
-    ]
+    ],
+    image: "https://images.unsplash.com/photo-1531058020387-3be344556be6?q=80&w=2000&auto=format&fit=crop"
   }
 ];
 

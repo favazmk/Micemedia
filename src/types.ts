@@ -10,6 +10,7 @@ export interface Service {
   description: string;
   details?: string[];
   iconName: string;
+  image?: string;
 }
 
 export interface PortfolioItem {

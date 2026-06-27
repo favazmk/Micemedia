@@ -6,6 +6,8 @@
 import { motion } from 'motion/react';
 import { ShieldCheck, Compass, Target, ArrowRight, Zap, Award, CheckCircle } from 'lucide-react';
 import { BRAND_INFO, PROCESS_DATA, VISION_MISSION, WHY_US_DATA } from '../data';
+import { PrimaryButton } from '@/components/ui/primary-button';
+import ColorBends from './ColorBends';
 
 interface AboutProps {
   setActivePage: (page: string) => void;
@@ -13,8 +15,33 @@ interface AboutProps {
 
 export default function About({ setActivePage }: AboutProps) {
   return (
-    <div className="py-24 md:py-32 flex flex-col w-full" id="aboutpage-root">
-      
+    <div className="py-24 md:py-32 flex flex-col w-full relative min-h-screen" id="aboutpage-root">
+
+      {/* ── ColorBends animated WebGL background ── */}
+      <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden" aria-hidden="true">
+        <ColorBends
+          colors={['#5c0000', '#8b1a1a', '#2d0000', '#c93636', '#6b0f0f', '#1a0000']}
+          rotation={110}
+          autoRotate={2}
+          speed={0.12}
+          scale={1.1}
+          frequency={0.9}
+          warpStrength={1.6}
+          mouseInfluence={0.6}
+          parallax={0.4}
+          noise={0.05}
+          iterations={4}
+          intensity={1.2}
+          bandWidth={5.5}
+          transparent={false}
+          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
+        />
+        {/* Overlay so text stays readable */}
+        <div className="absolute inset-0 bg-black/60" />
+      </div>
+
+      {/* All page content sits above the background */}
+      <div className="relative z-10 flex flex-col w-full">
       {/* SECTION 1: ABOUT HERO HEADER */}
       <section className="relative px-6 max-w-7xl mx-auto w-full mb-20 text-center">
         {/* Subtle background glow */}
@@ -282,21 +309,18 @@ export default function About({ setActivePage }: AboutProps) {
             Let our senior project directors handle the technical blueprints, dwg drafts, safety calculations, and visual models of your milestone session.
           </p>
           <div className="mt-8 relative z-10">
-            <button
+            <PrimaryButton
               onClick={() => {
                 setActivePage('contact');
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
-              className="relative overflow-hidden group cursor-pointer bg-gradient-to-r from-red-700 to-red-600 hover:from-red-600 hover:to-red-500 text-white font-sans text-xs font-bold uppercase tracking-wider py-4.5 px-10 rounded-full shadow-lg shadow-red-700/20 hover:shadow-red-600/30 transition-all duration-300 flex items-center gap-2 group hover:scale-105 border border-red-500/30"
-            >
-              <span className="absolute right-0 w-8 h-32 -mt-12 transition-all duration-1000 transform translate-x-12 bg-white opacity-10 rotate-12 group-hover:-translate-x-40 ease"></span>
-              Reach Our Executive Board
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            </button>
+              text="Reach Our Executive Board"
+            />
           </div>
         </div>
       </section>
 
+      </div>{/* end z-10 content wrapper */}
     </div>
   );
 }

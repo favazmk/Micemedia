@@ -47,14 +47,17 @@ export default function Header({ activePage, setActivePage }: HeaderProps) {
     <>
       <header
         id="main-header"
-        className={`fixed top-0 md:top-8 left-0 right-0 z-50 transition-all duration-300 w-full max-w-7xl mx-auto md:px-4`}
+        className={`fixed left-0 right-0 z-50 flex justify-center transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+          scrolled ? 'top-0 md:top-6 px-4' : 'top-0 px-0'
+        }`}
       >
         <div
-          className={`w-full relative transition-all duration-300 ${
+          style={{ maxWidth: scrolled ? '1280px' : '100%' }}
+          className={`w-full relative transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] flex items-center justify-between ${
             scrolled
-              ? 'glass-panel-heavy md:rounded-full py-3 px-6 shadow-2xl shadow-black/80'
-              : 'glass-panel md:rounded-2xl py-4 px-6 md:py-5 md:px-8'
-          } border-b md:border border-white/5 flex items-center justify-between`}
+              ? 'glass-panel-heavy md:rounded-full py-3 px-6 md:px-8 shadow-2xl shadow-black/80 border-b md:border border-white/5'
+              : 'glass-panel border-b border-white/10 py-5 px-6 md:px-12 rounded-none'
+          }`}
         >
 
           {/* Brand Logo */}

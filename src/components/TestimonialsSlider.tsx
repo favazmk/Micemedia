@@ -72,9 +72,7 @@ export default function TestimonialsSlider() {
       {/* Absolute Ambient Backlight center glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] sm:w-[600px] h-[150px] bg-red-650/4 rounded-full blur-[100px] pointer-events-none z-0"></div>
 
-      {/* Side masking gradient overrides for premium infinite depth look */}
-      <div className="absolute left-0 top-0 bottom-0 w-8 sm:w-24 bg-gradient-to-r from-[#05030a] to-transparent z-10 pointer-events-none"></div>
-      <div className="absolute right-0 top-0 bottom-0 w-8 sm:w-24 bg-gradient-to-l from-[#05030a] to-transparent z-10 pointer-events-none"></div>
+      {/* Side masking removed per user request */}
 
       {/* Outer wrapper limiting height & managing overflow */}
       <div className="w-full overflow-hidden py-6 relative z-10">
@@ -94,11 +92,6 @@ export default function TestimonialsSlider() {
         </div>
       </div>
 
-      {/* Subtle indicator under marquee */}
-      <div className="flex justify-center mt-3 text-[10px] font-mono text-neutral-600 gap-1.5 items-center select-none">
-        <span className="w-1.5 h-1.5 rounded-full bg-red-600/60 animate-pulse"></span>
-        <span>Hover cards to pause slider</span>
-      </div>
     </div>
   );
 }

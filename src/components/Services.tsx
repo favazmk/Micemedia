@@ -24,6 +24,7 @@ import {
   DollarSign
 } from 'lucide-react';
 import { SERVICES_DATA } from '../data';
+import { PrimaryButton } from '@/components/ui/primary-button';
 
 interface ServicesProps {
   selectedServiceId: string | null;
@@ -105,57 +106,7 @@ export default function Services({ selectedServiceId, setSelectedServiceId, setA
         <div className="w-12 h-[2px] bg-red-650 mx-auto mt-6 rounded-full"></div>
       </section>
 
-      {/* SECTION 3: CORE GRID TO INTRODUCE REMAINING 6 SERVICES SNEAK PEEK */}
-      <section className="px-6 max-w-7xl mx-auto w-full mb-24">
-        <span className="text-[10px] font-mono tracking-widest text-neutral-600 uppercase mb-6 block border-b border-white/5 pb-2">
-          Speciality Matrix (Grid Overview)
-        </span>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="services-grid-all">
-          {SERVICES_DATA.map((srv) => (
-            <div
-              key={`grid-${srv.id}`}
-              onClick={() => {
-                setActiveTab(srv.id);
-                const el = document.getElementById('selected-service-content');
-                if (el) {
-                  el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }
-              }}
-              className={`p-6 rounded-2xl border transition-all duration-350 cursor-pointer flex flex-col justify-between min-h-[220px] group ${
-                activeTab === srv.id
-                  ? 'bg-neutral-900 border-red-500/40 shadow-md ring-1 ring-red-500/10'
-                  : 'bg-neutral-950/40 border-white/5 hover:border-white/10 hover:bg-neutral-900/10'
-              }`}
-            >
-              <div>
-                <div className="flex justify-between items-center mb-6">
-                  <span className={`font-mono text-xs ${activeTab === srv.id ? 'text-red-500' : 'text-neutral-600'}`}>
-                    DISCIPLINE {srv.number}
-                  </span>
-                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center border transition-colors ${
-                    activeTab === srv.id 
-                      ? 'bg-red-655 border-red-500 text-white' 
-                      : 'bg-neutral-900 border-white/10 text-neutral-400 group-hover:text-red-500'
-                  }`}>
-                    {getIcon(srv.iconName)}
-                  </div>
-                </div>
-                <h3 className="font-display font-bold text-base text-white group-hover:text-red-500 transition-colors uppercase">
-                  {srv.title}
-                </h3>
-                <p className="text-neutral-400 text-xs mt-2 line-clamp-3 leading-relaxed">
-                  {srv.description}
-                </p>
-              </div>
 
-              <div className="pt-4 border-t border-white/5 mt-4 flex items-center justify-between text-[10px] font-mono text-neutral-500">
-                <span>✦ SEAMLESS INTEGRATION</span>
-                <span className="text-red-500 group-hover:underline">Focus Speciality</span>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
 
       {/* SECTION 2: DYNAMIC MASTER-DETAIL SPLIT PANEL */}
       <section className="px-6 max-w-7xl mx-auto w-full mb-12 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
@@ -443,13 +394,10 @@ export default function Services({ selectedServiceId, setSelectedServiceId, setA
                         Every single detail of our {selectedService.title} operations is handled in-house with standard dwg schematics, direct regional permits, and redundant executive back-ups.
                       </p>
                     </div>
-                    <button
+                    <PrimaryButton
                       onClick={() => setActivePage('contact')}
-                      className="relative overflow-hidden group bg-gradient-to-r from-red-700 to-red-600 hover:from-red-600 hover:to-red-500 border border-red-500/30 text-white font-mono text-xs uppercase font-bold px-5 py-3 rounded-xl transition-all duration-300 cursor-pointer text-center shrink-0 w-full md:w-auto shadow-lg shadow-red-700/10 hover:shadow-red-600/20"
-                    >
-                      <span className="absolute right-0 w-8 h-32 -mt-12 transition-all duration-1000 transform translate-x-12 bg-white opacity-10 rotate-12 group-hover:-translate-x-40 ease"></span>
-                      Enquire for this
-                    </button>
+                      text="Enquire for this"
+                    />
                   </div>
                 )}
 
@@ -457,16 +405,13 @@ export default function Services({ selectedServiceId, setSelectedServiceId, setA
 
               {/* Back out button */}
               <div className="mt-8 pt-6 border-t border-white/5 flex gap-4">
-                <button
+                <PrimaryButton
                   onClick={() => {
                     setActivePage('contact');
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                   }}
-                  className="bg-white hover:bg-neutral-100 text-black font-sans text-xs font-bold uppercase tracking-wider py-3.5 px-8 rounded-full transition-all duration-300 flex items-center gap-2 group cursor-pointer"
-                >
-                  Custom Proposal Brief
-                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 duration-200" />
-                </button>
+                  text="Custom Proposal Brief"
+                />
               </div>
 
             </motion.div>

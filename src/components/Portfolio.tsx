@@ -5,9 +5,11 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ArrowUpRight, Filter, X, SlidersHorizontal, Image, Sparkles, MapPin, Calendar, HelpCircle, ArrowRight } from 'lucide-react';
+import { X, MapPin, Calendar, Sparkles } from 'lucide-react';
 import { PORTFOLIO_DATA } from '../data';
 import { PortfolioItem } from '../types';
+import { PrimaryButton } from '@/components/ui/primary-button';
+import ChromaGrid, { ChromaItem } from './ChromaGrid';
 
 interface PortfolioProps {
   selectedPortfolioId: string | null;
@@ -16,26 +18,18 @@ interface PortfolioProps {
 }
 
 export default function Portfolio({ selectedPortfolioId, setSelectedPortfolioId, setActivePage }: PortfolioProps) {
-  const [activeFilter, setActiveFilter] = useState<string>('All');
   const [selectedItem, setSelectedItem] = useState<PortfolioItem | null>(null);
 
   // Handle deep linking from other page interactions
   useEffect(() => {
     if (selectedPortfolioId) {
       const match = PORTFOLIO_DATA.find(item => item.id === selectedPortfolioId);
-      if (match) {
-        setSelectedItem(match);
-      }
+      if (match) setSelectedItem(match);
       setSelectedPortfolioId(null);
     }
   }, [selectedPortfolioId, setSelectedPortfolioId]);
 
-  const filters = ['All', 'Conference', 'Exhibition', 'Corporate', 'Team Building', 'Private'];
-
-  const filteredItems = activeFilter === 'All'
-    ? PORTFOLIO_DATA
-    : PORTFOLIO_DATA.filter(item => item.category.toLowerCase().includes(activeFilter.toLowerCase()) || 
-                                    (activeFilter === 'Corporate' && item.category === 'Corporate Event' || item.category === 'Corporate Hospitality'));
+  const filteredItems = PORTFOLIO_DATA;
 
   return (
     <div className="py-24 md:py-32 flex flex-col w-full" id="portfoliopage-root">
@@ -72,85 +66,29 @@ export default function Portfolio({ selectedPortfolioId, setSelectedPortfolioId,
         <div className="w-12 h-[2px] bg-red-650 mx-auto mt-6 rounded-full"></div>
       </section>
 
-      {/* SECTION 2: CATEGORY FILTER BAR */}
-      <section className="px-6 max-w-7xl mx-auto w-full mb-12 flex flex-wrap justify-center items-center gap-2.5" id="portfolio-filters">
-        <div className="flex items-center gap-2 mr-3 bg-neutral-900 border border-white/5 px-4.5 py-2 rounded-full text-neutral-400 text-xs font-mono font-medium">
-          <Filter className="w-3.5 h-3.5 text-red-600" />
-          <span>FILTER WORK:</span>
-        </div>
-        
-        {filters.map((filter) => (
-          <button
-            key={filter}
-            onClick={() => setActiveFilter(filter)}
-            className={`px-6 py-2.5 rounded-full font-sans text-xs font-bold uppercase tracking-wider transition-all duration-300 cursor-pointer border ${
-              activeFilter === filter
-                ? 'bg-red-655 border-red-500 text-white shadow-lg shadow-red-700/20 shadow-red-950/20'
-                : 'bg-neutral-950/40 border-white/5 text-neutral-400 hover:text-white hover:bg-neutral-900/40 hover:border-white/10'
-            }`}
-          >
-            {filter}
-          </button>
-        ))}
+      {/* SECTION 2: CHROMAGRID */}
+      <section className="px-6 max-w-7xl mx-auto w-full mb-16" id="portfolio-chroma-grid">
+        <ChromaGrid
+          items={filteredItems.map((item): ChromaItem => ({
+            image: item.image,
+            title: item.title,
+            subtitle: item.caption,
+            handle: item.tag,
+            tag: item.category,
+            borderColor: '#dc4d49',
+            gradient: 'linear-gradient(145deg, #1a0a0a, #0a0a0a)',
+          }))}
+          radius={340}
+          damping={0.5}
+          fadeOut={0.8}
+          ease="power3.out"
+          onCardClick={(chromaItem) => {
+            const match = PORTFOLIO_DATA.find(p => p.title === chromaItem.title);
+            if (match) setSelectedItem(match);
+          }}
+        />
       </section>
 
-      {/* SECTION 3: FILTERED MASONRY-GRID OF CASE STUDIES */}
-      <section className="px-6 max-w-7xl mx-auto w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6.5 min-h-[400px]" id="portfolio-case-grid">
-        <AnimatePresence mode="popLayout">
-          {filteredItems.map((item) => (
-            <motion.div
-              layout
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              transition={{ duration: 0.35 }}
-              key={item.id}
-              onClick={() => setSelectedItem(item)}
-              className="group cursor-pointer bg-neutral-900/60 rounded-3xl overflow-hidden border border-white/5 hover:border-red-500/20 transition-all duration-300 flex flex-col justify-between"
-            >
-              {/* Asset Frame wrapper */}
-              <div className="relative aspect-[4/3] w-full overflow-hidden bg-neutral-950">
-                {/* Overlay vignette */}
-                <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/10 to-transparent z-10 opacity-70 group-hover:opacity-40 transition-opacity"></div>
-                
-                <img
-                  src={item.image}
-                  alt={item.title}
-                  referrerPolicy="no-referrer"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
-                />
-
-                {/* Accent mini tags */}
-                <span className="absolute top-4 left-4 z-20 px-3.5 py-1 rounded-full text-[10px] font-mono font-bold tracking-wider uppercase bg-neutral-950/80 border border-white/5 text-neutral-300">
-                  {item.category}
-                </span>
-
-                <div className="absolute bottom-4 right-4 z-20 bg-red-600 p-2 rounded-xl text-white shadow-xl translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
-                  <ArrowUpRight className="w-4 h-4" />
-                </div>
-              </div>
-
-              {/* Text metadata bottom block */}
-              <div className="p-6">
-                <span className="text-[10px] font-mono tracking-widest text-red-500 font-bold uppercase mb-1.5 block">
-                  {item.tag}
-                </span>
-                <h3 className="font-display text-lg font-bold text-white group-hover:text-red-500 transition-colors duration-305 leading-snug">
-                  {item.title}
-                </h3>
-                <p className="text-neutral-400 text-xs font-sans mt-2 line-clamp-2 leading-relaxed">
-                  {item.caption}
-                </p>
-                
-                <div className="mt-4 pt-4 border-t border-white/[0.04] flex justify-between items-center text-[10px] font-mono text-neutral-500">
-                  <span>✦ VIEW CASE DEBRIEF</span>
-                  <span>GCC STANDARDS</span>
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </AnimatePresence>
-      </section>
 
       {/* LIGHTBOX STAGE MODAL FOR SINGLE ITEM VIEW */}
       <AnimatePresence>
@@ -233,18 +171,15 @@ export default function Portfolio({ selectedPortfolioId, setSelectedPortfolioId,
                   <span className="text-[9px] font-mono text-neutral-500 block uppercase">
                     Interested in similar Staging?
                   </span>
-                  <button
+                  <PrimaryButton
                     onClick={() => {
                       setSelectedItem(null);
                       setActivePage('contact');
                       window.scrollTo({ top: 0, behavior: 'smooth' });
                     }}
-                    className="relative overflow-hidden group w-full bg-gradient-to-r from-red-700 to-red-600 hover:from-red-600 hover:to-red-500 border border-red-500/30 text-white font-sans text-xs font-bold uppercase tracking-wider py-3 px-6 rounded-xl transition-all cursor-pointer flex items-center justify-center gap-2 group shadow-lg shadow-red-700/10 hover:shadow-red-600/20"
-                  >
-                    <span className="absolute right-0 w-8 h-32 -mt-12 transition-all duration-1000 transform translate-x-12 bg-white opacity-10 rotate-12 group-hover:-translate-x-40 ease"></span>
-                    Discuss Similar Project
-                    <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-                  </button>
+                    text="Discuss Similar Project"
+                    className="w-full"
+                  />
                 </div>
               </div>
             </motion.div>

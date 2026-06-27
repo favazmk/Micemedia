@@ -319,7 +319,7 @@ input[type="range"]::-webkit-slider-thumb:hover {
 .portfolio-deck-card:nth-child(1) {
   --r: -12;
   --ty: 12px;
-  --tx-hover: -105px;
+  --tx-hover: -130px;
   z-index: 10;
 }
 .portfolio-deck-card:nth-child(2) {
@@ -331,25 +331,25 @@ input[type="range"]::-webkit-slider-thumb:hover {
 .portfolio-deck-card:nth-child(3) {
   --r: 14;
   --ty: 16px;
-  --tx-hover: 105px;
+  --tx-hover: 130px;
   z-index: 10;
 }
 
 @media (min-width: 640px) {
   .portfolio-deck-card:nth-child(1) {
-    --tx-hover: -210px;
+    --tx-hover: -270px;
   }
   .portfolio-deck-card:nth-child(3) {
-    --tx-hover: 210px;
+    --tx-hover: 270px;
   }
 }
 
 @media (min-width: 1024px) {
   .portfolio-deck-card:nth-child(1) {
-    --tx-hover: -290px;
+    --tx-hover: -315px;
   }
   .portfolio-deck-card:nth-child(3) {
-    --tx-hover: 290px;
+    --tx-hover: 315px;
   }
 }
 

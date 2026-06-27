@@ -23,6 +23,7 @@ import {
   Layers
 } from 'lucide-react';
 import { GetStartedButton } from '@/components/ui/get-started-button';
+import { PrimaryButton } from '@/components/ui/primary-button';
 import { BRAND_INFO, CLIENT_LOGOS, PORTFOLIO_DATA, SERVICES_DATA } from '../data';
 import TestimonialsSlider from './TestimonialsSlider';
 import EventScroll from './EventScroll';
@@ -81,7 +82,36 @@ interface HomeProps {
   setSelectedPortfolioId?: (id: string | null) => void;
 }
 
-export default function Home({ setActivePage, setSelectedServiceId, setSelectedPortfolioId }: HomeProps) {
+// --- ServiceBackground for dynamic crossfading image sequence ---
+const ServiceBackground = ({ image, index, total, scrollYProgress }: { image?: string; index: number; total: number; scrollYProgress: any }) => {
+  // calculate when this index should be visible
+  const rangeStart = (index - 0.5) / (total - 1);
+  const rangeMid = index / (total - 1);
+  const rangeEnd = (index + 0.5) / (total - 1);
+  
+  // Use clamping to ensure 0/1 range logic is handled properly
+  const opacity = useTransform(scrollYProgress, 
+    [Math.max(0, rangeStart), rangeMid, Math.min(1, rangeEnd)], 
+    [index === 0 ? 1 : 0, 1, index === total - 1 ? 1 : 0]
+  );
+  
+  const scale = useTransform(scrollYProgress, 
+    [Math.max(0, rangeStart), Math.min(1, rangeEnd)], 
+    [1.05, 1.15]
+  );
+  
+  if (!image) return null;
+  
+  return (
+    <motion.div 
+      className="absolute inset-0 z-0 bg-cover bg-center transition-all duration-300"
+      style={{ backgroundImage: `url(${image})`, opacity, scale }}
+    />
+  );
+};
+
+export default function Home({
+ setActivePage, setSelectedServiceId, setSelectedPortfolioId }: HomeProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   
   const heroRef = useRef<HTMLElement>(null);
@@ -225,7 +255,12 @@ export default function Home({ setActivePage, setSelectedServiceId, setSelectedP
   // Hero calculations
   const heroScale = useTransform(smoothHeroScroll, [0, 1], [1, 0.82]);
   const heroY = useTransform(smoothHeroScroll, [0, 1], [0, 220]);
-  const heroOpacity = useTransform(smoothHeroScroll, [0, 0.4, 0.8], [1, 0, 0]);
+  const headingOpacity = useTransform(smoothHeroScroll, [0, 0.4, 0.7], [1, 1, 0]);
+  const headingScale = useTransform(smoothHeroScroll, [0, 0.4, 0.8], [1, 0.9, 0.6]);
+  const headingBlurValue = useTransform(smoothHeroScroll, [0, 0.4, 0.8], [0, 0, 20]);
+  const headingBlur = useTransform(headingBlurValue, (val) => `blur(${val}px)`);
+  const headingRotateX = useTransform(smoothHeroScroll, [0, 0.4, 0.8], [0, 0, 45]);
+  const headingY = useTransform(smoothHeroScroll, [0, 0.4, 0.8], [0, -50, -150]);
   const bgTextY = useTransform(smoothHeroScroll, [0, 1], ["0%", "85%"]);
   const bgTextOpacity = useTransform(smoothHeroScroll, [0, 0.8], [0.07, 0.01]);
   const cardsOpacity = useTransform(smoothHeroScroll, [0, 0.5, 0.9], [1, 1, 0]);
@@ -246,10 +281,12 @@ export default function Home({ setActivePage, setSelectedServiceId, setSelectedP
     offset: ["start end", "end start"]
   });
   const smoothServicesViewportScroll = useSpring(servicesViewportScroll, { stiffness: 75, damping: 25, restDelta: 0.001 });
-  const servicesScale = useTransform(smoothServicesViewportScroll, [0, 0.25, 0.75, 1], [0.82, 1, 1, 0.85]);
-  const servicesRotateX = useTransform(smoothServicesViewportScroll, [0, 0.25, 0.75, 1], [15, 0, 0, -15]);
-  const servicesY = useTransform(smoothServicesViewportScroll, [0, 0.25, 0.75, 1], [120, 0, 0, -120]);
-
+  const servicesScale = useTransform(smoothServicesViewportScroll, [0, 0.2, 0.8, 1], [0.4, 1, 1, 0.4]);
+  const servicesRotateY = useTransform(smoothServicesViewportScroll, [0, 0.2, 0.8, 1], [60, 0, 0, -60]);
+  const servicesOpacity = useTransform(smoothServicesViewportScroll, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
+  const servicesBlurValue = useTransform(smoothServicesViewportScroll, [0, 0.2, 0.8, 1], [40, 0, 0, 40]);
+  const servicesBlur = useTransform(servicesBlurValue, (v) => `blur(${v}px)`);
+  
   const { scrollYProgress: servicesScroll } = useScroll({
     target: servicesRef,
     offset: ["start start", "end end"]
@@ -263,19 +300,23 @@ export default function Home({ setActivePage, setSelectedServiceId, setSelectedP
     offset: ["start end", "end start"]
   });
   const smoothPortfolioScroll = useSpring(portfolioScroll, { stiffness: 75, damping: 25, restDelta: 0.001 });
-  const portfolioScale = useTransform(smoothPortfolioScroll, [0, 0.45, 0.9], [0.82, 1, 0.85]);
-  const portfolioRotateX = useTransform(smoothPortfolioScroll, [0, 0.45, 0.9], [15, 0, -15]);
-  const portfolioY = useTransform(smoothPortfolioScroll, [0, 0.45, 0.9], [120, 0, -120]);
+  const portfolioScale = useTransform(smoothPortfolioScroll, [0, 0.25, 0.75, 1], [1.4, 1, 1, 0.6]);
+  const portfolioOpacity = useTransform(smoothPortfolioScroll, [0, 0.25, 0.75, 1], [0, 1, 1, 0]);
+  const portfolioBlurValue = useTransform(smoothPortfolioScroll, [0, 0.25, 0.75, 1], [40, 0, 0, 30]);
+  const portfolioBlur = useTransform(portfolioBlurValue, (v) => `blur(${v}px)`);
+  const portfolioY = useTransform(smoothPortfolioScroll, [0, 0.25, 0.75, 1], [200, 0, 0, -200]);
 
-  // Section 6 (Testimonials) calculations
+  // Section 6 (Testimonials) — Horizontal stage-slide + perspective flatten
   const { scrollYProgress: testimonialsScroll } = useScroll({
     target: testimonialsRef,
     offset: ["start end", "end start"]
   });
-  const smoothTestimonialsScroll = useSpring(testimonialsScroll, { stiffness: 75, damping: 25, restDelta: 0.001 });
-  const testimonialsScale = useTransform(smoothTestimonialsScroll, [0, 0.45, 0.9], [0.82, 1, 0.85]);
-  const testimonialsRotateX = useTransform(smoothTestimonialsScroll, [0, 0.45, 0.9], [15, 0, -15]);
-  const testimonialsY = useTransform(smoothTestimonialsScroll, [0, 0.45, 0.9], [120, 0, -120]);
+  const smoothTestimonialsScroll = useSpring(testimonialsScroll, { stiffness: 55, damping: 18, restDelta: 0.001 });
+  // Slams in from the LEFT, exits to the RIGHT — only horizontal section on the page
+  const testimonialsX = useTransform(smoothTestimonialsScroll, [0, 0.35, 0.65, 1], ["-120%", "0%", "0%", "120%"]);
+  // Perspective: starts face-on from left angle, snaps flat, folds away to the right
+  const testimonialsRotateY = useTransform(smoothTestimonialsScroll, [0, 0.35, 0.65, 1], [-30, 0, 0, 30]);
+  const testimonialsOpacity = useTransform(smoothTestimonialsScroll, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
   
   const handleServiceClick = (serviceId: string) => {
     if (setSelectedServiceId) {
@@ -322,7 +363,7 @@ export default function Home({ setActivePage, setSelectedServiceId, setSelectedP
           </motion.div>
 
           <motion.div
-            style={{ y: heroY, opacity: heroOpacity, transformPerspective: 1200 }}
+            style={{ y: heroY, transformPerspective: 1200 }}
             className="max-w-7xl mx-auto px-6 relative z-10 w-full text-center flex flex-col items-center [transform-style:preserve-3d]"
           >
           
@@ -340,39 +381,60 @@ export default function Home({ setActivePage, setSelectedServiceId, setSelectedP
           </motion.div>
 
           {/* Majestic Layered Headline */}
-          <motion.h1
-            initial={{ opacity: 0, y: 25 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.15 }}
-            className="font-display text-4xl sm:text-6xl md:text-8xl font-black tracking-tight text-white uppercase leading-[1.05] max-w-5xl"
+          <motion.div
+            style={{ 
+              opacity: headingOpacity, 
+              scale: headingScale, 
+              filter: headingBlur, 
+              rotateX: headingRotateX, 
+              y: headingY,
+            }}
+            className="w-full flex justify-center [transform-style:preserve-3d]"
           >
-            Where Every <br />
-            Event Becomes <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-red-600 to-amber-500 text-glow inline-block italic font-light tracking-wide normal-case py-1">
-              A Legacy.
-            </span>
-          </motion.h1>
+            <motion.h1
+              initial={{ opacity: 0, y: 25 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.15 }}
+              className="font-display text-4xl sm:text-6xl md:text-8xl font-black tracking-tight text-white uppercase leading-[1.05] max-w-5xl"
+            >
+              Where Every <br />
+              Event Becomes <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-red-600 to-amber-500 text-glow inline-block italic font-light tracking-wide normal-case py-1">
+                A Legacy.
+              </span>
+            </motion.h1>
+          </motion.div>
 
 
           {/* Action CTAs */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.45 }}
-            className="mt-12 flex flex-col sm:flex-row gap-5 items-center justify-center w-full max-w-md relative z-40"
-            id="hero-cta-group"
+          <motion.div 
+            style={{ 
+              opacity: headingOpacity, 
+              scale: headingScale, 
+              filter: headingBlur, 
+              rotateX: headingRotateX, 
+              y: headingY,
+            }}
+            className="w-full flex justify-center [transform-style:preserve-3d]"
           >
-            <GetStartedButton
-              onClick={() => setActivePage('portfolio')}
-              text="Explore Our Work"
-              className="shadow-white/5"
-            />
-            <button
-              onClick={() => setActivePage('contact')}
-              className="w-full sm:w-auto bg-neutral-900 hover:bg-neutral-800 border border-white/10 text-white font-sans text-xs font-bold uppercase tracking-wider py-4 px-10 rounded-full transition-all duration-300 flex items-center justify-center gap-2 group cursor-pointer hover:border-red-500/40 hover:scale-105"
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.45 }}
+              className="mt-12 flex flex-row gap-3 sm:gap-5 items-center justify-center w-full max-w-md relative z-40"
+              id="hero-cta-group"
             >
-              Start Your Event
-            </button>
+              <GetStartedButton
+                onClick={() => setActivePage('portfolio')}
+                text="Explore Our Work"
+                className="shadow-white/5 whitespace-nowrap text-[10px] sm:text-xs px-4 sm:px-8"
+              />
+              <PrimaryButton
+                onClick={() => setActivePage('contact')}
+                text="Start Your Event"
+                className="whitespace-nowrap text-[10px] sm:text-xs px-4 sm:px-8"
+              />
+            </motion.div>
           </motion.div>
 
           {/* Advanced 3D Stage Deck projection */}
@@ -589,13 +651,10 @@ export default function Home({ setActivePage, setSelectedServiceId, setSelectedP
           </div>
 
           <div className="mt-8">
-            <button
+            <PrimaryButton
               onClick={() => setActivePage('about')}
-              className="inline-flex items-center gap-2 group bg-red-600 hover:bg-red-500 text-white font-mono text-xs sm:text-sm tracking-wider uppercase font-bold transition-all cursor-pointer px-6 sm:px-8 py-3.5 rounded-full shadow-[0_0_15px_rgba(220,77,73,0.4)] hover:shadow-[0_0_25px_rgba(220,77,73,0.6)] hover:-translate-y-1 border border-red-400/50"
-            >
-              Discover Our Story 
-              <ArrowRight className="w-4 h-4 text-white group-hover:translate-x-1.5 transition-transform" />
-            </button>
+              text="Discover Our Story"
+            />
           </div>
 
         </div>
@@ -610,14 +669,30 @@ export default function Home({ setActivePage, setSelectedServiceId, setSelectedP
           <motion.section
             style={{
               scale: servicesScale,
-              rotateX: servicesRotateX,
-              y: servicesY,
+              rotateY: servicesRotateY,
+              opacity: servicesOpacity,
+              filter: servicesBlur,
               transformPerspective: 1200
             }}
             id="home-services"
-            className="w-full max-w-7xl mx-auto px-6 sm:px-12 md:px-16 py-8 sm:py-12 md:py-20 relative z-10 flex flex-col justify-between border border-white/40 rounded-[2rem] lg:rounded-[3rem] mt-10 shadow-[0_0_30px_rgba(255,255,255,0.08)]"
+            className="w-full max-w-7xl mx-auto px-6 sm:px-12 md:px-16 py-8 sm:py-12 md:py-20 relative z-10 flex flex-col justify-between border border-white/40 rounded-[2rem] lg:rounded-[3rem] mt-10 shadow-[0_0_50px_rgba(255,255,255,0.05)] overflow-hidden"
           >
-            <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-red-650/5 rounded-full blur-[100px] pointer-events-none"></div>
+            {/* Jaw-Dropping Image Sequence Backgrounds */}
+            {SERVICES_DATA.map((srv, index) => (
+              <ServiceBackground 
+                key={`bg-${srv.id}`}
+                image={srv.image}
+                index={index}
+                total={SERVICES_DATA.length}
+                scrollYProgress={smoothServicesScroll}
+              />
+            ))}
+            
+            {/* Deep overlay to ensure text remains highly readable over images */}
+            <div className="absolute inset-0 z-0 bg-gradient-to-t from-black/90 via-black/60 to-black/90 mix-blend-multiply pointer-events-none"></div>
+            <div className="absolute inset-0 z-0 bg-black/40 backdrop-blur-[2px] pointer-events-none"></div>
+
+            <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-red-650/15 rounded-full blur-[120px] pointer-events-none z-0"></div>
             
             <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-12 relative z-10 drop-shadow-[0_4px_8px_rgba(0,0,0,0.8)]">
               <div className="flex flex-col gap-2">
@@ -638,7 +713,7 @@ export default function Home({ setActivePage, setSelectedServiceId, setSelectedP
             </div>
 
             {/* Horizontal Scroll Layout with beautiful cards */}
-            <div className="overflow-hidden w-full relative z-10 -mx-6 px-6 sm:-mx-12 sm:px-12 md:-mx-16 md:px-16">
+            <div className="overflow-hidden w-full relative z-10">
               <motion.div
                 ref={trackRef}
                 style={{ x: servicesX }}
@@ -692,7 +767,8 @@ export default function Home({ setActivePage, setSelectedServiceId, setSelectedP
         ref={portfolioRef}
         style={{
           scale: portfolioScale,
-          rotateX: portfolioRotateX,
+          opacity: portfolioOpacity,
+          filter: portfolioBlur,
           y: portfolioY,
           transformPerspective: 1200
         }}
@@ -711,13 +787,10 @@ export default function Home({ setActivePage, setSelectedServiceId, setSelectedP
               Events That <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-red-600 to-amber-500 text-glow inline-block py-1 drop-shadow-lg">Speak.</span>
             </h2>
           </div>
-          <button
+          <PrimaryButton
             onClick={() => setActivePage('portfolio')}
-            className="font-mono text-xs px-6 py-3 bg-red-600/20 backdrop-blur-md border border-red-500/30 rounded-full hover:bg-red-600/40 hover:border-red-500/60 transition-all flex items-center gap-2 cursor-pointer text-white tracking-widest font-bold uppercase hover:-translate-y-1 duration-300 shadow-[0_4px_12px_rgba(220,77,73,0.2)] group"
-          >
-            All Case Studies
-            <ArrowRight className="w-4 h-4 text-red-400 group-hover:text-white group-hover:translate-x-1.5 transition-all" />
-          </button>
+            text="View All Case Studies"
+          />
         </div>
 
         {/* 3 Premium highlights with cards - Interactive CSS Fan-out deck */}
@@ -782,7 +855,7 @@ export default function Home({ setActivePage, setSelectedServiceId, setSelectedP
       </motion.section>
 
       {/* SECTION 5: CLIENT LOGOS INFINITE SCROLLER */}
-      <section id="home-partners" className="py-20 relative z-20 w-full overflow-hidden">
+      <section id="home-partners" className="py-20 relative z-20 w-full overflow-hidden max-w-7xl mx-auto my-20 border border-white/40 rounded-[2rem] lg:rounded-[3rem] shadow-[0_0_30px_rgba(255,255,255,0.08)]">
         <div className="max-w-7xl mx-auto px-6 mb-10 text-center flex flex-col items-center drop-shadow-[0_4px_8px_rgba(0,0,0,0.8)]">
           <span className="text-xs font-mono tracking-[0.2em] text-red-500 uppercase font-bold mb-2 [text-shadow:0_2px_4px_rgba(0,0,0,0.8)]">
             Trusted By
@@ -838,14 +911,14 @@ export default function Home({ setActivePage, setSelectedServiceId, setSelectedP
         </div>
       </section>
 
-      {/* SECTION 6: TESTIMONIALS (Client Quotes Slider) */}
+      {/* SECTION 6: CLIENT TESTIMONIALS */}
       <motion.section
         ref={testimonialsRef}
         style={{
-          scale: testimonialsScale,
-          rotateX: testimonialsRotateX,
-          y: testimonialsY,
-          transformPerspective: 1200
+          x: testimonialsX,
+          rotateY: testimonialsRotateY,
+          opacity: testimonialsOpacity,
+          transformPerspective: 1400,
         }}
         id="home-testimonials"
         className="py-20 md:py-24 max-w-7xl mx-auto px-6 sm:px-12 md:px-16 relative z-10 w-full my-20 border border-white/40 rounded-[2rem] lg:rounded-[3rem] shadow-[0_0_30px_rgba(255,255,255,0.08)]"
@@ -884,14 +957,10 @@ export default function Home({ setActivePage, setSelectedServiceId, setSelectedP
             Join Dubai's leading organizations. Complete our direct briefing questionnaire, estimate attendance, and receive a customized concept draft from our executive management board.
           </p>
           <div className="mt-10">
-            <button
+            <PrimaryButton
               onClick={() => setActivePage('contact')}
-              className="relative overflow-hidden group cursor-pointer bg-gradient-to-r from-red-700 to-red-600 hover:from-red-600 hover:to-red-500 text-white font-sans text-xs font-bold uppercase tracking-wider py-4 px-10 rounded-full shadow-lg shadow-red-700/20 hover:shadow-red-600/30 transition-all duration-300 flex items-center gap-2 group hover:scale-105 border border-red-500/30"
-            >
-              <span className="absolute right-0 w-8 h-32 -mt-12 transition-all duration-1000 transform translate-x-12 bg-white opacity-10 rotate-12 group-hover:-translate-x-40 ease"></span>
-              Get Custom Quotation Now
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            </button>
+              text="Contact Us Today"
+            />
           </div>
         </div>
       </section>

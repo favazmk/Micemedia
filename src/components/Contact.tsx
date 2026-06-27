@@ -14,15 +14,15 @@ import {
   CheckCircle, 
   MessageSquare, 
   FileText, 
-  Check, 
   Calendar, 
   Users, 
-  Sliders, 
   Globe, 
   AlertCircle 
 } from 'lucide-react';
 import { BRAND_INFO } from '../data';
 import { ProposalFormInputs } from '../types';
+import { PrimaryButton } from '@/components/ui/primary-button';
+import { GetStartedButton } from '@/components/ui/get-started-button';
 
 export default function Contact() {
   const [formInputs, setFormInputs] = useState<ProposalFormInputs>({
@@ -54,25 +54,6 @@ export default function Contact() {
     'Other'
   ];
 
-  // Guest bracket index helper for metric simulation
-  const getScaleFactor = (guests: string) => {
-    switch(guests) {
-      case 'Under 50': return 1;
-      case '50–200': return 2;
-      case '200–500': return 3.5;
-      case '500–1,000': return 5;
-      case '1,000+': return 8;
-      default: return 2;
-    }
-  };
-
-  const scaleFactor = getScaleFactor(formInputs.estimatedGuests);
-
-  // Dynamic simulation estimates
-  const simStaffNeeded = Math.ceil(scaleFactor * 4);
-  const simBuildDays = Math.ceil(scaleFactor * 0.8 + 1);
-  const simRedundantGens = scaleFactor > 3 ? 2 : 1;
-  const simAVScale = scaleFactor > 4 ? 'Arena Concert Rig' : scaleFactor > 2 ? 'Grand Ballroom PA' : 'Intimate VIP Array';
 
   const handleInputChange = (field: keyof ProposalFormInputs, value: string) => {
     setFormInputs(prev => ({
@@ -209,55 +190,9 @@ export default function Contact() {
             </div>
           </div>
 
-          {/* Card 2: Interactive Concept Estimator */}
-          <div className="bg-neutral-900/60 rounded-3xl p-8 border border-red-500/15 relative overflow-hidden" id="concept-estimator-widget">
-            <h3 className="font-display text-base font-bold text-white mb-4 uppercase tracking-wider flex items-center gap-2">
-              <Sliders className="w-4.5 h-4.5 text-red-500" />
-              Blueprint Planner Estimator
-            </h3>
-            <p className="text-neutral-400 text-xs mb-6">
-              Adjust guest size and type preferences in the right briefing form to see our simulated setup metrics update:
-            </p>
-
-            <div className="grid grid-cols-2 gap-4">
-              
-              <div className="bg-neutral-950 p-4 rounded-xl border border-white/5">
-                <span className="text-[9px] font-mono text-neutral-500 block uppercase">Project Managers</span>
-                <span className="text-2xl font-display font-black text-white mt-1 block">
-                  {simStaffNeeded} Officers
-                </span>
-              </div>
-
-              <div className="bg-neutral-950 p-4 rounded-xl border border-white/5">
-                <span className="text-[9px] font-mono text-neutral-500 block uppercase">On-Site Setup Time</span>
-                <span className="text-2xl font-display font-black text-white mt-1 block">
-                  {simBuildDays} Staging Days
-                </span>
-              </div>
-
-              <div className="bg-neutral-950 p-4 rounded-xl border border-white/5">
-                <span className="text-[9px] font-mono text-neutral-500 block uppercase">Power Redundancy</span>
-                <span className="text-2xl font-display font-black text-white mt-1 block">
-                  {simRedundantGens} Sync GenSets
-                </span>
-              </div>
-
-              <div className="bg-neutral-950 p-4 rounded-xl border border-white/5">
-                <span className="text-[9px] font-mono text-neutral-500 block uppercase">AV Rig Capability</span>
-                <span className="text-sm font-mono text-red-500 font-bold mt-1.5 block truncate">
-                  {simAVScale}
-                </span>
-              </div>
-
-            </div>
-
-            <div className="mt-5 text-[9px] font-mono text-neutral-500 flex items-center gap-1.5">
-              <Check className="w-3 h-3 text-green-500" />
-              <span>Perfect redundancy & DWTC health approvals guaranteed</span>
-            </div>
-          </div>
 
         </div>
+
 
         {/* Right Columns (7 spans) for actual Proposal briefing input Form */}
         <div className="lg:col-span-7">
@@ -396,13 +331,11 @@ export default function Contact() {
                   </div>
 
                   {/* Submit Button */}
-                  <button
-                    id="submit-form-btn"
+                  <PrimaryButton
                     type="submit"
                     disabled={isSubmitting}
-                    className="relative overflow-hidden group mt-4 bg-gradient-to-r from-red-700 to-red-600 hover:from-red-600 hover:to-red-500 text-white font-sans text-xs font-bold uppercase tracking-wider py-4.5 rounded-xl cursor-pointer transition-all duration-300 flex items-center justify-center gap-2 shadow-lg shadow-red-700/20 hover:shadow-red-600/30 disabled:scale-95 disabled:opacity-50 border border-red-500/30"
+                    className="w-full mt-4 !rounded-xl"
                   >
-                    <span className="absolute right-0 w-8 h-32 -mt-12 transition-all duration-1000 transform translate-x-12 bg-white opacity-10 rotate-12 group-hover:-translate-x-40 ease"></span>
                     {isSubmitting ? (
                       <>
                         <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
@@ -414,7 +347,7 @@ export default function Contact() {
                         Send Enquiry
                       </>
                     )}
-                  </button>
+                  </PrimaryButton>
 
                 </form>
               </motion.div>
@@ -477,7 +410,7 @@ export default function Contact() {
                     <MessageSquare className="w-4.5 h-4.5 fill-white" />
                     Priority WhatsApp Link
                   </a>
-                  <button
+                  <GetStartedButton
                     onClick={() => {
                       setIsSubmitted(false);
                       setFormInputs({
@@ -491,10 +424,8 @@ export default function Contact() {
                         comments: ''
                       });
                     }}
-                    className="w-full sm:w-auto bg-neutral-900 hover:bg-neutral-800 border border-white/10 text-neutral-400 hover:text-white font-sans text-xs font-bold uppercase tracking-wider py-4.5 px-8 rounded-xl transition-all cursor-pointer"
-                  >
-                    Submit Another Brief
-                  </button>
+                    text="Submit Another Brief"
+                  />
                 </div>
               </motion.div>
             )}
