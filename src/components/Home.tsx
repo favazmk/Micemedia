@@ -304,6 +304,10 @@ export default function Home({
   const servicesOpacity = useTransform(smoothServicesViewportScroll, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
   const servicesBlurValue = useTransform(smoothServicesViewportScroll, [0, 0.2, 0.8, 1], [40, 0, 0, 40]);
   const servicesBlur = useTransform(servicesBlurValue, (v) => `blur(${v}px)`);
+
+  const mobileServicesScale = useTransform(smoothServicesViewportScroll, [0, 0.45, 0.9], [0.82, 1, 0.85]);
+  const mobileServicesRotateX = useTransform(smoothServicesViewportScroll, [0, 0.45, 0.9], [15, 0, -15]);
+  const mobileServicesY = useTransform(smoothServicesViewportScroll, [0, 0.45, 0.9], [120, 0, -120]);
   
   const { scrollYProgress: servicesScroll } = useScroll({
     target: servicesRef,
@@ -323,6 +327,10 @@ export default function Home({
   const portfolioBlurValue = useTransform(smoothPortfolioScroll, [0, 0.25, 0.75, 1], [40, 0, 0, 30]);
   const portfolioBlur = useTransform(portfolioBlurValue, (v) => `blur(${v}px)`);
   const portfolioY = useTransform(smoothPortfolioScroll, [0, 0.25, 0.75, 1], [200, 0, 0, -200]);
+
+  const mobilePortfolioScale = useTransform(smoothPortfolioScroll, [0, 0.45, 0.9], [0.82, 1, 0.85]);
+  const mobilePortfolioRotateX = useTransform(smoothPortfolioScroll, [0, 0.45, 0.9], [15, 0, -15]);
+  const mobilePortfolioY = useTransform(smoothPortfolioScroll, [0, 0.45, 0.9], [120, 0, -120]);
 
   // Section 6 (Testimonials) — Horizontal stage-slide + perspective flatten
   const { scrollYProgress: testimonialsScroll } = useScroll({
@@ -656,7 +664,7 @@ export default function Home({
       {/* SECTION 2: ABOUT SUMMARY (MINIMAL & BOLD) */}
       <motion.section
         ref={aboutRef}
-        style={isMobile ? { opacity: 1, scale: 1, rotateX: 0, y: 0 } : {
+        style={{
           scale: aboutScale,
           rotateX: aboutRotateX,
           y: aboutY,
@@ -715,7 +723,12 @@ export default function Home({
       >
         <div className={`w-full overflow-hidden flex items-center justify-center ${isMobile ? 'relative py-10 flex-col' : 'sticky top-0 h-screen'}`}>
           <motion.section
-            style={isMobile ? { opacity: 1, scale: 1, filter: "none", rotateY: 0 } : {
+            style={isMobile ? {
+              scale: mobileServicesScale,
+              rotateX: mobileServicesRotateX,
+              y: mobileServicesY,
+              transformPerspective: 1200
+            } : {
               scale: servicesScale,
               rotateY: servicesRotateY,
               opacity: servicesOpacity,
@@ -773,7 +786,7 @@ export default function Home({
                     <div
                       key={srv.id}
                       onClick={() => handleServiceClick(srv.id)}
-                      className={`group relative bg-[#121212]/90 border p-8 sm:p-10 overflow-hidden rounded-3xl cursor-pointer transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] flex flex-col justify-between min-h-[320px] sm:min-h-[350px] w-[280px] sm:w-[350px] mx-auto shrink-0 shadow-2xl ${
+                      className={`group relative ${isMobile ? 'backdrop-blur-2xl bg-black/60' : 'bg-[#121212]/90'} border p-8 sm:p-10 overflow-hidden rounded-3xl cursor-pointer transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] flex flex-col justify-between min-h-[320px] sm:min-h-[350px] w-[280px] sm:w-[350px] mx-auto shrink-0 shadow-2xl ${
                         activeTouchServiceId === srv.id
                           ? 'border-[#E55B5B]/40 -translate-y-2 z-20'
                           : 'border-white/5 hover:-translate-y-2 hover:border-[#E55B5B]/40'
@@ -825,7 +838,12 @@ export default function Home({
       {/* SECTION 4: RECENT PORTFOLIO EXHIBITS (3 items highlight) */}
       <motion.section
         ref={portfolioRef}
-        style={isMobile ? { opacity: 1, scale: 1, filter: "none", y: 0 } : {
+        style={isMobile ? {
+          scale: mobilePortfolioScale,
+          rotateX: mobilePortfolioRotateX,
+          y: mobilePortfolioY,
+          transformPerspective: 1200
+        } : {
           scale: portfolioScale,
           opacity: portfolioOpacity,
           filter: portfolioBlur,
