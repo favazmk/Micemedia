@@ -33,22 +33,51 @@ export default function EventScroll({ scrollContainerRef }: EventScrollProps) {
   const smoothProgress = useSpring(scrollYProgress, { stiffness: 60, damping: 20, restDelta: 0.001 });
 
   useEffect(() => {
-    // Preload images
-    const loadedImages: HTMLImageElement[] = [];
+    let isCancelled = false;
+    const loadedImages: HTMLImageElement[] = new Array(frameCount).fill(null);
     let loaded = 0;
     setLoadedCount(0);
-
-    for (let i = 1; i <= frameCount; i++) {
-      const img = new Image();
-      const indexStr = i.toString().padStart(3, '0');
-      img.src = `/${folder}/ezgif-frame-${indexStr}.jpg`;
-      img.onload = () => {
-        loaded++;
-        setLoadedCount(loaded);
-      };
-      loadedImages.push(img);
-    }
     setImages(loadedImages);
+
+    const loadImagesSequentially = async () => {
+      const loadImage = (i: number): Promise<void> => {
+        return new Promise((resolve) => {
+          if (isCancelled) return resolve();
+          const img = new Image();
+          const indexStr = (i + 1).toString().padStart(3, '0');
+          img.src = `/${folder}/ezgif-frame-${indexStr}.jpg`;
+          
+          img.onload = () => {
+            if (isCancelled) return resolve();
+            loadedImages[i] = img;
+            loaded++;
+            setLoadedCount(loaded);
+            
+            // Only update the state array every 10 frames to reduce re-renders,
+            // or when we finish, so React knows about the new references.
+            if (loaded % 10 === 0 || loaded === frameCount) {
+              setImages([...loadedImages]);
+            }
+            resolve();
+          };
+          img.onerror = () => resolve();
+        });
+      };
+
+      // Load sequentially to prevent CPU/Network spikes that cause heating
+      for (let i = 0; i < frameCount; i++) {
+        if (isCancelled) break;
+        await loadImage(i);
+        // Small 5ms pause between frames to let the main thread breathe
+        await new Promise(r => setTimeout(r, 5));
+      }
+    };
+
+    loadImagesSequentially();
+
+    return () => {
+      isCancelled = true;
+    };
   }, [isMobile, frameCount, folder]);
 
   const drawFrame = (frameIndex: number) => {
@@ -58,7 +87,17 @@ export default function EventScroll({ scrollContainerRef }: EventScrollProps) {
     if (!ctx) return;
 
     const safeIndex = Math.max(0, Math.min(frameCount - 1, frameIndex));
-    const img = images[safeIndex];
+    let img = images[safeIndex];
+    
+    // Fallback to the closest previously loaded frame if current isn't ready
+    if (!img || !img.complete) {
+      for (let j = safeIndex; j >= 0; j--) {
+        if (images[j] && images[j].complete) {
+          img = images[j];
+          break;
+        }
+      }
+    }
     if (!img || !img.complete) return;
 
     const width = window.innerWidth;
@@ -113,15 +152,13 @@ export default function EventScroll({ scrollContainerRef }: EventScrollProps) {
         <canvas ref={canvasRef} className="w-full h-full block opacity-50" />
       </div>
       
-      {/* Loading overlay */}
+      {/* Non-blocking tiny loading indicator at the bottom instead of full screen */}
       {loadedCount < frameCount && (
-        <div className="fixed inset-0 flex items-center justify-center z-50 bg-[#050505]/90 backdrop-blur-md transition-opacity duration-500 pointer-events-none">
-          <div className="flex flex-col items-center gap-4">
-            <div className="w-8 h-8 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
-            <p className="text-white/60 font-mono text-xs uppercase tracking-widest">
-              Initializing Sequence {Math.round((loadedCount / frameCount) * 100)}%
-            </p>
-          </div>
+        <div className="fixed bottom-4 right-4 z-50 flex items-center gap-3 bg-black/50 backdrop-blur-md px-4 py-2 rounded-full pointer-events-none transition-opacity duration-500 border border-white/10">
+          <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
+          <p className="text-white/60 font-mono text-[10px] uppercase tracking-widest">
+            {Math.round((loadedCount / frameCount) * 100)}%
+          </p>
         </div>
       )}
     </>

@@ -442,12 +442,12 @@ export default function Home({
               <GetStartedButton
                 onClick={() => setActivePage('portfolio')}
                 text="Explore Our Work"
-                className="shadow-white/5 whitespace-nowrap text-[10px] sm:text-xs px-4 sm:px-8"
+                className="shadow-white/5 whitespace-nowrap text-[10px] sm:text-xs px-2 sm:px-8 flex-1 w-full justify-center"
               />
               <PrimaryButton
                 onClick={() => setActivePage('contact')}
                 text="Start Your Event"
-                className="whitespace-nowrap text-[10px] sm:text-xs px-4 sm:px-8"
+                className="whitespace-nowrap text-[10px] sm:text-xs px-2 sm:px-8 flex-1 w-full justify-center"
               />
             </motion.div>
           </motion.div>

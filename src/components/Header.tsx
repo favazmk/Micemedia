@@ -48,14 +48,14 @@ export default function Header({ activePage, setActivePage }: HeaderProps) {
       <header
         id="main-header"
         className={`fixed left-0 right-0 z-50 flex justify-center transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-          scrolled ? 'top-0 md:top-6 px-4' : 'top-0 px-0'
+          scrolled ? 'top-4 md:top-6 px-4' : 'top-0 px-0'
         }`}
       >
         <div
           style={{ maxWidth: scrolled ? '1280px' : '100%' }}
           className={`w-full relative transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] flex items-center justify-between ${
             scrolled
-              ? 'glass-panel-heavy md:rounded-full py-3 px-6 md:px-8 shadow-2xl shadow-black/80 border-b md:border border-white/5'
+              ? 'glass-panel-heavy rounded-full py-3 px-6 md:px-8 shadow-2xl shadow-black/80 border border-white/5'
               : 'glass-panel border-b border-white/10 py-5 px-6 md:px-12 rounded-none'
           }`}
         >
