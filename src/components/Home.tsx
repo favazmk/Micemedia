@@ -224,8 +224,8 @@ export default function Home({ setActivePage, setSelectedServiceId, setSelectedP
 
   // Hero calculations
   const heroScale = useTransform(smoothHeroScroll, [0, 1], [1, 0.82]);
-  const heroRotateX = useTransform(smoothHeroScroll, [0, 1], [0, 16]);
   const heroY = useTransform(smoothHeroScroll, [0, 1], [0, 220]);
+  const heroOpacity = useTransform(smoothHeroScroll, [0, 0.4, 0.8], [1, 0, 0]);
   const bgTextY = useTransform(smoothHeroScroll, [0, 1], ["0%", "85%"]);
   const bgTextOpacity = useTransform(smoothHeroScroll, [0, 0.8], [0.07, 0.01]);
   const cardsOpacity = useTransform(smoothHeroScroll, [0, 0.5, 0.9], [1, 1, 0]);
@@ -322,7 +322,7 @@ export default function Home({ setActivePage, setSelectedServiceId, setSelectedP
           </motion.div>
 
           <motion.div
-            style={{ y: heroY, transformPerspective: 1200 }}
+            style={{ y: heroY, opacity: heroOpacity, transformPerspective: 1200 }}
             className="max-w-7xl mx-auto px-6 relative z-10 w-full text-center flex flex-col items-center [transform-style:preserve-3d]"
           >
           
