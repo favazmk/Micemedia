@@ -5,7 +5,7 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { MessageCircle } from 'lucide-react';
+import { MessageCircle, X, Phone } from 'lucide-react';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import Home from './components/Home';
@@ -18,6 +18,7 @@ export default function App() {
   const [activePage, setActivePage] = useState<string>('home');
   const [selectedServiceId, setSelectedServiceId] = useState<string | null>(null);
   const [selectedPortfolioId, setSelectedPortfolioId] = useState<string | null>(null);
+  const [isContactMenuOpen, setIsContactMenuOpen] = useState(false);
 
   const renderPage = () => {
     switch (activePage) {
@@ -104,13 +105,50 @@ export default function App() {
       </main>
 
       {/* Sticky Contact FAB */}
-      <button 
-        onClick={() => setActivePage('contact')}
-        className="fixed bottom-6 left-6 z-[100] w-12 h-12 md:w-14 md:h-14 bg-red-600 rounded-full flex items-center justify-center shadow-[0_4px_16px_rgba(220,38,38,0.5)] hover:scale-110 hover:bg-red-500 transition-all duration-300"
-        aria-label="Contact Us"
-      >
-        <MessageCircle className="w-5 h-5 md:w-6 md:h-6 text-white" />
-      </button>
+      <div className="fixed bottom-6 right-6 z-[100] flex flex-col items-center gap-3">
+        <AnimatePresence>
+          {isContactMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, y: 15, scale: 0.8 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 15, scale: 0.8 }}
+              className="flex flex-col gap-3"
+            >
+              {/* WhatsApp Button */}
+              <a 
+                href="https://wa.me/971501234567" // Placeholder WhatsApp link
+                target="_blank" 
+                rel="noreferrer"
+                className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center shadow-lg hover:scale-110 hover:bg-green-400 transition-all duration-300"
+                aria-label="WhatsApp"
+              >
+                <MessageCircle className="w-5 h-5 text-white" />
+              </a>
+              {/* Call Button */}
+              <a 
+                href="tel:+971501234567" // Placeholder Phone link
+                className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center shadow-lg hover:scale-110 hover:bg-blue-400 transition-all duration-300"
+                aria-label="Call Us"
+              >
+                <Phone className="w-5 h-5 text-white" />
+              </a>
+            </motion.div>
+          )}
+        </AnimatePresence>
+        
+        {/* Main FAB Toggle */}
+        <button 
+          onClick={() => setIsContactMenuOpen(!isContactMenuOpen)}
+          className="w-12 h-12 md:w-14 md:h-14 bg-red-600 rounded-full flex items-center justify-center shadow-[0_4px_16px_rgba(220,38,38,0.5)] hover:scale-110 hover:bg-red-500 transition-all duration-300"
+          aria-label="Contact Menu"
+        >
+          {isContactMenuOpen ? (
+            <X className="w-5 h-5 md:w-6 md:h-6 text-white" />
+          ) : (
+            <MessageCircle className="w-5 h-5 md:w-6 md:h-6 text-white" />
+          )}
+        </button>
+      </div>
 
       {/* System Footer Bar */}
       <Footer setActivePage={setActivePage} setSelectedServiceId={setSelectedServiceId} />
