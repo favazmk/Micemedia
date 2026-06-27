@@ -724,6 +724,7 @@ export default function Home({
         <div className={`w-full flex items-center justify-center ${isMobile ? 'relative py-10 flex-col' : 'overflow-hidden sticky top-0 h-screen'}`}>
           <motion.section
             style={isMobile ? {
+              opacity: 1,
               scale: mobileServicesScale,
               rotateX: mobileServicesRotateX,
               y: mobileServicesY,
@@ -839,6 +840,7 @@ export default function Home({
       <motion.section
         ref={portfolioRef}
         style={isMobile ? {
+          opacity: 1,
           scale: mobilePortfolioScale,
           rotateX: mobilePortfolioRotateX,
           y: mobilePortfolioY,
