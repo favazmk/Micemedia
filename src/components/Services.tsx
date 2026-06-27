@@ -21,8 +21,10 @@ import {
   Lightbulb,
   TreePine,
   Sliders,
-  DollarSign
+  DollarSign,
+  ChevronDown
 } from 'lucide-react';
+import Particles from './Particles';
 import { SERVICES_DATA } from '../data';
 import { PrimaryButton } from '@/components/ui/primary-button';
 
@@ -62,19 +64,103 @@ export default function Services({ selectedServiceId, setSelectedServiceId, setA
 
   const selectedService = SERVICES_DATA.find(s => s.id === activeTab) || SERVICES_DATA[0];
 
-  // Interactive AV Companion State
-  const [avVolume, setAvVolume] = useState<number>(75);
-  const [avLighting, setAvLighting] = useState<string>('Crimson Fire');
-  const [avScreen, setAvScreen] = useState<string>('Dynamic Video');
+  const renderServiceContent = (srv: any) => (
+    <div className="glass-panel-heavy rounded-3xl p-6 md:p-10 border border-white/5 relative overflow-hidden h-full">
+      {/* Absolute background spotlight glow */}
+      <div className="absolute top-0 right-0 w-64 h-64 bg-red-650/10 rounded-full blur-[100px] pointer-events-none"></div>
 
-  // Interactive Exhibition Companion State
-  const [exBuildType, setExBuildType] = useState<string>('Custom Double-Decker');
-  const [exSustainOption, setExSustainOption] = useState<boolean>(true);
-  const [exAreaSize, setExAreaSize] = useState<number>(36); // sqm
+      <div className="flex items-center justify-between mb-8.5 border-b border-white/5 pb-6">
+        <div>
+          <span className="text-[10px] font-mono font-bold tracking-widest uppercase text-red-500">
+            DISCIPLINE EXECUTIVE {srv.number}
+          </span>
+          <h2 className="font-display text-2xl sm:text-3xl font-black text-white mt-1.5 uppercase">
+            {srv.title}
+          </h2>
+        </div>
+        <div className="w-14 h-14 rounded-2xl bg-neutral-900 border border-white/10 flex items-center justify-center text-red-500 shadow-xl shrink-0 ml-4">
+          {getIcon(srv.iconName)}
+        </div>
+      </div>
+
+      <p className="text-neutral-300 text-sm md:text-base leading-relaxed mb-8">
+        {srv.description}
+      </p>
+
+      {/* Speciality deliverables */}
+      <div className="mb-10">
+        <span className="text-[10px] font-mono tracking-widest text-neutral-500 uppercase block mb-4.5">
+          Core Execution Services Include:
+        </span>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+          {srv.details?.map((del: string, i: number) => (
+            <div key={i} className="flex items-start gap-3 bg-neutral-900/40 border border-white/5 p-3 rounded-xl hover:border-red-500/10 transition-colors">
+              <div className="w-5 h-5 rounded bg-red-600/10 border border-red-600/20 flex items-center justify-center text-red-500 shrink-0 mt-0.5">
+                <Check className="w-3.5 h-3.5" />
+              </div>
+              <span className="text-xs md:text-sm text-neutral-300 font-sans font-medium">
+                {del}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* General Service Pitch Panel */}
+      <div className="border-t border-white/5 pt-8 mt-4.5">
+        <div className="bg-neutral-950 p-6 rounded-2xl border border-white/5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
+          <div>
+            <h4 className="font-display text-sm font-bold text-white mb-1 flex items-center gap-2">
+              <Lightbulb className="w-4 h-4 text-red-500" />
+              Premium Dubai Delivery Included
+            </h4>
+            <p className="text-neutral-400 text-xs leading-relaxed max-w-md">
+              Every single detail of our {srv.title} operations is handled in-house with standard dwg schematics, direct regional permits, and redundant executive back-ups.
+            </p>
+          </div>
+          <PrimaryButton
+            onClick={() => setActivePage('contact')}
+            text="Enquire for this"
+          />
+        </div>
+      </div>
+
+      {/* Back out button */}
+      <div className="mt-8 pt-6 border-t border-white/5 flex gap-4">
+        <PrimaryButton
+          onClick={() => {
+            setActivePage('contact');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+          text="Custom Proposal Brief"
+        />
+      </div>
+    </div>
+  );
+
+
 
   return (
-    <div className="py-24 md:py-32 flex flex-col w-full" id="servicespage-root">
+    <div className="py-24 md:py-32 flex flex-col w-full relative min-h-screen" id="servicespage-root">
       
+      {/* ── Particles animated WebGL background ── */}
+      <div className="absolute inset-0 z-0 pointer-events-none" aria-hidden="true">
+        <div className="sticky top-0 left-0 w-full h-screen">
+          <Particles
+            particleColors={['#ff4d6d', '#e63946', '#800c0c']}
+            particleCount={300}
+            particleSpread={12}
+            speed={0.1}
+            particleBaseSize={100}
+            moveParticlesOnHover={true}
+            particleHoverFactor={1.5}
+            alphaParticles={true}
+            cameraDistance={25}
+          />
+        </div>
+      </div>
+
+      <div className="relative z-10 flex flex-col w-full">
       {/* SECTION 1: SERVICES HEADER */}
       <section className="relative px-6 max-w-7xl mx-auto w-full mb-16 text-center">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-64 bg-red-650/10 rounded-full blur-3xl pointer-events-none"></div>
@@ -117,43 +203,70 @@ export default function Services({ selectedServiceId, setSelectedServiceId, setA
             Select Speciality
           </span>
           {SERVICES_DATA.map((srv) => (
-            <button
-              id={`service-tab-${srv.id}`}
-              key={srv.id}
-              onClick={() => {
-                setActiveTab(srv.id);
-                const el = document.getElementById('selected-service-content');
-                if (el && window.innerWidth < 1024) {
-                  el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-              }}
-              className={`w-full py-4.5 px-6 rounded-2xl flex items-center justify-between transition-all duration-300 text-left border cursor-pointer ${
-                activeTab === srv.id
-                  ? 'bg-neutral-900 border-red-500/30 shadow-lg shadow-red-950/20 text-white'
-                  : 'bg-neutral-950/40 border-white/5 hover:border-white/10 text-neutral-400 hover:text-white'
-              }`}
-            >
-              <div className="flex items-center gap-4">
-                <span className={`font-mono text-xs ${activeTab === srv.id ? 'text-red-500' : 'text-neutral-600'}`}>
-                  {srv.number}
-                </span>
-                <span className="font-display font-bold text-sm tracking-tight">
-                  {srv.title}
-                </span>
-              </div>
-              <div className={`p-1.5 rounded-lg border transition-colors ${
-                activeTab === srv.id 
-                  ? 'bg-red-600 border-red-500 text-white' 
-                  : 'bg-neutral-900 border-white/5 text-neutral-500'
-              }`}>
-                {getIcon(srv.iconName === 'Users2' ? 'Users2' : srv.iconName)}
-              </div>
-            </button>
+            <div key={srv.id} className="flex flex-col">
+              <button
+                id={`service-tab-${srv.id}`}
+                onClick={() => {
+                  // Toggle on mobile, just set active on desktop
+                  if (window.innerWidth < 1024) {
+                    setActiveTab(activeTab === srv.id ? '' : srv.id);
+                    if (activeTab !== srv.id) {
+                      setTimeout(() => {
+                        const el = document.getElementById(`service-tab-${srv.id}`);
+                        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                      }, 100);
+                    }
+                  } else {
+                    setActiveTab(srv.id);
+                  }
+                }}
+                className={`w-full py-4.5 px-6 rounded-2xl flex items-center justify-between transition-all duration-300 text-left border cursor-pointer ${
+                  activeTab === srv.id
+                    ? 'bg-neutral-900 border-red-500/30 shadow-lg shadow-red-950/20 text-white'
+                    : 'bg-neutral-950/40 border-white/5 hover:border-white/10 text-neutral-400 hover:text-white'
+                }`}
+              >
+                <div className="flex items-center gap-4">
+                  <span className={`font-mono text-xs ${activeTab === srv.id ? 'text-red-500' : 'text-neutral-600'}`}>
+                    {srv.number}
+                  </span>
+                  <div className={`p-1.5 rounded-lg border transition-colors ${
+                    activeTab === srv.id 
+                      ? 'bg-red-600 border-red-500 text-white' 
+                      : 'bg-neutral-900 border-white/5 text-neutral-500'
+                  }`}>
+                    {getIcon(srv.iconName === 'Users2' ? 'Users2' : srv.iconName)}
+                  </div>
+                  <span className="font-display font-bold text-sm tracking-tight">
+                    {srv.title}
+                  </span>
+                </div>
+                <ChevronDown className={`w-5 h-5 transition-transform duration-300 ${activeTab === srv.id ? 'rotate-180 text-red-500 lg:-rotate-90' : 'text-neutral-500 lg:-rotate-90'}`} />
+              </button>
+
+              {/* MOBILE ACCORDION CONTENT */}
+              <AnimatePresence initial={false}>
+                {activeTab === srv.id && (
+                  <motion.div
+                    key={`content-${srv.id}`}
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.3, ease: 'easeInOut' }}
+                    className="lg:hidden overflow-hidden"
+                  >
+                    <div className="pt-3 pb-2">
+                      {renderServiceContent(srv)}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
           ))}
         </div>
 
-        {/* Right Side: Detailed View Container */}
-        <div className="lg:col-span-8 lg:sticky lg:top-32" id="selected-service-content">
+        {/* Right Side: Detailed View Container (DESKTOP ONLY) */}
+        <div className="hidden lg:block lg:col-span-8 lg:sticky lg:top-32" id="selected-service-content">
           <AnimatePresence mode="wait">
             <motion.div
               key={selectedService.id}
@@ -161,265 +274,16 @@ export default function Services({ selectedServiceId, setSelectedServiceId, setA
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -20 }}
               transition={{ duration: 0.3 }}
-              className="glass-panel-heavy rounded-3xl p-8 md:p-10 border border-white/5 relative overflow-hidden"
+              className="h-full"
             >
-              {/* Absolute background spotlight glow */}
-              <div className="absolute top-0 right-0 w-64 h-64 bg-red-650/10 rounded-full blur-[100px] pointer-events-none"></div>
-
-              <div className="flex items-center justify-between mb-8.5 border-b border-white/5 pb-6">
-                <div>
-                  <span className="text-[10px] font-mono font-bold tracking-widest uppercase text-red-500">
-                    DISCIPLINE EXECUTIVE {selectedService.number}
-                  </span>
-                  <h2 className="font-display text-2xl sm:text-3xl font-black text-white mt-1.5 uppercase">
-                    {selectedService.title}
-                  </h2>
-                </div>
-                <div className="w-14 h-14 rounded-2xl bg-neutral-900 border border-white/10 flex items-center justify-center text-red-500 shadow-xl">
-                  {getIcon(selectedService.iconName)}
-                </div>
-              </div>
-
-              <p className="text-neutral-300 text-sm md:text-base leading-relaxed mb-8">
-                {selectedService.description}
-              </p>
-
-              {/* Speciality deliverables */}
-              <div className="mb-10">
-                <span className="text-[10px] font-mono tracking-widest text-neutral-500 uppercase block mb-4.5">
-                  Core Execution Services Include:
-                </span>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
-                  {selectedService.details?.map((del, i) => (
-                    <div key={i} className="flex items-start gap-3 bg-neutral-900/40 border border-white/5 p-3 rounded-xl hover:border-red-500/10 transition-colors">
-                      <div className="w-5 h-5 rounded bg-red-600/10 border border-red-600/20 flex items-center justify-center text-red-500 shrink-0 mt-0.5">
-                        <Check className="w-3.5 h-3.5" />
-                      </div>
-                      <span className="text-xs md:text-sm text-neutral-300 font-sans font-medium">
-                        {del}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* CUSTOM CORE INTERACTIVE COMPANION WIDGET ASSCOIATED */}
-              <div className="border-t border-white/5 pt-8 mt-4.5">
-                
-                {/* CASE 1: Audio Visual Production Simulator */}
-                {selectedService.id === 'audio-visual-production' && (
-                  <div className="bg-neutral-950 p-6 rounded-2xl border border-red-500/10 relative" id="av-simulator-widget">
-                    <span className="absolute top-4 right-4 bg-red-600/10 text-red-400 border border-red-500/20 text-[9px] font-mono px-2 py-0.5 rounded-full uppercase tracking-widest">
-                      Live Tech Monitor
-                    </span>
-                    <h4 className="font-display text-sm font-bold text-white mb-4 flex items-center gap-2">
-                      <Sliders className="w-4 h-4 text-red-500" />
-                      AV Set Configuration Preview
-                    </h4>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                      
-                      {/* Control 1 */}
-                      <div className="flex flex-col gap-2">
-                        <span className="text-[10px] font-mono text-neutral-500">PA Sound (dB): <b className="text-white">{avVolume} dB</b></span>
-                        <input 
-                          type="range" 
-                          min="40" 
-                          max="120" 
-                          value={avVolume} 
-                          onChange={(e) => setAvVolume(Number(e.target.value))}
-                          className="w-full cursor-pointer accent-red-600" 
-                        />
-                        <span className="text-[9px] font-mono text-neutral-600">
-                          {avVolume > 100 ? '⚠️ High Intensity Zone' : avVolume > 70 ? 'Optimal Ball Room' : 'Delicate Boardroom'}
-                        </span>
-                      </div>
-
-                      {/* Control 2 */}
-                      <div className="flex flex-col gap-2">
-                        <span className="text-[10px] font-mono text-neutral-500">Stage Lighting Aura</span>
-                        <div className="flex gap-1">
-                          {['Crimson Fire', 'Golden Luxe', 'Muted Cosmic'].map((aura) => (
-                            <button
-                              key={aura}
-                              onClick={() => setAvLighting(aura)}
-                              className={`text-[9px] font-mono px-2 py-1 rounded cursor-pointer border ${
-                                avLighting === aura 
-                                  ? 'bg-red-600 border-red-500 text-white' 
-                                  : 'bg-neutral-900 border-white/5 text-neutral-400'
-                              }`}
-                            >
-                              {aura.split(' ')[0]}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-
-                      {/* Control 3 */}
-                      <div className="flex flex-col gap-2">
-                        <span className="text-[10px] font-mono text-neutral-500">LED Media Wall feed</span>
-                        <select 
-                          value={avScreen} 
-                          onChange={(e) => setAvScreen(e.target.value)}
-                          className="bg-neutral-900 border border-white/5 text-xs text-white p-1 rounded font-mono outline-hidden cursor-pointer"
-                        >
-                          <option value="Dynamic Video">3D Kinetic Loop</option>
-                          <option value="Live Broadcast">Camera Multi-feed</option>
-                          <option value="Sleek Branding">Corporate Identity</option>
-                        </select>
-                      </div>
-
-                    </div>
-
-                    {/* Integrated Stage Mockup Box */}
-                    <div className="mt-6 aspect-[16/6] bg-[#0c0c0c] border border-white/5 rounded-xl relative overflow-hidden flex flex-col justify-between p-4 shadow-inner">
-                      {/* Simulate color aura based on states */}
-                      <div className={`absolute inset-x-0 top-0 h-10 w-full transition-all duration-300 pointer-events-none opacity-40 blur-md ${
-                        avLighting === 'Crimson Fire' ? 'bg-red-600/30' : avLighting === 'Golden Luxe' ? 'bg-amber-500/30' : 'bg-red-800/30'
-                      }`}></div>
-
-                      <div className="flex justify-between items-center z-10">
-                        <span className="text-[8px] font-mono text-neutral-500">LED MAIN: <b className="text-neutral-300">{avScreen}</b></span>
-                        <div className="flex gap-1">
-                          <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
-                          <span className="text-[8px] font-mono text-green-500">SYSTEM ON AIR</span>
-                        </div>
-                      </div>
-
-                      {/* Rigged PA boxes */}
-                      <div className="flex justify-between items-end z-10 h-full mt-4">
-                        <div className="w-5 h-10 bg-neutral-900 border border-white/10 rounded flex flex-col justify-around p-1">
-                          <div className={`w-full h-1 bg-red-600 ${avVolume > 85 ? 'animate-pulse' : ''}`}></div>
-                          <div className={`w-full h-1 bg-neutral-750`}></div>
-                        </div>
-                        
-                        {/* Simulation Screen Banner */}
-                        <div className="w-4/5 h-12 border border-white/15 bg-neutral-905 rounded-md flex items-center justify-center relative overflow-hidden">
-                          <span className="text-[9px] font-mono text-neutral-300">
-                            {avScreen === 'Dynamic Video' ? '✦ KINETIC MOTION ACTIVE ✦' : avScreen === 'Live Broadcast' ? '🎥 REC LIVE FEED 01' : 'MICE MEDIA LOGO LOOP'}
-                          </span>
-                        </div>
-
-                        <div className="w-5 h-10 bg-neutral-900 border border-white/10 rounded flex flex-col justify-around p-1">
-                          <div className={`w-full h-1 bg-red-655 ${avVolume > 85 ? 'animate-pulse' : ''}`}></div>
-                          <div className={`w-full h-1 bg-neutral-750`}></div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* CASE 2: Exhibitions Pavilions Setup */}
-                {selectedService.id === 'exhibitions' && (
-                  <div className="bg-neutral-950 p-6 rounded-2xl border border-white/5 relative" id="ex-build-widget">
-                    <span className="absolute top-4 right-4 bg-red-600/10 text-red-400 border border-red-500/20 text-[9px] font-mono px-2 py-0.5 rounded-full uppercase">
-                      Joinery Estimator
-                    </span>
-                    <h4 className="font-display text-sm font-bold text-white mb-4 flex items-center gap-2">
-                      <Layers className="w-4 h-4 text-red-500" />
-                      Custom Exhibition Booth Configurator
-                    </h4>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-4">
-                      
-                      {/* Option 1 */}
-                      <div className="flex flex-col gap-1.5">
-                        <span className="text-[10px] font-mono text-neutral-500">Fabrication Tier</span>
-                        <select 
-                          value={exBuildType}
-                          onChange={(e) => setExBuildType(e.target.value)}
-                          className="bg-neutral-900 border border-white/5 text-xs text-white p-1.5 rounded font-mono cursor-pointer outline-hidden"
-                        >
-                          <option value="Custom Double-Decker">Elite Double-Decker</option>
-                          <option value="Modular Sustainable">Zero-Waste Modular</option>
-                          <option value="Bespoke Joinery">Single-Tier Joinery</option>
-                        </select>
-                      </div>
-
-                      {/* Option 2 */}
-                      <div className="flex flex-col gap-1.5">
-                        <span className="text-[10px] font-mono text-neutral-500">Exhibition Size (sqm)</span>
-                        <input 
-                          type="number" 
-                          min="9" 
-                          max="200"
-                          value={exAreaSize}
-                          onChange={(e) => setExAreaSize(Math.max(9, Number(e.target.value)))}
-                          className="bg-neutral-900 border border-white/5 text-xs text-white p-1.5 rounded font-mono outline-hidden"
-                        />
-                      </div>
-
-                      {/* Option 3 */}
-                      <div className="flex flex-col gap-1.5 justify-center">
-                        <label className="flex items-center gap-2.5 cursor-pointer text-xs font-mono text-neutral-400">
-                          <input 
-                            type="checkbox" 
-                            checked={exSustainOption}
-                            onChange={(e) => setExSustainOption(e.target.checked)}
-                            className="bg-neutral-900 border-white/10 rounded accent-red-600"
-                          />
-                          Eco-Conscious Build
-                        </label>
-                      </div>
-
-                    </div>
-
-                    {/* Pricing configuration simulator table */}
-                    <div className="bg-neutral-900/60 p-4 rounded-xl border border-white/5">
-                      <div className="flex justify-between items-center text-xs font-mono mb-2">
-                        <span className="text-neutral-500">Core Fabrication Time:</span>
-                        <span className="text-white font-bold">{Math.ceil(exAreaSize * 0.15)} Days Setup</span>
-                      </div>
-                      <div className="flex justify-between items-center text-xs font-mono mb-2">
-                        <span className="text-neutral-500">DWTC Permit Handlings:</span>
-                        <span className="text-green-500 font-bold">Comprehensive Included</span>
-                      </div>
-                      <div className="flex justify-between items-center text-xs font-mono pt-2 border-t border-white/5">
-                        <span className="text-neutral-400 uppercase font-bold text-[10px] tracking-wider">Estimated Setup Plan:</span>
-                        <span className="text-red-500 font-bold text-sm tracking-tight">{exBuildType} ({exAreaSize} sqm)</span>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* CASE 3: General Service Pitch Panel */}
-                {selectedService.id !== 'audio-visual-production' && selectedService.id !== 'exhibitions' && (
-                  <div className="bg-neutral-950 p-6 rounded-2xl border border-white/5 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-                    <div>
-                      <h4 className="font-display text-sm font-bold text-white mb-1 flex items-center gap-2">
-                        <Lightbulb className="w-4 h-4 text-red-500" />
-                        Premium Dubai Delivery Included
-                      </h4>
-                      <p className="text-neutral-400 text-xs leading-relaxed max-w-md">
-                        Every single detail of our {selectedService.title} operations is handled in-house with standard dwg schematics, direct regional permits, and redundant executive back-ups.
-                      </p>
-                    </div>
-                    <PrimaryButton
-                      onClick={() => setActivePage('contact')}
-                      text="Enquire for this"
-                    />
-                  </div>
-                )}
-
-              </div>
-
-              {/* Back out button */}
-              <div className="mt-8 pt-6 border-t border-white/5 flex gap-4">
-                <PrimaryButton
-                  onClick={() => {
-                    setActivePage('contact');
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                  }}
-                  text="Custom Proposal Brief"
-                />
-              </div>
-
+              {renderServiceContent(selectedService)}
             </motion.div>
           </AnimatePresence>
         </div>
 
       </section>
 
+      </div>
     </div>
   );
 }

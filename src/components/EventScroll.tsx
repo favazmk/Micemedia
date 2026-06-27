@@ -1,7 +1,8 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { useScroll, useSpring, useMotionValueEvent } from 'motion/react';
 
-const FRAME_COUNT = 120;
+const DESKTOP_FRAMES = 120;
+const MOBILE_FRAMES = 115;
 
 interface EventScrollProps {
   scrollContainerRef: React.RefObject<HTMLElement | null>;
@@ -11,6 +12,18 @@ export default function EventScroll({ scrollContainerRef }: EventScrollProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [images, setImages] = useState<HTMLImageElement[]>([]);
   const [loadedCount, setLoadedCount] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    // Initial check and resize listener
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile(); // Run once on mount
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  const frameCount = isMobile ? MOBILE_FRAMES : DESKTOP_FRAMES;
+  const folder = isMobile ? 'fps-sequence mobile' : 'fps-sequence';
 
   const { scrollYProgress } = useScroll({
     target: scrollContainerRef,
@@ -23,11 +36,12 @@ export default function EventScroll({ scrollContainerRef }: EventScrollProps) {
     // Preload images
     const loadedImages: HTMLImageElement[] = [];
     let loaded = 0;
+    setLoadedCount(0);
 
-    for (let i = 1; i <= FRAME_COUNT; i++) {
+    for (let i = 1; i <= frameCount; i++) {
       const img = new Image();
       const indexStr = i.toString().padStart(3, '0');
-      img.src = `/fps-sequence/ezgif-frame-${indexStr}.jpg`;
+      img.src = `/${folder}/ezgif-frame-${indexStr}.jpg`;
       img.onload = () => {
         loaded++;
         setLoadedCount(loaded);
@@ -35,7 +49,7 @@ export default function EventScroll({ scrollContainerRef }: EventScrollProps) {
       loadedImages.push(img);
     }
     setImages(loadedImages);
-  }, []);
+  }, [isMobile, frameCount, folder]);
 
   const drawFrame = (frameIndex: number) => {
     if (!canvasRef.current || images.length === 0) return;
@@ -43,7 +57,7 @@ export default function EventScroll({ scrollContainerRef }: EventScrollProps) {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    const safeIndex = Math.max(0, Math.min(FRAME_COUNT - 1, frameIndex));
+    const safeIndex = Math.max(0, Math.min(frameCount - 1, frameIndex));
     const img = images[safeIndex];
     if (!img || !img.complete) return;
 
@@ -80,18 +94,18 @@ export default function EventScroll({ scrollContainerRef }: EventScrollProps) {
   };
 
   useMotionValueEvent(smoothProgress, "change", (latest) => {
-    const frameIndex = Math.floor(latest * (FRAME_COUNT - 1));
-    requestAnimationFrame(() => drawFrame(frameIndex));
+    const idx = Math.floor(latest * (frameCount - 1));
+    requestAnimationFrame(() => drawFrame(idx));
   });
 
   useEffect(() => {
     if (loadedCount > 0) {
       drawFrame(0);
     }
-    const handleResize = () => drawFrame(Math.floor(smoothProgress.get() * (FRAME_COUNT - 1)));
+    const handleResize = () => drawFrame(Math.floor(smoothProgress.get() * (frameCount - 1)));
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, [loadedCount, images]);
+  }, [loadedCount, images, frameCount]);
 
   return (
     <>
@@ -100,12 +114,12 @@ export default function EventScroll({ scrollContainerRef }: EventScrollProps) {
       </div>
       
       {/* Loading overlay */}
-      {loadedCount < FRAME_COUNT && (
+      {loadedCount < frameCount && (
         <div className="fixed inset-0 flex items-center justify-center z-50 bg-[#050505]/90 backdrop-blur-md transition-opacity duration-500 pointer-events-none">
           <div className="flex flex-col items-center gap-4">
             <div className="w-8 h-8 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
             <p className="text-white/60 font-mono text-xs uppercase tracking-widest">
-              Initializing Sequence {Math.round((loadedCount / FRAME_COUNT) * 100)}%
+              Initializing Sequence {Math.round((loadedCount / frameCount) * 100)}%
             </p>
           </div>
         </div>

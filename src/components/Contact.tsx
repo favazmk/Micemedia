@@ -23,6 +23,7 @@ import { BRAND_INFO } from '../data';
 import { ProposalFormInputs } from '../types';
 import { PrimaryButton } from '@/components/ui/primary-button';
 import { GetStartedButton } from '@/components/ui/get-started-button';
+import Particles from './Particles';
 
 export default function Contact() {
   const [formInputs, setFormInputs] = useState<ProposalFormInputs>({
@@ -83,8 +84,26 @@ export default function Contact() {
   };
 
   return (
-    <div className="py-24 md:py-32 flex flex-col w-full" id="contactpage-root">
+    <div className="py-24 md:py-32 flex flex-col w-full relative min-h-screen" id="contactpage-root">
       
+      {/* ── Particles animated WebGL background ── */}
+      <div className="absolute inset-0 z-0 pointer-events-none" aria-hidden="true">
+        <div className="sticky top-0 left-0 w-full h-screen">
+          <Particles
+            particleColors={['#ff4d6d', '#e63946', '#800c0c']}
+            particleCount={300}
+            particleSpread={12}
+            speed={0.1}
+            particleBaseSize={100}
+            moveParticlesOnHover={true}
+            particleHoverFactor={1.5}
+            alphaParticles={true}
+            cameraDistance={25}
+          />
+        </div>
+      </div>
+
+      <div className="relative z-10 flex flex-col w-full">
       {/* SECTION 1: HEADER */}
       <section className="relative px-6 max-w-7xl mx-auto w-full mb-16 text-center">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-64 bg-red-650/10 rounded-full blur-3xl pointer-events-none"></div>
@@ -434,6 +453,7 @@ export default function Contact() {
 
       </section>
 
+      </div>
     </div>
   );
 }

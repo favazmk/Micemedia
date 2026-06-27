@@ -7,7 +7,7 @@ import { motion } from 'motion/react';
 import { ShieldCheck, Compass, Target, ArrowRight, Zap, Award, CheckCircle } from 'lucide-react';
 import { BRAND_INFO, PROCESS_DATA, VISION_MISSION, WHY_US_DATA } from '../data';
 import { PrimaryButton } from '@/components/ui/primary-button';
-import ColorBends from './ColorBends';
+import Particles from './Particles';
 
 interface AboutProps {
   setActivePage: (page: string) => void;
@@ -17,28 +17,26 @@ export default function About({ setActivePage }: AboutProps) {
   return (
     <div className="py-24 md:py-32 flex flex-col w-full relative min-h-screen" id="aboutpage-root">
 
-      {/* ── ColorBends animated WebGL background ── */}
-      <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden" aria-hidden="true">
-        <ColorBends
-          colors={['#5c0000', '#8b1a1a', '#2d0000', '#c93636', '#6b0f0f', '#1a0000']}
-          rotation={110}
-          autoRotate={2}
-          speed={0.12}
-          scale={1.1}
-          frequency={0.9}
-          warpStrength={1.6}
-          mouseInfluence={0.6}
-          parallax={0.4}
-          noise={0.05}
-          iterations={4}
-          intensity={1.2}
-          bandWidth={5.5}
-          transparent={false}
-          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
-        />
-        {/* Overlay so text stays readable */}
-        <div className="absolute inset-0 bg-black/60" />
+      {/* ── Particles animated WebGL background ── */}
+      {/* We use an absolute wrapper that spans the full page height, with a sticky child that tracks the viewport.
+          This prevents the canvas from stretching to thousands of pixels and crashing WebGL, 
+          since the 'fixed' property is broken by the parent's framer-motion transform. */}
+      <div className="absolute inset-0 z-0 pointer-events-none" aria-hidden="true">
+        <div className="sticky top-0 left-0 w-full h-screen">
+          <Particles
+            particleColors={['#ff4d6d', '#e63946', '#800c0c']}
+            particleCount={300}
+            particleSpread={12}
+            speed={0.1}
+            particleBaseSize={100}
+            moveParticlesOnHover={true}
+            particleHoverFactor={1.5}
+            alphaParticles={true}
+            cameraDistance={25}
+          />
+        </div>
       </div>
+
 
       {/* All page content sits above the background */}
       <div className="relative z-10 flex flex-col w-full">
