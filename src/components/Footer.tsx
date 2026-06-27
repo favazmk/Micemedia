@@ -30,7 +30,7 @@ export default function Footer({ setActivePage, setSelectedServiceId }: FooterPr
   };
 
   return (
-    <footer id="main-footer" className="bg-neutral-950 border-t border-white/5 relative overflow-hidden mt-20">
+    <footer id="main-footer" className="bg-black border-t border-white/5 relative overflow-hidden mt-20 z-20">
       {/* Visual Ambient Blur */}
       <div className="absolute bottom-0 right-1/4 w-[350px] h-[350px] bg-red-600/5 rounded-full blur-[100px] pointer-events-none"></div>
 

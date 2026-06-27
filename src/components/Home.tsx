@@ -4,7 +4,7 @@
  */
 
 import React, { useRef, useState, useEffect } from 'react';
-import { motion, useScroll, useTransform, useSpring } from 'motion/react';
+import { motion, useScroll, useTransform, useSpring, useMotionValueEvent } from 'motion/react';
 import { 
   ArrowRight, 
   Trophy, 
@@ -25,6 +25,7 @@ import {
 import { GetStartedButton } from '@/components/ui/get-started-button';
 import { BRAND_INFO, CLIENT_LOGOS, PORTFOLIO_DATA, SERVICES_DATA } from '../data';
 import TestimonialsSlider from './TestimonialsSlider';
+import EventScroll from './EventScroll';
 
 const serviceIconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   Presentation,
@@ -82,6 +83,7 @@ interface HomeProps {
 
 export default function Home({ setActivePage, setSelectedServiceId, setSelectedPortfolioId }: HomeProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  
   const heroRef = useRef<HTMLElement>(null);
   const aboutRef = useRef<HTMLElement>(null);
   const servicesRef = useRef<HTMLElement>(null);
@@ -294,32 +296,35 @@ export default function Home({ setActivePage, setSelectedServiceId, setSelectedP
   return (
     <div ref={containerRef} className="flex flex-col w-full relative" id="homepage-root">
       
+      {/* Global Canvas Sequence */}
+      <EventScroll scrollContainerRef={containerRef} />
+
       {/* SECTION 1: HERO CONTAINER */}
       <section ref={heroRef} id="hero-section" className="relative min-h-screen flex items-center justify-center pt-32 pb-24 overflow-hidden [perspective:1200px]">
         {/* Cinematic Backdrop Spotlights */}
         <div className="absolute inset-0 z-0 bg-transparent pointer-events-none">
-          {/* Spotlight 1: Center-Top Red dramatic glow */}
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-5xl h-[80vh] bg-gradient-to-b from-red-650/15 via-red-950/2 to-transparent rounded-full blur-[120px]"></div>
-          {/* Spotlight 2: Stage light pillar effect - softened to avoid sharp lines */}
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[40px] md:w-[60px] h-[75vh] bg-gradient-to-b from-red-500/10 via-red-500/2 to-transparent blur-[8px]"></div>
-          {/* Ambient dust overlay */}
-          <div className="absolute inset-0 bg-[radial-gradient(#ffffff03_1px,transparent_1px)] [background-size:16px_16px] opacity-60"></div>
-        </div>
+            {/* Spotlight 1: Center-Top Red dramatic glow */}
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-5xl h-[80vh] bg-gradient-to-b from-red-650/15 via-red-950/2 to-transparent rounded-full blur-[120px]"></div>
+            {/* Spotlight 2: Stage light pillar effect - softened to avoid sharp lines */}
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[40px] md:w-[60px] h-[75vh] bg-gradient-to-b from-red-500/10 via-red-500/2 to-transparent blur-[8px]"></div>
+            {/* Ambient dust overlay */}
+            <div className="absolute inset-0 bg-[radial-gradient(#ffffff03_1px,transparent_1px)] [background-size:16px_16px] opacity-60"></div>
+          </div>
 
-        {/* Massive 3D Parallax Background Title Outline */}
-        <motion.div
-          style={{ y: bgTextY, opacity: bgTextOpacity, WebkitTextStroke: "1.5px rgba(200, 138, 115, 0.15)" }}
-          className="absolute inset-0 flex items-center justify-center z-0 select-none pointer-events-none overflow-hidden"
-        >
-          <span className="font-display text-[15vw] font-black text-transparent uppercase tracking-[0.1em] leading-none whitespace-nowrap block select-none">
-            MICE MEDIA
-          </span>
-        </motion.div>
+          {/* Massive 3D Parallax Background Title Outline */}
+          <motion.div
+            style={{ y: bgTextY, opacity: bgTextOpacity, WebkitTextStroke: "1.5px rgba(200, 138, 115, 0.15)" }}
+            className="absolute inset-0 flex items-center justify-center z-0 select-none pointer-events-none overflow-hidden"
+          >
+            <span className="font-display text-[15vw] font-black text-transparent uppercase tracking-[0.1em] leading-none whitespace-nowrap block select-none">
+              MICE MEDIA
+            </span>
+          </motion.div>
 
-        <motion.div
-          style={{ scale: heroScale, rotateX: heroRotateX, y: heroY, transformPerspective: 1200 }}
-          className="max-w-7xl mx-auto px-6 relative z-10 w-full text-center flex flex-col items-center [transform-style:preserve-3d]"
-        >
+          <motion.div
+            style={{ y: heroY, transformPerspective: 1200 }}
+            className="max-w-7xl mx-auto px-6 relative z-10 w-full text-center flex flex-col items-center [transform-style:preserve-3d]"
+          >
           
           {/* Dynamic Entrance Badge */}
           <motion.div
@@ -348,15 +353,6 @@ export default function Home({ setActivePage, setSelectedServiceId, setSelectedP
             </span>
           </motion.h1>
 
-          {/* Sub-copy block */}
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.3 }}
-            className="mt-8 font-sans text-neutral-400 text-base md:text-xl leading-relaxed max-w-2xl"
-          >
-            From intimate boardroom summits to stadium-scale spectacles — we architect corporate experiences that move people, drive decisions, and outlast the moment.
-          </motion.p>
 
           {/* Action CTAs */}
           <motion.div
@@ -385,23 +381,7 @@ export default function Home({ setActivePage, setSelectedServiceId, setSelectedP
             className="relative w-full max-w-4xl h-[280px] sm:h-[350px] mt-24 flex items-center justify-center [perspective:1200px]"
             id="hologram-stage-canvas"
           >
-            {/* Rotating Ring Base */}
-            <motion.div
-              style={{ rotateX: 75 }}
-              animate={{ rotateZ: 360 }}
-              transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
-              className="absolute top-1/2 left-1/2 w-[280px] h-[280px] sm:w-[480px] sm:h-[480px] -ml-[140px] -mt-[140px] sm:-ml-[240px] sm:-mt-[240px] border-2 border-dashed border-red-500/40 rounded-full z-0 pointer-events-none origin-center"
-            ></motion.div>
-            <motion.div
-              style={{ rotateX: 75 }}
-              animate={{ rotateZ: -360 }}
-              transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-              className="absolute top-1/2 left-1/2 w-[200px] h-[200px] sm:w-[340px] sm:h-[340px] -ml-[100px] -mt-[100px] sm:-ml-[170px] sm:-mt-[170px] border border-red-500/25 rounded-full z-0 pointer-events-none origin-center"
-            ></motion.div>
-            <motion.div
-              style={{ rotateX: 75 }}
-              className="absolute top-1/2 left-1/2 w-[120px] h-[120px] sm:w-[240px] sm:h-[240px] -ml-[60px] -mt-[60px] sm:-ml-[120px] sm:-mt-[120px] bg-red-500/10 rounded-full blur-[40px] z-0 pointer-events-none"
-            ></motion.div>
+            {/* Background elements removed as per user request */}
 
             {/* Floating, Tilted 3D holographic Cards (similar to Cinedaily's layout) */}
             <div className="absolute inset-0 flex items-center justify-center gap-3 sm:gap-8 pointer-events-auto [transform-style:preserve-3d] z-10">
@@ -505,9 +485,7 @@ export default function Home({ setActivePage, setSelectedServiceId, setSelectedP
 
             </div>
 
-            {/* Stage spotlights beams shooting up */}
-            <div className="absolute bottom-12 left-1/4 w-[1px] h-[250px] bg-gradient-to-t from-red-500/20 to-transparent blur-[1px]"></div>
-            <div className="absolute bottom-12 right-1/4 w-[1px] h-[250px] bg-gradient-to-t from-red-500/20 to-transparent blur-[1px]"></div>
+            {/* Spotlights removed */}
           </motion.div>
 
         </motion.div>
@@ -565,7 +543,7 @@ export default function Home({ setActivePage, setSelectedServiceId, setSelectedP
         </div>
       </div>
 
-      {/* SECTION 2: ABOUT SUMMARY */}
+      {/* SECTION 2: ABOUT SUMMARY (MINIMAL & BOLD) */}
       <motion.section
         ref={aboutRef}
         style={{
@@ -575,85 +553,51 @@ export default function Home({ setActivePage, setSelectedServiceId, setSelectedP
           transformPerspective: 1200
         }}
         id="home-about"
-        className="py-20 md:py-24 max-w-7xl mx-auto px-6 sm:px-12 md:px-16 relative z-10 w-full glass-panel-heavy rounded-[2rem] md:rounded-[4rem] border border-white/5 bg-gradient-to-b from-neutral-900/40 via-neutral-950/80 to-black/95 my-20 shadow-2xl overflow-hidden"
+        className="py-20 sm:py-24 max-w-5xl mx-auto px-6 sm:px-12 relative z-10 w-full my-20 border border-white/40 rounded-[2rem] lg:rounded-[3rem] shadow-[0_0_30px_rgba(255,255,255,0.08)]"
       >
-        {/* Soft glowing ambient spots to enrich background */}
-        <div className="absolute -top-24 -right-24 w-96 h-96 bg-red-650/5 rounded-full blur-[100px] pointer-events-none"></div>
-        <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-amber-655/3 rounded-full blur-[100px] pointer-events-none"></div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative z-10">
+        <div className="flex flex-col items-center text-center gap-6 drop-shadow-[0_4px_12px_rgba(0,0,0,0.8)]">
           
-          {/* Title column */}
-          <div className="lg:col-span-5 flex flex-col gap-4">
-            <span className="text-xs font-mono tracking-widest text-red-500 uppercase font-bold">
-              About MICE MEDIA
-            </span>
-            <h2 className="font-display text-3xl md:text-5xl font-extrabold tracking-tight text-white leading-tight">
-              We Don't Just <br />Plan Events — We <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-red-600 to-amber-500 text-glow inline-block py-1">Engineer Moments.</span>
-            </h2>
-            <p className="text-neutral-400 font-sans text-sm md:text-base leading-relaxed mt-4">
-              Born from a conviction that the events industry deserved better — more precision, more creativity, more soul — MICE MEDIA was built to raise the bar. We operate out of Dubai, with a reach that extends across UAE and the wider GCC region.
-            </p>
-            <div className="mt-6">
-              <button
-                onClick={() => setActivePage('about')}
-                className="inline-flex items-center gap-2 group text-white hover:text-red-500 font-mono text-sm tracking-wider uppercase font-semibold transition-colors cursor-pointer"
-              >
-                Discover Our Story 
-                <ArrowRight className="w-4 h-4 text-red-600 group-hover:translate-x-1.5 transition-transform" />
-              </button>
+          <span className="text-xs font-mono tracking-[0.3em] text-red-500 uppercase font-bold [text-shadow:0_2px_4px_rgba(0,0,0,0.8)] flex items-center gap-3">
+             <span className="w-8 h-[1px] bg-red-500/50"></span>
+             MICE MEDIA
+             <span className="w-8 h-[1px] bg-red-500/50"></span>
+          </span>
+          
+          <h2 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tighter text-white leading-[1.1] [text-shadow:0_4px_20px_rgba(0,0,0,1)] uppercase">
+            Engineering <br className="hidden sm:block" />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-red-600 to-amber-500 text-glow inline-block py-1 drop-shadow-xl">Extraordinary Moments.</span>
+          </h2>
+          
+          <p className="text-neutral-300 font-sans text-sm sm:text-base md:text-lg leading-relaxed mt-2 max-w-2xl font-medium [text-shadow:0_2px_8px_rgba(0,0,0,1)]">
+            We operate out of Dubai with a single uncompromising standard: to raise the bar for the events industry across the UAE and GCC. No exceptions.
+          </p>
+          
+          {/* 3 Sleek Mini-Stats instead of bulky cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 w-full max-w-3xl mt-10 border-t border-white/10 pt-10">
+            <div className="flex flex-col items-center gap-1.5">
+              <span className="text-2xl sm:text-3xl font-display font-black text-white [text-shadow:0_2px_10px_rgba(0,0,0,1)]">100%</span>
+              <span className="text-[9px] sm:text-[10px] font-mono tracking-widest text-red-400 uppercase font-bold [text-shadow:0_1px_2px_rgba(0,0,0,1)]">Uncompromising</span>
+            </div>
+            <div className="flex flex-col items-center gap-1.5">
+              <span className="text-2xl sm:text-3xl font-display font-black text-white [text-shadow:0_2px_10px_rgba(0,0,0,1)] uppercase tracking-tight">End-to-End</span>
+              <span className="text-[9px] sm:text-[10px] font-mono tracking-widest text-red-400 uppercase font-bold [text-shadow:0_1px_2px_rgba(0,0,0,1)]">Seamless Setup</span>
+            </div>
+            <div className="flex flex-col items-center gap-1.5">
+              <span className="text-2xl sm:text-3xl font-display font-black text-white [text-shadow:0_2px_10px_rgba(0,0,0,1)] uppercase tracking-tight">Direct</span>
+              <span className="text-[9px] sm:text-[10px] font-mono tracking-widest text-red-400 uppercase font-bold [text-shadow:0_1px_2px_rgba(0,0,0,1)]">Supervision</span>
             </div>
           </div>
 
-          {/* Stats & Promise Grid */}
-          <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-6 w-full h-full">
-            
-            {/* Promise Card - spans 2 columns */}
-            <div className="sm:col-span-2 glass-card rounded-2xl p-6.5 border border-white/5 relative overflow-hidden flex flex-col justify-between">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-red-600/5 rounded-full blur-2xl"></div>
-              <Sparkles className="w-6 h-6 text-red-600 mb-4" />
-              <div>
-                <h3 className="font-display text-lg font-bold text-white mb-2">The Uncompromising Standard</h3>
-                <p className="text-neutral-400 text-sm leading-relaxed">
-                  Every project that leaves our team carries one non-negotiable: it has to be extraordinary. No exceptions. No compromises. Not for any budget, deadline, or brief.
-                </p>
-              </div>
-            </div>
-
-            {/* Info Box 1 */}
-            <div className="glass-card rounded-2xl p-6 relative overflow-hidden flex flex-col justify-between hover:border-red-500/20 group">
-              <div className="flex justify-between items-start mb-6">
-                <Trophy className="w-5 h-5 text-red-500 group-hover:scale-110 transition-transform" />
-                <span className="text-[10px] font-mono text-neutral-600 group-hover:text-neutral-400">END-TO-END DELIVERY</span>
-              </div>
-              <div>
-                <span className="block font-display text-lg font-black text-white mb-1 group-hover:text-red-500 transition-colors uppercase">
-                  Seamless Setup
-                </span>
-                <span className="text-xs font-mono tracking-wide text-neutral-400 normal-case">
-                  Venue sourcing, custom booths, registration, and premium AV.
-                </span>
-              </div>
-            </div>
-
-            {/* Info Box 2 */}
-            <div className="glass-card rounded-2xl p-6 relative overflow-hidden flex flex-col justify-between hover:border-red-500/20 group">
-              <div className="flex justify-between items-start mb-6">
-                <Users className="w-5 h-5 text-red-500 group-hover:scale-110 transition-transform" />
-                <span className="text-[10px] font-mono text-neutral-600 group-hover:text-neutral-400">DIRECT SUPERVISION</span>
-              </div>
-              <div>
-                <span className="block font-display text-lg font-black text-white mb-1 group-hover:text-red-500 transition-colors uppercase">
-                  Dedicated Board
-                </span>
-                <span className="text-xs font-mono tracking-wide text-neutral-400 normal-case">
-                  Our core team manages your requests seamlessly on-site.
-                </span>
-              </div>
-            </div>
-
+          <div className="mt-8">
+            <button
+              onClick={() => setActivePage('about')}
+              className="inline-flex items-center gap-2 group bg-red-600 hover:bg-red-500 text-white font-mono text-xs sm:text-sm tracking-wider uppercase font-bold transition-all cursor-pointer px-6 sm:px-8 py-3.5 rounded-full shadow-[0_0_15px_rgba(220,77,73,0.4)] hover:shadow-[0_0_25px_rgba(220,77,73,0.6)] hover:-translate-y-1 border border-red-400/50"
+            >
+              Discover Our Story 
+              <ArrowRight className="w-4 h-4 text-white group-hover:translate-x-1.5 transition-transform" />
+            </button>
           </div>
+
         </div>
       </motion.section>
 
@@ -671,25 +615,25 @@ export default function Home({ setActivePage, setSelectedServiceId, setSelectedP
               transformPerspective: 1200
             }}
             id="home-services"
-            className="w-full max-w-7xl mx-auto px-6 sm:px-12 md:px-16 py-8 sm:py-12 md:py-20 relative z-10 glass-panel-heavy rounded-[2rem] md:rounded-[4rem] border border-white/5 bg-gradient-to-b from-neutral-900/40 via-neutral-950/80 to-black/95 shadow-2xl flex flex-col justify-between overflow-hidden"
+            className="w-full max-w-7xl mx-auto px-6 sm:px-12 md:px-16 py-8 sm:py-12 md:py-20 relative z-10 flex flex-col justify-between border border-white/40 rounded-[2rem] lg:rounded-[3rem] mt-10 shadow-[0_0_30px_rgba(255,255,255,0.08)]"
           >
             <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-red-650/5 rounded-full blur-[100px] pointer-events-none"></div>
             
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-12 relative z-10">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-12 relative z-10 drop-shadow-[0_4px_8px_rgba(0,0,0,0.8)]">
               <div className="flex flex-col gap-2">
-                <span className="text-xs font-mono tracking-widest text-[#E55B5B] uppercase font-bold">
+                <span className="text-xs font-mono tracking-widest text-[#E55B5B] uppercase font-bold [text-shadow:0_2px_4px_rgba(0,0,0,0.8)]">
                   WHAT WE DO
                 </span>
-                <h2 className="font-display text-3xl md:text-[40px] font-semibold text-white tracking-tight leading-none">
+                <h2 className="font-display text-3xl md:text-[40px] font-semibold text-white tracking-tight leading-none [text-shadow:0_4px_16px_rgba(0,0,0,1)]">
                   Every Event. Every Scale.
                 </h2>
               </div>
               <button
                 onClick={() => setActivePage('services')}
-                className="font-mono text-xs px-6 py-3 border border-white/10 rounded-full hover:bg-white/5 transition-all flex items-center gap-2 cursor-pointer text-white tracking-widest font-semibold uppercase hover:border-red-500/30 duration-300"
+                className="font-mono text-xs px-6 py-3 bg-white/10 backdrop-blur-md border border-white/20 rounded-full hover:bg-white/20 transition-all flex items-center gap-2 cursor-pointer text-white tracking-widest font-bold uppercase hover:border-white/40 hover:-translate-y-1 duration-300 shadow-[0_4px_12px_rgba(0,0,0,0.5)] group"
               >
                 ALL DISCIPLINES
-                <ArrowUpRight className="w-4 h-4 text-white" />
+                <ArrowUpRight className="w-4 h-4 text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
               </button>
             </div>
 
@@ -753,26 +697,26 @@ export default function Home({ setActivePage, setSelectedServiceId, setSelectedP
           transformPerspective: 1200
         }}
         id="home-portfolio"
-        className="py-20 md:py-24 max-w-7xl mx-auto px-6 sm:px-12 md:px-16 relative z-10 w-full glass-panel-heavy rounded-[2rem] md:rounded-[4rem] border border-white/5 bg-gradient-to-b from-neutral-900/40 via-neutral-950/80 to-black/95 my-20 shadow-2xl overflow-hidden"
+        className="py-20 md:py-24 max-w-7xl mx-auto px-6 sm:px-12 md:px-16 relative z-10 w-full my-20 border border-white/40 rounded-[2rem] lg:rounded-[3rem] shadow-[0_0_30px_rgba(255,255,255,0.08)]"
       >
         {/* Ambient backlighting blobs */}
         <div className="absolute -top-24 -left-24 w-96 h-96 bg-red-650/5 rounded-full blur-[100px] pointer-events-none"></div>
 
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-16 relative z-10">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-16 relative z-10 drop-shadow-[0_4px_8px_rgba(0,0,0,0.8)]">
           <div className="flex flex-col gap-4">
-            <span className="text-xs font-mono tracking-widest text-red-500 uppercase font-bold">
+            <span className="text-xs font-mono tracking-widest text-red-500 uppercase font-bold [text-shadow:0_2px_4px_rgba(0,0,0,0.8)]">
               Our Work
             </span>
-            <h2 className="font-display text-3xl md:text-5xl font-extrabold tracking-tight text-white uppercase leading-none">
-              Events That <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-red-600 to-amber-500 text-glow inline-block py-1">Speak.</span>
+            <h2 className="font-display text-3xl md:text-5xl font-extrabold tracking-tight text-white uppercase leading-none [text-shadow:0_4px_16px_rgba(0,0,0,1)]">
+              Events That <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-red-600 to-amber-500 text-glow inline-block py-1 drop-shadow-lg">Speak.</span>
             </h2>
           </div>
           <button
             onClick={() => setActivePage('portfolio')}
-            className="inline-flex items-center gap-1 text-red-500 hover:text-white font-mono text-xs uppercase tracking-wider font-bold transition-colors cursor-pointer group"
+            className="font-mono text-xs px-6 py-3 bg-red-600/20 backdrop-blur-md border border-red-500/30 rounded-full hover:bg-red-600/40 hover:border-red-500/60 transition-all flex items-center gap-2 cursor-pointer text-white tracking-widest font-bold uppercase hover:-translate-y-1 duration-300 shadow-[0_4px_12px_rgba(220,77,73,0.2)] group"
           >
             All Case Studies
-            <ArrowRight className="w-4 h-4 text-red-600 group-hover:translate-x-1.5 transition-transform" />
+            <ArrowRight className="w-4 h-4 text-red-400 group-hover:text-white group-hover:translate-x-1.5 transition-all" />
           </button>
         </div>
 
@@ -838,24 +782,21 @@ export default function Home({ setActivePage, setSelectedServiceId, setSelectedP
       </motion.section>
 
       {/* SECTION 5: CLIENT LOGOS INFINITE SCROLLER */}
-      <section id="home-partners" className="py-20 bg-neutral-950 border-y border-white/5 relative z-20 w-full overflow-hidden">
-        <div className="max-w-7xl mx-auto px-6 mb-10 text-center flex flex-col items-center">
-          <span className="text-xs font-mono tracking-[0.2em] text-red-500 uppercase font-bold mb-2">
+      <section id="home-partners" className="py-20 relative z-20 w-full overflow-hidden">
+        <div className="max-w-7xl mx-auto px-6 mb-10 text-center flex flex-col items-center drop-shadow-[0_4px_8px_rgba(0,0,0,0.8)]">
+          <span className="text-xs font-mono tracking-[0.2em] text-red-500 uppercase font-bold mb-2 [text-shadow:0_2px_4px_rgba(0,0,0,0.8)]">
             Trusted By
           </span>
-          <h2 className="font-display text-2xl md:text-3xl font-extrabold text-white">
+          <h2 className="font-display text-2xl md:text-3xl font-extrabold text-white [text-shadow:0_4px_16px_rgba(0,0,0,1)]">
             The Brands That Chose Us
           </h2>
-          <p className="text-neutral-500 text-xs font-mono mt-1">
+          <p className="text-neutral-300 text-xs font-mono mt-1 font-medium [text-shadow:0_2px_8px_rgba(0,0,0,1)]">
             Leading organisations across UAE and the GCC region.
           </p>
         </div>
 
         {/* Continuous marquee layout */}
-        <div className="w-full relative py-7 flex items-center bg-neutral-950" id="logo-slider-viewport">
-          {/* Edge masking gradients for smooth premium transition */}
-          <div className="absolute left-0 top-0 bottom-0 w-16 sm:w-32 bg-gradient-to-r from-neutral-950 to-transparent z-10 pointer-events-none"></div>
-          <div className="absolute right-0 top-0 bottom-0 w-16 sm:w-32 bg-gradient-to-l from-neutral-950 to-transparent z-10 pointer-events-none"></div>
+        <div className="w-full relative py-7 flex items-center" id="logo-slider-viewport">
 
           <div 
             ref={logosRef}
@@ -907,16 +848,16 @@ export default function Home({ setActivePage, setSelectedServiceId, setSelectedP
           transformPerspective: 1200
         }}
         id="home-testimonials"
-        className="py-20 md:py-24 max-w-7xl mx-auto px-6 sm:px-12 md:px-16 relative z-10 w-full glass-panel-heavy rounded-[2rem] md:rounded-[4rem] border border-white/5 bg-gradient-to-b from-neutral-900/40 via-neutral-950/80 to-black/95 my-20 shadow-2xl overflow-hidden"
+        className="py-20 md:py-24 max-w-7xl mx-auto px-6 sm:px-12 md:px-16 relative z-10 w-full my-20 border border-white/40 rounded-[2rem] lg:rounded-[3rem] shadow-[0_0_30px_rgba(255,255,255,0.08)]"
       >
         {/* Soft backlight spot */}
         <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-red-650/5 rounded-full blur-[100px] pointer-events-none"></div>
 
-        <div className="text-center mb-10 flex flex-col items-center relative z-10">
-          <span className="text-xs font-mono tracking-widest text-red-500 uppercase font-bold">
+        <div className="text-center mb-10 flex flex-col items-center relative z-10 drop-shadow-[0_4px_8px_rgba(0,0,0,0.8)]">
+          <span className="text-xs font-mono tracking-widest text-red-500 uppercase font-bold [text-shadow:0_2px_4px_rgba(0,0,0,0.8)]">
             Client Voices
           </span>
-          <h2 className="font-display text-3xl md:text-5xl font-extrabold uppercase text-white mt-3">
+          <h2 className="font-display text-3xl md:text-5xl font-extrabold uppercase text-white mt-3 [text-shadow:0_4px_16px_rgba(0,0,0,1)]">
             Straight From The Source
           </h2>
           <div className="w-12 h-[2px] bg-red-650 mt-4 rounded-full"></div>
@@ -928,18 +869,18 @@ export default function Home({ setActivePage, setSelectedServiceId, setSelectedP
       </motion.section>
 
       {/* SECTION 7: CALL TO ACTION BOTTOM BANNER */}
-      <section id="cta-bottom" className="py-24 border-t border-white/5 relative overflow-hidden bg-neutral-950">
-        <div className="absolute inset-0 z-0 bg-black pointer-events-none">
+      <section id="cta-bottom" className="py-24 border-t border-white/5 relative overflow-hidden z-20">
+        <div className="absolute inset-0 z-0 pointer-events-none">
           <div className="absolute bottom-[-100px] left-1/2 -translate-x-1/2 w-4/5 h-[300px] bg-red-650/10 rounded-full blur-[100px]"></div>
         </div>
 
-        <div className="max-w-4xl mx-auto px-6 text-center relative z-10 flex flex-col items-center">
+        <div className="max-w-4xl mx-auto px-6 text-center relative z-10 flex flex-col items-center drop-shadow-[0_4px_8px_rgba(0,0,0,0.8)]">
           <Sparkles className="w-8 h-8 text-red-600 mb-6 animate-pulse" />
-          <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-black uppercase text-white tracking-tight leading-tight">
+          <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-black uppercase text-white tracking-tight leading-tight [text-shadow:0_4px_16px_rgba(0,0,0,1)]">
             Ready to Design <br className="sm:hidden" />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-red-600 to-amber-500 text-glow inline-block py-1">Your Event Legacy?</span>
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-red-600 to-amber-500 text-glow inline-block py-1 drop-shadow-lg">Your Event Legacy?</span>
           </h2>
-          <p className="mt-6 text-neutral-400 font-sans text-sm md:text-base leading-relaxed max-w-xl">
+          <p className="mt-6 text-neutral-300 font-sans text-sm md:text-base leading-relaxed max-w-xl font-medium [text-shadow:0_2px_8px_rgba(0,0,0,1)]">
             Join Dubai's leading organizations. Complete our direct briefing questionnaire, estimate attendance, and receive a customized concept draft from our executive management board.
           </p>
           <div className="mt-10">
