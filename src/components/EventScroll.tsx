@@ -146,17 +146,40 @@ export default function EventScroll({ scrollContainerRef }: EventScrollProps) {
     return () => window.removeEventListener('resize', handleResize);
   }, [loadedCount, images, frameCount]);
 
+  // Block scrolling while frames are loading
+  useEffect(() => {
+    if (loadedCount < frameCount) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [loadedCount, frameCount]);
+
   return (
     <>
       <div className="fixed inset-0 z-0 bg-[#050505] pointer-events-none" style={{ willChange: "transform" }}>
         <canvas ref={canvasRef} className="w-full h-full block opacity-50" />
       </div>
       
-      {/* Non-blocking tiny loading indicator at the bottom instead of full screen */}
+      {/* Blocking full-screen loading screen */}
       {loadedCount < frameCount && (
-        <div className="fixed bottom-4 right-4 z-50 flex items-center gap-3 bg-black/50 backdrop-blur-md px-4 py-2 rounded-full pointer-events-none transition-opacity duration-500 border border-white/10">
-          <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
-          <p className="text-white/60 font-mono text-[10px] uppercase tracking-widest">
+        <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#050505] backdrop-blur-sm">
+          <div className="w-12 h-12 border-2 border-white/10 border-t-red-500 rounded-full animate-spin mb-6"></div>
+          <h2 className="text-white font-display text-lg sm:text-xl uppercase tracking-[0.2em] mb-4 font-bold [text-shadow:0_2px_10px_rgba(229,91,91,0.3)]">
+            Loading Experience
+          </h2>
+          <div className="w-48 sm:w-64 h-1 bg-white/10 rounded-full overflow-hidden shadow-[0_0_15px_rgba(229,91,91,0.2)]">
+            <div 
+              className="h-full bg-red-500 transition-all duration-300 relative" 
+              style={{ width: `${(loadedCount / frameCount) * 100}%` }}
+            >
+              <div className="absolute top-0 right-0 bottom-0 w-8 bg-gradient-to-r from-transparent to-white/50 blur-[2px]"></div>
+            </div>
+          </div>
+          <p className="text-white/40 font-mono text-[10px] uppercase tracking-widest mt-4">
             {Math.round((loadedCount / frameCount) * 100)}%
           </p>
         </div>
