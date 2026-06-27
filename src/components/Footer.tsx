@@ -193,7 +193,7 @@ export default function Footer({ setActivePage, setSelectedServiceId }: FooterPr
             <span>© 2026 MICE Media LLC FZ. All Rights Reserved.</span>
             <span className="mx-2 hidden md:inline">|</span>
             <span className="text-neutral-600 block md:inline mt-1 md:mt-0">
-              Built by <a href="https://thewebbranding.com" target="_blank" rel="noopener noreferrer" className="text-white hover:text-red-500 transition-colors">Web Branding</a>
+              Built by <a href="https://thewebbranding.com" target="_blank" rel="noopener noreferrer" className="text-purple-500 hover:text-purple-400 font-bold transition-colors">Web Branding</a>
             </span>
           </div>
 
