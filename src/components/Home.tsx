@@ -318,7 +318,16 @@ export default function Home({
   const testimonialsRotateY = useTransform(smoothTestimonialsScroll, [0, 0.35, 0.65, 1], [-30, 0, 0, 30]);
   const testimonialsOpacity = useTransform(smoothTestimonialsScroll, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
   
+  const [activeTouchServiceId, setActiveTouchServiceId] = useState<string | null>(null);
+  const [activeTouchPortfolioId, setActiveTouchPortfolioId] = useState<string | null>(null);
+
   const handleServiceClick = (serviceId: string) => {
+    const isTouchDevice = window.matchMedia('(hover: none)').matches;
+    if (isTouchDevice && activeTouchServiceId !== serviceId) {
+      setActiveTouchServiceId(serviceId);
+      setActiveTouchPortfolioId(null);
+      return;
+    }
     if (setSelectedServiceId) {
       setSelectedServiceId(serviceId);
     }
@@ -327,6 +336,12 @@ export default function Home({
   };
 
   const handlePortfolioClick = (itemId: string) => {
+    const isTouchDevice = window.matchMedia('(hover: none)').matches;
+    if (isTouchDevice && activeTouchPortfolioId !== itemId) {
+      setActiveTouchPortfolioId(itemId);
+      setActiveTouchServiceId(null);
+      return;
+    }
     if (setSelectedPortfolioId) {
       setSelectedPortfolioId(itemId);
     }
@@ -725,17 +740,25 @@ export default function Home({
                     <div
                       key={srv.id}
                       onClick={() => handleServiceClick(srv.id)}
-                      className="group relative bg-[#121212]/90 border border-white/5 p-8 sm:p-10 overflow-hidden rounded-3xl cursor-pointer hover:-translate-y-2 hover:border-[#E55B5B]/40 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] flex flex-col justify-between min-h-[320px] sm:min-h-[350px] w-[280px] sm:w-[350px] shrink-0 shadow-2xl"
+                      className={`group relative bg-[#121212]/90 border p-8 sm:p-10 overflow-hidden rounded-3xl cursor-pointer transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] flex flex-col justify-between min-h-[320px] sm:min-h-[350px] w-[280px] sm:w-[350px] shrink-0 shadow-2xl ${
+                        activeTouchServiceId === srv.id
+                          ? 'border-[#E55B5B]/40 -translate-y-2'
+                          : 'border-white/5 hover:-translate-y-2 hover:border-[#E55B5B]/40'
+                      }`}
                     >
                       {/* Faint ambient light glow */}
-                      <div className="absolute -top-10 -right-10 w-24 h-24 bg-red-600/5 rounded-full blur-2xl group-hover:bg-red-600/15 duration-300 pointer-events-none"></div>
+                      <div className={`absolute -top-10 -right-10 w-24 h-24 bg-red-600/5 rounded-full blur-2xl duration-300 pointer-events-none ${
+                        activeTouchServiceId === srv.id ? 'bg-red-600/15' : 'group-hover:bg-red-600/15'
+                      }`}></div>
                       
                       <div className="relative z-10 flex flex-col justify-between h-full">
                         <div>
                           <span className="font-mono text-xs tracking-widest text-neutral-500 block mb-10 uppercase">
                             SERVICE #{srv.number}
                           </span>
-                          <h3 className="font-display text-xl sm:text-2xl font-extrabold text-white mb-5 leading-snug group-hover:text-red-500 transition-colors">
+                          <h3 className={`font-display text-xl sm:text-2xl font-extrabold text-white mb-5 leading-snug transition-colors ${
+                            activeTouchServiceId === srv.id ? 'text-red-500' : 'group-hover:text-red-500'
+                          }`}>
                             {srv.title}
                           </h3>
                           <p className="text-neutral-400 font-sans text-sm leading-relaxed mb-8 min-h-[72px]">
@@ -743,14 +766,18 @@ export default function Home({
                           </p>
                         </div>
 
-                        <div className="flex items-center gap-2 font-mono text-xs text-[#E55B5B] group-hover:gap-4 transition-all duration-300 font-semibold uppercase tracking-wider text-left">
+                        <div className={`flex items-center gap-2 font-mono text-xs text-[#E55B5B] transition-all duration-300 font-semibold uppercase tracking-wider text-left ${
+                          activeTouchServiceId === srv.id ? 'gap-4' : 'group-hover:gap-4'
+                        }`}>
                           <span>Explore Specialties</span>
                           <ArrowRight className="w-3.5 h-3.5 text-[#E55B5B] transition-transform" />
                         </div>
                       </div>
 
                       {/* Massive faint icon in background */}
-                      <div className="absolute -right-8 -bottom-8 opacity-[0.03] text-white scale-150 transition-transform duration-700 group-hover:scale-125 w-40 h-40 pointer-events-none flex items-center justify-center">
+                      <div className={`absolute -right-8 -bottom-8 opacity-[0.03] text-white scale-150 transition-transform duration-700 pointer-events-none flex items-center justify-center ${
+                        activeTouchServiceId === srv.id ? 'scale-125' : 'group-hover:scale-125'
+                      }`}>
                         <IconComponent className="w-full h-full stroke-[1.2]" />
                       </div>
                     </div>
@@ -802,7 +829,11 @@ export default function Home({
                 <div
                   key={item.id}
                   onClick={() => handlePortfolioClick(item.id)}
-                  className="portfolio-deck-card w-[180px] sm:w-[260px] md:w-[285px] h-[260px] sm:h-[350px] md:h-[385px] flex flex-col overflow-hidden cursor-pointer group/card select-none"
+                  className={`portfolio-deck-card w-[180px] sm:w-[260px] md:w-[285px] h-[260px] sm:h-[350px] md:h-[385px] flex flex-col overflow-hidden cursor-pointer group/card select-none transition-all duration-300 ${
+                    activeTouchPortfolioId === item.id 
+                      ? 'scale-105 border-red-500/30' 
+                      : ''
+                  }`}
                 >
                   {/* Image Frame inside the glass card */}
                   <div className="relative w-[92%] h-[50%] mx-auto mt-3 rounded-xl overflow-hidden bg-neutral-950/40 border border-white/5 flex items-center justify-center">
@@ -811,12 +842,18 @@ export default function Home({
                       src={item.image}
                       alt={item.title}
                       referrerPolicy="no-referrer"
-                      className="absolute inset-0 w-full h-full object-cover group-hover/card:scale-110 transition-transform duration-500 ease-out"
+                      className={`absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-out ${
+                        activeTouchPortfolioId === item.id ? 'scale-110' : 'group-hover/card:scale-110'
+                      }`}
                     />
                     
                     {/* Centered Floating Icon mimicking user's code */}
-                    <div className="relative z-20 w-11 h-11 sm:w-14 sm:h-14 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-white shadow-lg group-hover/card:scale-110 group-hover/card:bg-red-650/20 group-hover/card:border-red-500/30 transition-all duration-300">
-                      <IconComponent className="w-5 h-5 sm:w-6.5 sm:h-6.5 text-white group-hover/card:text-red-500 transition-colors" />
+                    <div className={`relative z-20 w-11 h-11 sm:w-14 sm:h-14 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-white shadow-lg transition-all duration-300 ${
+                      activeTouchPortfolioId === item.id 
+                        ? 'scale-110 bg-red-650/20 border-red-500/30' 
+                        : 'group-hover/card:scale-110 group-hover/card:bg-red-650/20 group-hover/card:border-red-500/30'
+                    }`}>
+                      <IconComponent className="w-5 h-5 sm:w-6.5 sm:h-6.5 text-white transition-colors" />
                     </div>
 
                     {/* Tag label */}
@@ -828,7 +865,9 @@ export default function Home({
                   {/* Bottom Text Info & View Case Study strip mimicking .glass::before */}
                   <div className="flex-1 flex flex-col justify-between p-4.5 relative z-20">
                     <div className="text-left">
-                      <h3 className="font-display text-sm sm:text-base font-bold text-white group-hover/card:text-red-500 transition-colors duration-300 truncate">
+                      <h3 className={`font-display text-sm sm:text-base font-bold text-white transition-colors duration-300 truncate ${
+                        activeTouchPortfolioId === item.id ? 'text-red-500' : 'group-hover/card:text-red-500'
+                      }`}>
                         {item.title}
                       </h3>
                       <p className="text-neutral-400 text-[10px] sm:text-xs mt-1 sm:mt-1.5 line-clamp-2 leading-relaxed">
@@ -838,10 +877,14 @@ export default function Home({
 
                     {/* Styled bottom strip bar */}
                     <div className="mt-3 pt-3 border-t border-white/5 flex items-center justify-between text-left">
-                      <span className="text-[9px] sm:text-[10px] font-mono tracking-wider uppercase text-neutral-500 group-hover/card:text-neutral-400 transition-colors">
+                      <span className={`text-[9px] sm:text-[10px] font-mono tracking-wider uppercase transition-colors ${
+                        activeTouchPortfolioId === item.id ? 'text-neutral-400' : 'text-neutral-500 group-hover/card:text-neutral-400'
+                      }`}>
                         {item.tag}
                       </span>
-                      <div className="flex items-center gap-1 text-[9px] sm:text-[10px] font-mono uppercase font-bold text-red-500 opacity-0 group-hover/card:opacity-100 transition-opacity duration-300">
+                      <div className={`flex items-center gap-1 text-[9px] sm:text-[10px] font-mono uppercase font-bold text-red-500 transition-opacity duration-300 ${
+                        activeTouchPortfolioId === item.id ? 'opacity-100' : 'opacity-0 group-hover/card:opacity-100'
+                      }`}>
                         <span>Case Study</span>
                         <ArrowUpRight className="w-3 h-3" />
                       </div>
