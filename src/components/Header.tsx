@@ -69,7 +69,7 @@ export default function Header({ activePage, setActivePage }: HeaderProps) {
             <img
               src="/images/mice-media-logo.png"
               alt="MICE Media Logo"
-              className="h-8 md:h-10 w-auto scale-[1.5] md:scale-[2] origin-left transition-transform duration-300 group-hover:scale-[1.6] md:group-hover:scale-[2.1]"
+              className="h-8 md:h-10 w-auto scale-[1.8] md:scale-[2] origin-left transition-transform duration-300 group-hover:scale-[1.9] md:group-hover:scale-[2.1]"
             />
           </button>
 
