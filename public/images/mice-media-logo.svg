@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 180" fill="none">
+  <!-- Stylized "m" letterform -->
+  <path d="M40 160 L40 65 Q40 25 65 25 Q90 25 90 65 L90 160" stroke="#C94441" stroke-width="14" stroke-linecap="round" fill="none"/>
+  <path d="M90 160 L90 65 Q90 25 115 25 Q140 25 140 65 L140 160" stroke="#C94441" stroke-width="14" stroke-linecap="round" fill="none"/>
+  <!-- Small circle dot top-right of m -->
+  <circle cx="155" cy="30" r="8" stroke="#C94441" stroke-width="4" fill="none"/>
+  <!-- Small circle dot further right -->
+  <circle cx="205" cy="80" r="7" stroke="#C94441" stroke-width="3.5" fill="none"/>
+</svg>

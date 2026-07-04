@@ -39,16 +39,12 @@ export default function Footer({ setActivePage, setSelectedServiceId }: FooterPr
           {/* Column 1: Brand details */}
           <div className="flex flex-col gap-6 md:col-span-2 lg:col-span-1">
             <div className="flex flex-col">
-              <div className="flex flex-col -space-y-1.5" id="footer-logo">
-                <div className="flex items-baseline leading-none">
-                  <span className="font-display text-3xl font-black text-red-500 tracking-tighter">M</span>
-                  <span className="font-display text-2xl font-black tracking-tight text-white">ice</span>
-                </div>
-                <div className="flex items-center pl-0.5 leading-none">
-                  <span className="font-display text-xs font-bold tracking-[0.22em] text-neutral-400 uppercase">
-                    media
-                  </span>
-                </div>
+              <div id="footer-logo">
+                <img
+                  src="/images/mice-media-logo.png"
+                  alt="MICE Media Logo"
+                  className="h-20 md:h-24 w-auto"
+                />
               </div>
               <span className="text-[10px] font-mono tracking-widest text-neutral-500 mt-2">MICE Media LLC FZ</span>
             </div>

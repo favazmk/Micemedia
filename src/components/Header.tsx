@@ -64,19 +64,13 @@ export default function Header({ activePage, setActivePage }: HeaderProps) {
           <button
             id="brand-logo-btn"
             onClick={() => handleNavClick('home')}
-            className="flex flex-col items-start cursor-pointer text-left group"
+            className="flex items-center cursor-pointer group"
           >
-            <div className="flex flex-col -space-y-1.5">
-              <div className="flex items-baseline leading-none">
-                <span className="font-display text-2xl md:text-3xl font-black text-red-500 tracking-tighter">M</span>
-                <span className="font-display text-xl md:text-2xl font-black tracking-tight text-white">ice</span>
-              </div>
-              <div className="flex items-center pl-0.5 leading-none">
-                <span className="font-display text-[10px] md:text-xs font-bold tracking-[0.22em] text-neutral-400 group-hover:text-red-500 transition-colors uppercase">
-                  media
-                </span>
-              </div>
-            </div>
+            <img
+              src="/images/mice-media-logo.png"
+              alt="MICE Media Logo"
+              className="h-8 md:h-10 w-auto scale-[1.5] md:scale-[2] origin-left transition-transform duration-300 group-hover:scale-[1.6] md:group-hover:scale-[2.1]"
+            />
           </button>
 
           {/* Desktop Navigation */}
