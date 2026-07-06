@@ -17,7 +17,7 @@ export default function About({ setActivePage }: AboutProps) {
   return (
     <div className="py-24 md:py-32 flex flex-col w-full relative min-h-screen" id="aboutpage-root">
 
-      {/* ── Particles animated WebGL background ── */}
+      {/* â”€â”€ Particles animated WebGL background â”€â”€ */}
       {/* We use an absolute wrapper that spans the full page height, with a sticky child that tracks the viewport.
           This prevents the canvas from stretching to thousands of pixels and crashing WebGL, 
           since the 'fixed' property is broken by the parent's framer-motion transform. */}
@@ -63,7 +63,7 @@ export default function About({ setActivePage }: AboutProps) {
           className="font-display text-4xl sm:text-5xl md:text-6xl font-black uppercase text-white tracking-tight"
         >
           We Don't Just Plan Events — <br />
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-red-600 to-amber-500 text-glow inline-block py-1">We Engineer Moments.</span>
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-red-400 text-glow inline-block py-1">We Engineer Moments.</span>
         </motion.h1>
         
         <div className="w-16 h-[2px] bg-red-650 mx-auto mt-6 rounded-full"></div>
@@ -162,7 +162,7 @@ export default function About({ setActivePage }: AboutProps) {
             className="glass-panel-heavy rounded-3xl p-10 border border-white/5 flex flex-col justify-between"
           >
             <div>
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-red-650 to-red-650 flex items-center justify-center text-white mb-8 shadow-lg shadow-red-700/20">
+              <div className="w-12 h-12 rounded-xl bg-red-600 flex items-center justify-center text-white mb-8 shadow-lg shadow-red-600/20">
                 <Target className="w-5 h-5" />
               </div>
               <span className="text-xs font-mono tracking-widest text-red-500 uppercase font-bold">
@@ -176,7 +176,7 @@ export default function About({ setActivePage }: AboutProps) {
               </p>
             </div>
             
-            <div className="flex items-center gap-3 border-t border-white/5 pt-6 text-xs text-neutral-500 font-mono">
+            <div className="flex items-center gap-3 border-t border-white/5 pt-6 text-xs text-white font-mono">
               <span>✦ CREATING BENCHMARKS</span>
               <span>✦ RETAINING CUSTOMER OBSESSION</span>
             </div>
@@ -190,10 +190,10 @@ export default function About({ setActivePage }: AboutProps) {
             className="glass-panel-heavy rounded-3xl p-10 border border-white/5 flex flex-col justify-between"
           >
             <div>
-              <div className="w-12 h-12 rounded-xl bg-neutral-900 border border-white/10 flex items-center justify-center text-red-500 mb-8">
+              <div className="w-12 h-12 rounded-xl bg-red-600 flex items-center justify-center text-white mb-8 shadow-lg shadow-red-600/20">
                 <Compass className="w-5 h-5" />
               </div>
-              <span className="text-xs font-mono tracking-widest text-neutral-400 uppercase font-bold">
+              <span className="text-xs font-mono tracking-widest text-red-500 uppercase font-bold">
                 Our Vision
               </span>
               <h2 className="font-display text-2xl sm:text-3xl font-black text-white uppercase mt-3 mb-6">
@@ -204,7 +204,7 @@ export default function About({ setActivePage }: AboutProps) {
               </p>
             </div>
 
-            <div className="flex items-center gap-3 border-t border-white/5 pt-6 text-xs text-neutral-550 font-mono">
+            <div className="flex items-center gap-3 border-t border-white/5 pt-6 text-xs text-white font-mono">
               <span>✦ OUTLASTING THE MOMENT</span>
               <span>✦ LEADING REGIONAL experiential PRODUCTION</span>
             </div>

@@ -35,7 +35,7 @@ export default function Portfolio({ selectedPortfolioId, setSelectedPortfolioId,
   return (
     <div className="py-24 md:py-32 flex flex-col w-full relative min-h-screen" id="portfoliopage-root">
       
-      {/* ── Particles animated WebGL background ── */}
+      {/* â”€â”€ Particles animated WebGL background â”€â”€ */}
       <div className="absolute inset-0 z-0 pointer-events-none" aria-hidden="true">
         <div className="sticky top-0 left-0 w-full h-screen">
           <Particles
@@ -75,7 +75,7 @@ export default function Portfolio({ selectedPortfolioId, setSelectedPortfolioId,
           className="font-display text-4xl sm:text-5xl md:text-6xl font-black uppercase text-white tracking-tight"
         >
           Events That Speak <br />
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-red-600 to-amber-500 text-glow inline-block py-1">For Themselves.</span>
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-red-400 text-glow inline-block py-1">For Themselves.</span>
         </motion.h1>
         
         <p className="text-neutral-400 font-sans text-sm md:text-base leading-relaxed mt-4 max-w-xl mx-auto">

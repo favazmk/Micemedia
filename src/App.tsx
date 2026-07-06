@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { MessageCircle, X, Phone } from 'lucide-react';
 import Header from './components/Header';
@@ -14,11 +14,72 @@ import Services from './components/Services';
 import Portfolio from './components/Portfolio';
 import Contact from './components/Contact';
 
+const slugToIdMap: Record<string, string> = {
+  'conferences-and-seminars': 'conferences-seminars',
+  'product-launch-brand-activation': 'product-launch-activation',
+  'audio-video-production': 'audio-visual-production',
+  'incentives-and-travel-rewards': 'incentives-travel'
+};
+
+const idToSlugMap: Record<string, string> = {
+  'conferences-seminars': 'conferences-and-seminars',
+  'product-launch-activation': 'product-launch-brand-activation',
+  'audio-visual-production': 'audio-video-production',
+  'incentives-travel': 'incentives-and-travel-rewards'
+};
+
 export default function App() {
-  const [activePage, setActivePage] = useState<string>('home');
-  const [selectedServiceId, setSelectedServiceId] = useState<string | null>(null);
+  const [activePage, setActivePage] = useState<string>(() => {
+    const path = window.location.pathname.substring(1).split('/')[0];
+    const validPages = ['home', 'about-us', 'services', 'portfolio', 'contact'];
+    return validPages.includes(path) ? path : 'home';
+  });
+
+  const [selectedServiceId, setSelectedServiceId] = useState<string | null>(() => {
+    const segments = window.location.pathname.split('/').filter(Boolean);
+    if (segments[0] === 'services' && segments[1]) {
+      return slugToIdMap[segments[1]] || segments[1];
+    }
+    return null;
+  });
+
   const [selectedPortfolioId, setSelectedPortfolioId] = useState<string | null>(null);
   const [isContactMenuOpen, setIsContactMenuOpen] = useState(false);
+
+  // Sync state changes TO the browser history
+  useEffect(() => {
+    let newPath = `/${activePage === 'home' ? '' : activePage}`;
+    if (activePage === 'services' && selectedServiceId) {
+      const slug = idToSlugMap[selectedServiceId] || selectedServiceId;
+      newPath += `/${slug}`;
+    }
+
+    const currentPath = window.location.pathname;
+    if (currentPath !== newPath && currentPath !== newPath + '/') {
+      window.history.pushState({ page: activePage, serviceId: selectedServiceId }, '', newPath);
+      // Only scroll to top if we are actually changing pages, not just expanding a service accordion
+      if (currentPath.split('/')[1] !== newPath.split('/')[1]) {
+        window.scrollTo(0, 0);
+      }
+    }
+  }, [activePage, selectedServiceId]);
+
+  // Sync browser back/forward buttons TO the state
+  useEffect(() => {
+    const handlePopState = () => {
+      const segments = window.location.pathname.split('/').filter(Boolean);
+      const page = segments[0] || 'home';
+      setActivePage(page);
+      
+      if (page === 'services' && segments[1]) {
+        setSelectedServiceId(slugToIdMap[segments[1]] || segments[1]);
+      } else {
+        setSelectedServiceId(null);
+      }
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
 
   const renderPage = () => {
     switch (activePage) {
@@ -30,7 +91,7 @@ export default function App() {
             setSelectedPortfolioId={setSelectedPortfolioId}
           />
         );
-      case 'about':
+      case 'about-us':
         return <About setActivePage={setActivePage} />;
       case 'services':
         return (

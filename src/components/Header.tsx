@@ -31,7 +31,7 @@ export default function Header({ activePage, setActivePage }: HeaderProps) {
 
   const navItems = [
     { label: 'Home', value: 'home' },
-    { label: 'About', value: 'about' },
+    { label: 'About', value: 'about-us' },
     { label: 'Services', value: 'services' },
     { label: 'Portfolio', value: 'portfolio' },
     { label: 'Contact', value: 'contact' },
@@ -176,7 +176,7 @@ export default function Header({ activePage, setActivePage }: HeaderProps) {
                 </a>
               </div>
               <div className="flex items-center gap-1.5 text-neutral-500 text-[10px] font-mono">
-                <span>© 2026 MICE Media LLC FZ</span>
+                <span>© 2026 MICE Media</span>
               </div>
             </div>
           </motion.div>

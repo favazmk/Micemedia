@@ -4,6 +4,12 @@ import { useScroll, useSpring, useMotionValueEvent } from 'motion/react';
 const DESKTOP_FRAMES = 120;
 const MOBILE_FRAMES = 115;
 
+// Global cache to prevent reloading images when navigating between pages
+const globalCache: Record<string, { images: HTMLImageElement[], loaded: number, isComplete: boolean }> = {
+  desktop: { images: [], loaded: 0, isComplete: false },
+  mobile: { images: [], loaded: 0, isComplete: false }
+};
+
 interface EventScrollProps {
   scrollContainerRef: React.RefObject<HTMLElement | null>;
 }
@@ -34,6 +40,15 @@ export default function EventScroll({ scrollContainerRef }: EventScrollProps) {
 
   useEffect(() => {
     let isCancelled = false;
+    const cacheKey = isMobile ? 'mobile' : 'desktop';
+
+    // If already fully loaded globally, skip loading and use cache
+    if (globalCache[cacheKey].isComplete) {
+      setLoadedCount(frameCount);
+      setImages(globalCache[cacheKey].images);
+      return;
+    }
+
     const loadedImages: HTMLImageElement[] = new Array(frameCount).fill(null);
     let loaded = 0;
     setLoadedCount(0);
@@ -58,6 +73,14 @@ export default function EventScroll({ scrollContainerRef }: EventScrollProps) {
             if (loaded % 10 === 0 || loaded === frameCount) {
               setImages([...loadedImages]);
             }
+
+            // Save to global cache once everything is completely downloaded
+            if (loaded === frameCount) {
+              globalCache[cacheKey].images = [...loadedImages];
+              globalCache[cacheKey].loaded = loaded;
+              globalCache[cacheKey].isComplete = true;
+            }
+
             resolve();
           };
           img.onerror = () => resolve();

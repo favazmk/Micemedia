@@ -453,7 +453,7 @@ export default function Home({
             >
               Where Every <br />
               Event Becomes <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-red-600 to-amber-500 text-glow inline-block italic font-light tracking-wide normal-case py-1">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-red-400 text-glow inline-block italic font-light tracking-wide normal-case py-1">
                 A Legacy.
               </span>
             </motion.h1>
@@ -568,7 +568,7 @@ export default function Home({
                     Two things most agencies can't balance. We refuse to choose between them — on every project, at every scale, without exception.
                   </p>
                   <span className="text-[8px] sm:text-[11px] font-mono uppercase tracking-widest text-red-400 font-bold hover:text-red-300 transition-colors inline-flex items-center gap-1 group/link">
-                    OUR SERVICES <span className="transform group-hover/link:translate-x-1 transition-transform">→</span>
+                    OUR SERVICES <span className="transform group-hover/link:translate-x-1 transition-transform">â†’</span>
                   </span>
                 </div>
               </motion.div>
@@ -579,9 +579,9 @@ export default function Home({
                   y: heroCard3Y
                 }}
                 animate={{
-                  rotateY: isMobile ? (activeTouchHeroCardId === 'about' ? 0 : 10) : 20,
-                  rotateX: isMobile ? (activeTouchHeroCardId === 'about' ? 12 : 6) : 6,
-                  z: isMobile ? (activeTouchHeroCardId === 'about' ? 60 : 10) : 10,
+                  rotateY: isMobile ? (activeTouchHeroCardId === 'about-us' ? 0 : 10) : 20,
+                  rotateX: isMobile ? (activeTouchHeroCardId === 'about-us' ? 12 : 6) : 6,
+                  z: isMobile ? (activeTouchHeroCardId === 'about-us' ? 60 : 10) : 10,
                   scale: 1
                 }}
                 whileHover={{ 
@@ -590,10 +590,10 @@ export default function Home({
                   rotateX: 12, 
                   z: 100
                 }}
-                onClick={() => handleHeroCardClick('about')}
+                onClick={() => handleHeroCardClick('about-us')}
                 transition={{ type: "spring", stiffness: 350, damping: 25 }}
                 className={`w-[105px] sm:w-[220px] h-[180px] sm:h-[280px] bg-neutral-900/90 rounded-2xl border p-3 sm:p-5 flex flex-col justify-between shadow-2xl shadow-black text-left cursor-pointer transition-colors duration-150 ${
-                  activeTouchHeroCardId === 'about' ? 'bg-[#171717]/95 border-red-500/60 z-50' : 'hover:bg-[#171717]/95 border-white/20 hover:border-red-500/60'
+                  activeTouchHeroCardId === 'about-us' ? 'bg-[#171717]/95 border-red-500/60 z-50' : 'hover:bg-[#171717]/95 border-white/20 hover:border-red-500/60'
                 }`}
               >
                 <div>
@@ -687,7 +687,7 @@ export default function Home({
           
           <h2 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tighter text-white leading-[1.1] [text-shadow:0_4px_20px_rgba(0,0,0,1)] uppercase">
             Engineering <br className="hidden sm:block" />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-red-600 to-amber-500 text-glow inline-block py-1 drop-shadow-xl">Extraordinary Moments.</span>
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-red-400 text-glow inline-block py-1 drop-shadow-xl">Extraordinary Moments.</span>
           </h2>
           
           <p className="text-neutral-300 font-sans text-sm sm:text-base md:text-lg leading-relaxed mt-2 max-w-2xl font-medium [text-shadow:0_2px_8px_rgba(0,0,0,1)]">
@@ -712,7 +712,7 @@ export default function Home({
 
           <div className="mt-8">
             <PrimaryButton
-              onClick={() => setActivePage('about')}
+              onClick={() => setActivePage('about-us')}
               text="Discover Our Story"
             />
           </div>
@@ -874,7 +874,7 @@ export default function Home({
               Our Work
             </span>
             <h2 className="font-display text-3xl md:text-5xl font-extrabold tracking-tight text-white uppercase leading-none [text-shadow:0_4px_16px_rgba(0,0,0,1)]">
-              Events That <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-red-600 to-amber-500 text-glow inline-block py-1 drop-shadow-lg">Speak.</span>
+              Events That <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-red-400 text-glow inline-block py-1 drop-shadow-lg">Speak.</span>
             </h2>
           </div>
           <PrimaryButton
@@ -1065,7 +1065,7 @@ export default function Home({
           <Sparkles className="w-8 h-8 text-red-600 mb-6 animate-pulse" />
           <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-black uppercase text-white tracking-tight leading-tight [text-shadow:0_4px_16px_rgba(0,0,0,1)]">
             Ready to Design <br className="sm:hidden" />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-red-600 to-amber-500 text-glow inline-block py-1 drop-shadow-lg">Your Event Legacy?</span>
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-red-400 text-glow inline-block py-1 drop-shadow-lg">Your Event Legacy?</span>
           </h2>
           <p className="mt-6 text-neutral-300 font-sans text-sm md:text-base leading-relaxed max-w-xl font-medium [text-shadow:0_2px_8px_rgba(0,0,0,1)]">
             Join Dubai's leading organizations. Complete our direct briefing questionnaire, estimate attendance, and receive a customized concept draft from our executive management board.

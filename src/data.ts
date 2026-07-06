@@ -7,12 +7,11 @@ import { Service, PortfolioItem, ClientLogo, Testimonial, ProcessStep, WhyUsReas
 
 export const BRAND_INFO = {
   name: "MICE MEDIA",
-  legalName: "MICE Media LLC FZ",
+  legalName: "MICE Media",
   tagline: "Crafting Events That the World Remembers",
   location: "Dubai, UAE",
-  address: "MICE Media LLC FZ, The Meydan Hotel, Grandstand – 6th Floor, Nad Al Shiba 1, Dubai – UAE",
-  phone1: "+971 50 1606797",
-  phone2: "+971 50 840 8655",
+  address: "MICE Media, The Meydan Hotel, Grandstand – 6th Floor, Nad Al Shiba 1, Dubai – UAE",
+  phone1: "+971 50 840 8655",
   whatsapp: "https://wa.me/971508408655",
   email: "info@micemediaevents.com",
   socials: {
@@ -37,7 +36,7 @@ export const SERVICES_DATA: Service[] = [
       "Automated Live Registration & RFID Badging",
       "Bespoke Simultaneous Translation Systems"
     ],
-    image: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=2000&auto=format&fit=crop"
+    image: "/images/services/service_conferences_1783333265054.png"
   },
   {
     id: "gala-dinner-awards",
@@ -52,7 +51,7 @@ export const SERVICES_DATA: Service[] = [
       "Cinematic Video Openers & Presentation Assets",
       "Seamless Live Entertainment Scheduling"
     ],
-    image: "https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?q=80&w=2000&auto=format&fit=crop"
+    image: "/images/services/service_gala_1783333277608.png"
   },
   {
     id: "product-launch-activation",
@@ -67,7 +66,7 @@ export const SERVICES_DATA: Service[] = [
       "Influencer Event Activations & PR Stunts",
       "Bespoke Spatial Fragrance & Audio Ambience"
     ],
-    image: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?q=80&w=2000&auto=format&fit=crop"
+    image: "/images/services/service_product_launch_1783333289525.png"
   },
   {
     id: "audio-visual-production",
@@ -82,7 +81,7 @@ export const SERVICES_DATA: Service[] = [
       "Dynamic Multi-Camera Broadcast & HD Streaming",
       "Full Rigging, Truss, and Ground Support Engineering"
     ],
-    image: "https://images.unsplash.com/photo-1520627581900-50280eb4c2bc?q=80&w=2000&auto=format&fit=crop"
+    image: "/images/services/service_av_1783333304135.png"
   },
   {
     id: "branding",
@@ -97,7 +96,7 @@ export const SERVICES_DATA: Service[] = [
       "Premium Motion Typography & Logo Loops",
       "Integrated Event Companion App Custom UI"
     ],
-    image: "https://images.unsplash.com/photo-1557683316-973673baf926?q=80&w=2000&auto=format&fit=crop"
+    image: "/images/services/service_branding_1783333316099.png"
   },
   {
     id: "incentives-travel",
@@ -112,7 +111,7 @@ export const SERVICES_DATA: Service[] = [
       "Curative Masterclasses with Regional Headliners",
       "VIP Access to Regional Landmarks & Events"
     ],
-    image: "https://images.unsplash.com/photo-1512453979436-5a50c640e5eb?q=80&w=2000&auto=format&fit=crop"
+    image: "/images/services/service_incentives_1783333326101.png"
   },
   {
     id: "team-building",
@@ -127,7 +126,7 @@ export const SERVICES_DATA: Service[] = [
       "Corporate CSR-Aligned Philanthropic Builds",
       "Psychology-Backed Deep-Trust Workspaces"
     ],
-    image: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2000&auto=format&fit=crop"
+    image: "/images/services/service_team_building_1783333338151.png"
   },
   {
     id: "entertainment",
@@ -142,7 +141,7 @@ export const SERVICES_DATA: Service[] = [
       "A-List Presenters, MCs, and Regional Masters",
       "Interactive Laser Harp & Tech-Arts Fusion"
     ],
-    image: "https://images.unsplash.com/photo-1459749411175-04bf5292ceea?q=80&w=2000&auto=format&fit=crop"
+    image: "/images/services/service_entertainment_1783333349846.png"
   },
   {
     id: "exhibitions",
@@ -157,7 +156,7 @@ export const SERVICES_DATA: Service[] = [
       "Zero-Waste Fully Modular Sustainable Booths",
       "Full Regulatory DWTC Submission & Permit Handlings"
     ],
-    image: "https://images.unsplash.com/photo-1531058020387-3be344556be6?q=80&w=2000&auto=format&fit=crop"
+    image: "/images/services/service_exhibitions_1783333361785.png"
   }
 ];
 

@@ -46,7 +46,7 @@ export default function Footer({ setActivePage, setSelectedServiceId }: FooterPr
                   className="h-20 md:h-24 w-auto"
                 />
               </div>
-              <span className="text-[10px] font-mono tracking-widest text-neutral-500 mt-2">MICE Media LLC FZ</span>
+              <span className="text-[10px] font-mono tracking-widest text-neutral-500 mt-2">MICE Media</span>
             </div>
             
             <p className="text-neutral-400 text-sm leading-relaxed">
@@ -110,7 +110,7 @@ export default function Footer({ setActivePage, setSelectedServiceId }: FooterPr
                 </button>
               </li>
               <li>
-                <button onClick={() => handlePageClick('about')} className="hover:text-red-500 transition-colors cursor-pointer text-left">
+                <button onClick={() => handlePageClick('about-us')} className="hover:text-red-500 transition-colors cursor-pointer text-left">
                   Corporate Journey
                 </button>
               </li>
@@ -186,10 +186,10 @@ export default function Footer({ setActivePage, setSelectedServiceId }: FooterPr
         {/* Copyright section */}
         <div className="flex flex-col md:flex-row justify-between items-center gap-6 pt-10 text-xs text-neutral-500 font-mono">
           <div className="text-center md:text-left">
-            <span>© 2026 MICE Media LLC FZ. All Rights Reserved.</span>
+            <span>© 2026 MICE Media. All Rights Reserved.</span>
             <span className="mx-2 hidden md:inline">|</span>
             <span className="text-neutral-600 block md:inline mt-1 md:mt-0">
-              Built by <a href="https://thewebbranding.com" target="_blank" rel="noopener noreferrer" className="text-purple-500 hover:text-purple-400 font-bold transition-colors">Web Branding</a>
+              Built by <a href="https://thewebbranding.com" target="_blank" rel="noopener noreferrer" className="text-purple-600 hover:text-purple-500 font-bold transition-colors">Web Branding</a>
             </span>
           </div>
 

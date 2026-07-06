@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Phone, 
@@ -17,13 +17,201 @@ import {
   Calendar, 
   Users, 
   Globe, 
-  AlertCircle 
+  AlertCircle,
+  ChevronDown,
+  Check
 } from 'lucide-react';
 import { BRAND_INFO } from '../data';
 import { ProposalFormInputs } from '../types';
 import { PrimaryButton } from '@/components/ui/primary-button';
 import { GetStartedButton } from '@/components/ui/get-started-button';
 import Particles from './Particles';
+
+const CustomSelect = ({ 
+  label, 
+  value, 
+  options, 
+  onChange 
+}: { 
+  label: string, 
+  value: string, 
+  options: {value: string, label: string}[], 
+  onChange: (val: string) => void 
+}) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  return (
+    <div className="flex flex-col gap-2 relative" ref={dropdownRef}>
+      <label className="text-xs font-mono text-neutral-400 uppercase tracking-wider">{label}</label>
+      <div 
+        className={`bg-neutral-900 border ${isOpen ? 'border-red-500/60' : 'border-white/5'} text-white rounded-xl py-3 px-4 font-sans text-sm cursor-pointer flex justify-between items-center transition-colors`}
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        <span>{options.find(opt => opt.value === value)?.label || value}</span>
+        <ChevronDown className={`w-4 h-4 text-neutral-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+      </div>
+      
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.15 }}
+            className="absolute top-[calc(100%+8px)] left-0 w-full bg-neutral-900 border border-white/10 rounded-xl overflow-hidden z-50 shadow-xl shadow-black/50"
+          >
+            <div className="max-h-60 overflow-y-auto custom-scrollbar">
+              {options.map((opt) => (
+                <div
+                  key={opt.value}
+                  className={`px-4 py-3 flex items-center justify-between cursor-pointer hover:bg-neutral-800 transition-colors ${value === opt.value ? 'bg-red-500/10 text-red-500 font-bold' : 'text-neutral-300'}`}
+                  onClick={() => {
+                    onChange(opt.value);
+                    setIsOpen(false);
+                  }}
+                >
+                  <span>{opt.label}</span>
+                  {value === opt.value && <Check className="w-4 h-4" />}
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
+
+const CustomDatePicker = ({
+  label,
+  value,
+  onChange
+}: {
+  label: string,
+  value: string,
+  onChange: (val: string) => void
+}) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  
+  // Date state
+  const [currentMonth, setCurrentMonth] = useState(new Date());
+  
+  useEffect(() => {
+    if (value) {
+      setCurrentMonth(new Date(value));
+    }
+  }, [value]);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const getDaysInMonth = (date: Date) => new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+  const getFirstDayOfMonth = (date: Date) => new Date(date.getFullYear(), date.getMonth(), 1).getDay();
+
+  const handlePrevMonth = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1));
+  };
+  
+  const handleNextMonth = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1));
+  };
+
+  const handleSelectDate = (day: number) => {
+    const formattedDate = `${currentMonth.getFullYear()}-${String(currentMonth.getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    onChange(formattedDate);
+    setIsOpen(false);
+  };
+
+  const daysInMonth = getDaysInMonth(currentMonth);
+  const firstDay = getFirstDayOfMonth(currentMonth);
+  const days = Array.from({ length: daysInMonth }, (_, i) => i + 1);
+  const blanks = Array.from({ length: firstDay }, (_, i) => i);
+
+  const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+  return (
+    <div className="flex flex-col gap-2 relative" ref={dropdownRef}>
+      <label className="text-xs font-mono text-neutral-400 uppercase tracking-wider">{label}</label>
+      <div 
+        className={`bg-neutral-900 border ${isOpen ? 'border-red-500/60' : 'border-white/5'} text-white rounded-xl py-3 px-4 font-sans text-sm cursor-pointer flex justify-between items-center transition-colors`}
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        <span className={value ? 'text-white' : 'text-neutral-500'}>{value ? value : 'Select Date'}</span>
+        <Calendar className={`w-4 h-4 ${isOpen ? 'text-red-500' : 'text-neutral-400'} transition-colors`} />
+      </div>
+      
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.15 }}
+            className="absolute top-[calc(100%+8px)] left-0 w-full sm:w-[320px] bg-neutral-900 border border-white/10 rounded-xl overflow-hidden z-50 shadow-xl shadow-black/50 p-5"
+          >
+            <div className="flex justify-between items-center mb-4">
+              <button type="button" onClick={handlePrevMonth} className="p-1.5 hover:bg-white/10 rounded-lg transition-colors cursor-pointer text-white">
+                <ChevronDown className="w-4 h-4 rotate-90" />
+              </button>
+              <div className="font-bold text-[15px] tracking-wide text-white font-sans">
+                {monthNames[currentMonth.getMonth()]} {currentMonth.getFullYear()}
+              </div>
+              <button type="button" onClick={handleNextMonth} className="p-1.5 hover:bg-white/10 rounded-lg transition-colors cursor-pointer text-white">
+                <ChevronDown className="w-4 h-4 -rotate-90" />
+              </button>
+            </div>
+            
+            <div className="grid grid-cols-7 gap-1 mb-2">
+              {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map(day => (
+                <div key={day} className="text-center text-[10px] uppercase font-mono tracking-wider text-neutral-500 py-1">{day}</div>
+              ))}
+            </div>
+            
+            <div className="grid grid-cols-7 gap-1">
+              {blanks.map(blank => (
+                <div key={`blank-${blank}`} className="p-2"></div>
+              ))}
+              {days.map(day => {
+                const isSelected = value === `${currentMonth.getFullYear()}-${String(currentMonth.getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                return (
+                  <button
+                    key={day}
+                    type="button"
+                    onClick={() => handleSelectDate(day)}
+                    className={`p-2 text-sm text-center rounded-lg transition-all font-medium cursor-pointer ${isSelected ? 'bg-red-500 text-white shadow-lg shadow-red-500/30' : 'text-neutral-300 hover:bg-white/10 hover:text-white'}`}
+                  >
+                    {day}
+                  </button>
+                );
+              })}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
 
 export default function Contact() {
   const [formInputs, setFormInputs] = useState<ProposalFormInputs>({
@@ -32,7 +220,7 @@ export default function Contact() {
     email: '',
     phone: '',
     eventType: 'Conference',
-    estimatedGuests: '50–200',
+    estimatedGuests: '50-200',
     preferredDate: '',
     comments: ''
   });
@@ -86,7 +274,7 @@ export default function Contact() {
   return (
     <div className="py-24 md:py-32 flex flex-col w-full relative min-h-screen" id="contactpage-root">
       
-      {/* ── Particles animated WebGL background ── */}
+      {/* â”€â”€ Particles animated WebGL background â”€â”€ */}
       <div className="absolute inset-0 z-0 pointer-events-none" aria-hidden="true">
         <div className="sticky top-0 left-0 w-full h-screen">
           <Particles
@@ -125,7 +313,7 @@ export default function Contact() {
           transition={{ delay: 0.1 }}
           className="font-display text-4xl sm:text-5xl md:text-6xl font-black uppercase text-white tracking-tight"
         >
-          Your Next Event <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-red-600 to-amber-500 text-glow inline-block py-1">Starts Here.</span>
+          Your Next Event <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-red-400 text-glow inline-block py-1">Starts Here.</span>
         </motion.h1>
         
         <p className="text-neutral-400 font-sans text-sm md:text-base leading-relaxed mt-4 max-w-xl mx-auto">
@@ -203,9 +391,7 @@ export default function Contact() {
                 <MessageSquare className="w-4 h-4 fill-white" />
                 Direct WhatsApp Chat
               </a>
-              <span className="text-[10px] font-mono text-neutral-500">
-                Avg Response: under 12 mins
-              </span>
+
             </div>
           </div>
 
@@ -298,44 +484,32 @@ export default function Contact() {
 
                   {/* Row 3 - Dropdowns */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    <div className="flex flex-col gap-2">
-                      <label className="text-xs font-mono text-neutral-400 uppercase tracking-wider">Event Type</label>
-                      <select
-                        value={formInputs.eventType}
-                        onChange={(e) => handleInputChange('eventType', e.target.value)}
-                        className="bg-neutral-905 border border-white/5 focus:border-red-500/60 text-white rounded-xl py-3 px-4 font-sans text-sm focus:outline-hidden transition-colors cursor-pointer"
-                      >
-                        {eventTypes.map(type => (
-                          <option key={type} value={type}>{type}</option>
-                        ))}
-                      </select>
-                    </div>
-                    <div className="flex flex-col gap-2">
-                      <label className="text-xs font-mono text-neutral-400 uppercase tracking-wider">Estimated Guests</label>
-                      <select
-                        value={formInputs.estimatedGuests}
-                        onChange={(e) => handleInputChange('estimatedGuests', e.target.value)}
-                        className="bg-neutral-905 border border-white/5 focus:border-red-500/60 text-white rounded-xl py-3 px-4 font-sans text-sm focus:outline-hidden transition-colors cursor-pointer"
-                      >
-                        <option value="Under 50">Under 50 guests</option>
-                        <option value="50–200">50–200 guests</option>
-                        <option value="200–500">200–500 guests</option>
-                        <option value="500–1,000">500–1,000 guests</option>
-                        <option value="1,000+">1,000+ guests</option>
-                      </select>
-                    </div>
+                    <CustomSelect
+                      label="Event Type"
+                      value={formInputs.eventType}
+                      onChange={(val) => handleInputChange('eventType', val)}
+                      options={eventTypes.map(type => ({ value: type, label: type }))}
+                    />
+                    <CustomSelect
+                      label="Estimated Guests"
+                      value={formInputs.estimatedGuests}
+                      onChange={(val) => handleInputChange('estimatedGuests', val)}
+                      options={[
+                        { value: 'Under 50', label: 'Under 50 guests' },
+                        { value: '50-200', label: '50-200 guests' },
+                        { value: '200-500', label: '200-500 guests' },
+                        { value: '500-1,000', label: '500-1,000 guests' },
+                        { value: '1,000+', label: '1,000+ guests' }
+                      ]}
+                    />
                   </div>
 
                   {/* Row 4 */}
-                  <div className="flex flex-col gap-2">
-                    <label className="text-xs font-mono text-neutral-400 uppercase tracking-wider">Preferred Event Date</label>
-                    <input
-                      type="date"
-                      value={formInputs.preferredDate}
-                      onChange={(e) => handleInputChange('preferredDate', e.target.value)}
-                      className="bg-neutral-900 border border-white/5 focus:border-red-500/60 text-white rounded-xl py-3 px-4 font-sans text-sm focus:outline-hidden transition-colors cursor-pointer"
-                    />
-                  </div>
+                  <CustomDatePicker
+                    label="Preferred Event Date"
+                    value={formInputs.preferredDate}
+                    onChange={(val) => handleInputChange('preferredDate', val)}
+                  />
 
                   {/* Row 5 */}
                   <div className="flex flex-col gap-2">
@@ -438,7 +612,7 @@ export default function Contact() {
                         email: '',
                         phone: '',
                         eventType: 'Conference',
-                        estimatedGuests: '50–200',
+                        estimatedGuests: '50-200',
                         preferredDate: '',
                         comments: ''
                       });
