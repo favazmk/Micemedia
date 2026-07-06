@@ -1,9 +1,4 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
-
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { motion } from 'motion/react';
 import { 
   Presentation, 
@@ -65,21 +60,46 @@ export default function Services({ selectedServiceId, setSelectedServiceId, setA
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Track the active state in a ref to avoid observer recreation loop
+  const activeIdRef = useRef(selectedServiceId);
+  useEffect(() => {
+    activeIdRef.current = selectedServiceId;
+  }, [selectedServiceId]);
+
   // Update selectedServiceId (and URL) as user scrolls through text blocks
   useEffect(() => {
+    const intersectingMap = new Map<string, number>();
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (entry.isIntersecting && entry.intersectionRatio >= 0.3) {
-            const id = entry.target.id.replace('service-text-', '').replace('service-mobile-', '');
-            // Only update if it's actually changing to avoid endless state loops
-            if (id !== selectedServiceId) {
-              setSelectedServiceId(id);
-            }
+          const id = entry.target.id.replace('service-text-', '').replace('service-mobile-', '');
+          if (entry.isIntersecting) {
+            intersectingMap.set(id, entry.intersectionRatio);
+          } else {
+            intersectingMap.delete(id);
           }
         });
+
+        // Find the service that is most visible in the viewport
+        let highestId: string | null = null;
+        let maxRatio = 0;
+        intersectingMap.forEach((ratio, id) => {
+          if (ratio > maxRatio) {
+            maxRatio = ratio;
+            highestId = id;
+          }
+        });
+
+        // Only trigger update if we have a clear visible winner and it's actually changing
+        if (highestId && maxRatio >= 0.25 && highestId !== activeIdRef.current) {
+          setSelectedServiceId(highestId);
+        }
       },
-      { threshold: 0.3 }
+      { 
+        // Multiple thresholds to track changing intersection ratios smoothly
+        threshold: [0.1, 0.25, 0.5, 0.75, 0.9] 
+      }
     );
 
     SERVICES_DATA.forEach(srv => {
@@ -90,7 +110,7 @@ export default function Services({ selectedServiceId, setSelectedServiceId, setA
     });
 
     return () => observer.disconnect();
-  }, [selectedServiceId, setSelectedServiceId]);
+  }, [setSelectedServiceId]);
 
   return (
     <div className="flex flex-col w-full relative min-h-screen" id="servicespage-root">
