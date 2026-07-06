@@ -52,11 +52,15 @@ export default function Header({ activePage, setActivePage }: HeaderProps) {
         }`}
       >
         <div
-          style={{ maxWidth: scrolled ? '1280px' : '100%' }}
+          style={{ 
+            maxWidth: scrolled ? '1280px' : '100%',
+            backdropFilter: scrolled ? 'blur(24px)' : 'blur(16px)',
+            WebkitBackdropFilter: scrolled ? 'blur(24px)' : 'blur(16px)'
+          }}
           className={`w-full relative transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] flex items-center justify-between ${
             scrolled
-              ? 'glass-panel-heavy rounded-full py-3 px-6 md:px-8 shadow-2xl shadow-black/80 border border-white/5'
-              : 'glass-panel border-b border-white/10 py-5 px-6 md:px-12 rounded-none'
+              ? 'bg-neutral-905/30 rounded-full py-3 px-6 md:px-8 shadow-2xl shadow-black/80 border border-white/5'
+              : 'bg-neutral-950/70 border-b border-white/10 py-5 px-6 md:px-12 rounded-none'
           }`}
         >
 
