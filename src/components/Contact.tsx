@@ -355,14 +355,9 @@ export default function Contact() {
                 </div>
                 <div className="flex flex-col">
                   <span className="text-xs font-mono text-neutral-510 uppercase tracking-wider">Direct Hotlines</span>
-                  <div className="flex flex-col mt-1">
-                    <a href={`tel:${BRAND_INFO.phone1}`} className="text-sm font-sans text-neutral-300 font-bold hover:text-red-500 transition-colors">
-                      {BRAND_INFO.phone1}
-                    </a>
-                    <a href={`tel:${BRAND_INFO.phone2}`} className="text-sm font-sans text-neutral-300 font-bold hover:text-red-500 transition-colors">
-                      {BRAND_INFO.phone2}
-                    </a>
-                  </div>
+                  <a href={`tel:${BRAND_INFO.phone1}`} className="text-sm font-sans text-neutral-300 font-bold hover:text-red-500 transition-colors mt-1">
+                    {BRAND_INFO.phone1}
+                  </a>
                 </div>
               </div>
 

@@ -7,3 +7,5 @@ coverage/
 .env*
 !.env.example
 .vercel
+.venv/
+.agents/Untitled-1.txt

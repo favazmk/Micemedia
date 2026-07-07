@@ -164,14 +164,9 @@ export default function Footer({ setActivePage, setSelectedServiceId }: FooterPr
               </div>
               <div className="flex items-center gap-3">
                 <Phone className="w-4 h-4 text-red-600 shrink-0" />
-                <div className="flex flex-col">
-                  <a href={`tel:${BRAND_INFO.phone1}`} className="hover:text-red-500 transition-colors">
-                    {BRAND_INFO.phone1}
-                  </a>
-                  <a href={`tel:${BRAND_INFO.phone2}`} className="hover:text-red-500 transition-colors">
-                    {BRAND_INFO.phone2}
-                  </a>
-                </div>
+                <a href={`tel:${BRAND_INFO.phone1}`} className="hover:text-red-500 transition-colors">
+                  {BRAND_INFO.phone1}
+                </a>
               </div>
               <div className="flex items-center gap-3">
                 <Mail className="w-4 h-4 text-red-600 shrink-0" />

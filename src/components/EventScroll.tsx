@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import { useScroll, useSpring, useMotionValueEvent } from 'motion/react';
 
 const DESKTOP_FRAMES = 120;
-const MOBILE_FRAMES = 115;
+const MOBILE_FRAMES = 217;
 
 // Global cache to prevent reloading images when navigating between pages
 const globalCache: Record<string, { images: HTMLImageElement[], loaded: number, isComplete: boolean }> = {
@@ -29,7 +29,7 @@ export default function EventScroll({ scrollContainerRef }: EventScrollProps) {
   }, []);
 
   const frameCount = isMobile ? MOBILE_FRAMES : DESKTOP_FRAMES;
-  const folder = isMobile ? 'fps-sequence mobile' : 'fps-sequence';
+  const folder = isMobile ? 'New_fps-sequences-mobile' : 'fps-sequence';
 
   const { scrollYProgress } = useScroll({
     target: scrollContainerRef,
@@ -60,7 +60,8 @@ export default function EventScroll({ scrollContainerRef }: EventScrollProps) {
           if (isCancelled) return resolve();
           const img = new Image();
           const indexStr = (i + 1).toString().padStart(3, '0');
-          img.src = `/${folder}/ezgif-frame-${indexStr}.jpg`;
+          const ext = folder.includes('mobile') ? 'webp' : 'jpg';
+          img.src = `/${folder}/ezgif-frame-${indexStr}.${ext}`;
           
           img.onload = () => {
             if (isCancelled) return resolve();
