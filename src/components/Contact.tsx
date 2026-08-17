@@ -244,6 +244,30 @@ export default function Contact() {
   ];
 
 
+  const buildWhatsAppEnquiryUrl = (code: string, inputs: ProposalFormInputs) => {
+    const lines = [
+      `*NEW EVENT PROPOSAL ENQUIRY*`,
+      `━━━━━━━━━━━━━━━━━━━━━`,
+      `*Reference Code:* ${code}`,
+      ``,
+      `*CLIENT INFORMATION*`,
+      `• *Full Name:* ${inputs.fullName}`,
+      `• *Company / Organisation:* ${inputs.companyName || 'Not Specified'}`,
+      `• *Email Address:* ${inputs.email}`,
+      `• *Phone Number:* ${inputs.phone}`,
+      ``,
+      `*EVENT SPECIFICATIONS*`,
+      `• *Event Type:* ${inputs.eventType}`,
+      `• *Estimated Guests:* ${inputs.estimatedGuests} Guests`,
+      `• *Preferred Target Date:* ${inputs.preferredDate || 'To Be Arranged'}`,
+      ...(inputs.comments?.trim() ? [``, `*PROJECT BRIEF / REQUIREMENTS:*`, `${inputs.comments.trim()}`] : []),
+      `━━━━━━━━━━━━━━━━━━━━━`,
+      `_Sent via MICE Media Events (Dubai, UAE)_`
+    ];
+
+    return `https://wa.me/971508408655?text=${encodeURIComponent(lines.join('\n'))}`;
+  };
+
   const handleInputChange = (field: keyof ProposalFormInputs, value: string) => {
     setFormInputs(prev => ({
       ...prev,
@@ -261,14 +285,18 @@ export default function Contact() {
 
     setIsSubmitting(true);
     
-    // Simulate high-end backend review time
+    // Simulate brief staging, show receipt, and direct to WhatsApp
     setTimeout(() => {
       const code = 'MICE-' + Math.floor(100000 + Math.random() * 900000);
       setRefCode(code);
       setIsSubmitting(false);
       setIsSubmitted(true);
       window.scrollTo({ top: 0, behavior: 'smooth' });
-    }, 1800);
+
+      // Directly open formatted WhatsApp message in a new window/tab
+      const waUrl = buildWhatsAppEnquiryUrl(code, formInputs);
+      window.open(waUrl, '_blank', 'noopener,noreferrer');
+    }, 1200);
   };
 
   return (
@@ -590,13 +618,13 @@ export default function Contact() {
 
                 <div className="mt-8 flex flex-col sm:flex-row gap-4 items-center justify-center w-full max-w-md">
                   <a
-                    href={`https://wa.me/971508408655?text=Hello%20MICE%20Media,%20just%20submitted%20brief%2520reference%20${refCode}.`}
+                    href={buildWhatsAppEnquiryUrl(refCode, formInputs)}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="w-full sm:w-auto bg-green-600 hover:bg-green-500 text-white font-mono text-xs uppercase font-bold py-4.5 px-8 rounded-xl transition-all cursor-pointer flex items-center justify-center gap-2 shadow-lg"
                   >
                     <MessageSquare className="w-4.5 h-4.5 fill-white" />
-                    Priority WhatsApp Link
+                    Open WhatsApp Enquiry
                   </a>
                   <GetStartedButton
                     onClick={() => {
