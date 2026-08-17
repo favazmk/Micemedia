@@ -47,10 +47,10 @@ export default function HeroImageReveal() {
       ref={containerRef}
       className="hero-image"
     >
-      <img src="/images/hero-bw.png" className="hero-bw" alt="Event Sketch" />
+      <img src="./images/hero-bw.png" className="hero-bw" alt="Event Sketch" />
       <video 
         ref={videoRef}
-        src="/images/hero-color.mp4" 
+        src="./images/hero-color.mp4" 
         className="hero-color" 
         muted 
         loop 

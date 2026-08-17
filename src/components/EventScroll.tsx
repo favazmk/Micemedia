@@ -60,7 +60,7 @@ export default function EventScroll({ scrollContainerRef }: EventScrollProps) {
           if (isCancelled) return resolve();
           const img = new Image();
           const indexStr = (i + 1).toString().padStart(3, '0');
-          img.src = `/${folder}/frame-${indexStr}.webp`;
+          img.src = `./${folder}/frame-${indexStr}.webp`;
 
           img.onload = () => {
             if (isCancelled) return resolve();

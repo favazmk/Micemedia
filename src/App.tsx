@@ -30,14 +30,20 @@ const idToSlugMap: Record<string, string> = {
 
 export default function App() {
   const [activePage, setActivePage] = useState<string>(() => {
-    const path = window.location.pathname.substring(1).split('/')[0];
-    const validPages = ['home', 'about-us', 'services', 'portfolio', 'contact'];
+    let path = window.location.pathname.split('/').pop() || '';
+    path = path.replace('.html', ''); // Handle MPA routes
+    const validPages = ['home', 'about-us', 'services', 'portfolio', 'contact', 'index'];
+    if (path === 'index' || path === '') return 'home';
     return validPages.includes(path) ? path : 'home';
   });
 
   const [selectedServiceId, setSelectedServiceId] = useState<string | null>(() => {
+    // If on services.html#id, use hash. Otherwise check path for backward compatibility.
+    if (window.location.hash) {
+      return window.location.hash.substring(1);
+    }
     const segments = window.location.pathname.split('/').filter(Boolean);
-    if (segments[0] === 'services' && segments[1]) {
+    if (segments[0] && segments[0].replace('.html', '') === 'services' && segments[1]) {
       return slugToIdMap[segments[1]] || segments[1];
     }
     return null;
@@ -48,15 +54,29 @@ export default function App() {
 
   // Sync state changes TO the browser history
   useEffect(() => {
-    let newPath = `/${activePage === 'home' ? '' : activePage}`;
+    let newPath = `/${activePage === 'home' ? 'index.html' : activePage + '.html'}`;
     if (activePage === 'services' && selectedServiceId) {
-      const slug = idToSlugMap[selectedServiceId] || selectedServiceId;
-      newPath += `/${slug}`;
+      newPath += `#${selectedServiceId}`;
     }
 
-    const currentPath = window.location.pathname;
-    if (currentPath !== newPath && currentPath !== newPath + '/') {
-      window.history.pushState({ page: activePage, serviceId: selectedServiceId }, '', newPath);
+    const currentPath = window.location.pathname + window.location.hash;
+    // Don't push if it's the initial load matching exactly
+    if (currentPath !== newPath && currentPath !== newPath.replace('index.html', '')) {
+      try {
+        window.history.pushState({ page: activePage, serviceId: selectedServiceId }, '', newPath);
+      } catch (e) {
+        // Ignore pushState errors on file:// protocol, but navigate if necessary
+        if (window.location.protocol === 'file:') {
+            console.warn('pushState failed, likely due to file:// protocol.');
+            // Fallback to real navigation if the HTML file changed
+            const currentFile = window.location.pathname.split('/').pop() || 'index.html';
+            const targetFile = newPath.split('/').pop() || 'index.html';
+            if (currentFile !== targetFile) {
+                window.location.href = targetFile;
+                return;
+            }
+        }
+      }
       // Only scroll to top if we are actually changing pages, not just expanding a service accordion
       if (currentPath.split('/')[1] !== newPath.split('/')[1]) {
         window.scrollTo(0, 0);
@@ -67,12 +87,13 @@ export default function App() {
   // Sync browser back/forward buttons TO the state
   useEffect(() => {
     const handlePopState = () => {
-      const segments = window.location.pathname.split('/').filter(Boolean);
-      const page = segments[0] || 'home';
+      let path = window.location.pathname.split('/').pop() || '';
+      path = path.replace('.html', '');
+      const page = path === 'index' || path === '' ? 'home' : path;
       setActivePage(page);
       
-      if (page === 'services' && segments[1]) {
-        setSelectedServiceId(slugToIdMap[segments[1]] || segments[1]);
+      if (page === 'services' && window.location.hash) {
+        setSelectedServiceId(window.location.hash.substring(1));
       } else {
         setSelectedServiceId(null);
       }

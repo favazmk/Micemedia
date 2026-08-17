@@ -41,7 +41,7 @@ export default function Footer({ setActivePage, setSelectedServiceId }: FooterPr
             <div className="flex flex-col">
               <div id="footer-logo">
                 <img
-                  src="/images/mice-media-logo.png"
+                  src="./images/mice-media-logo.png"
                   alt="MICE Media Logo"
                   className="h-20 md:h-24 w-auto"
                 />

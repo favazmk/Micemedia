@@ -36,7 +36,7 @@ export const SERVICES_DATA: Service[] = [
       "Automated Live Registration & RFID Badging",
       "Bespoke Simultaneous Translation Systems"
     ],
-    image: "/images/services/service_conferences_1783333265054.webp"
+    image: "./images/services/service_conferences_1783333265054.webp"
   },
   {
     id: "gala-dinner-awards",
@@ -51,7 +51,7 @@ export const SERVICES_DATA: Service[] = [
       "Cinematic Video Openers & Presentation Assets",
       "Seamless Live Entertainment Scheduling"
     ],
-    image: "/images/services/service_gala_1783333277608.webp"
+    image: "./images/services/service_gala_1783333277608.webp"
   },
   {
     id: "product-launch-activation",
@@ -66,7 +66,7 @@ export const SERVICES_DATA: Service[] = [
       "Influencer Event Activations & PR Stunts",
       "Bespoke Spatial Fragrance & Audio Ambience"
     ],
-    image: "/images/services/service_product_launch_1783333289525.webp"
+    image: "./images/services/service_product_launch_1783333289525.webp"
   },
   {
     id: "audio-visual-production",
@@ -81,7 +81,7 @@ export const SERVICES_DATA: Service[] = [
       "Dynamic Multi-Camera Broadcast & HD Streaming",
       "Full Rigging, Truss, and Ground Support Engineering"
     ],
-    image: "/images/services/service_av_1783333304135.webp"
+    image: "./images/services/service_av_1783333304135.webp"
   },
   {
     id: "branding",
@@ -96,7 +96,7 @@ export const SERVICES_DATA: Service[] = [
       "Premium Motion Typography & Logo Loops",
       "Integrated Event Companion App Custom UI"
     ],
-    image: "/images/services/service_branding_1783333316099.webp"
+    image: "./images/services/service_branding_1783333316099.webp"
   },
   {
     id: "incentives-travel",
@@ -111,7 +111,7 @@ export const SERVICES_DATA: Service[] = [
       "Curative Masterclasses with Regional Headliners",
       "VIP Access to Regional Landmarks & Events"
     ],
-    image: "/images/services/service_incentives_1783333326101.webp"
+    image: "./images/services/service_incentives_1783333326101.webp"
   },
   {
     id: "team-building",
@@ -126,7 +126,7 @@ export const SERVICES_DATA: Service[] = [
       "Corporate CSR-Aligned Philanthropic Builds",
       "Psychology-Backed Deep-Trust Workspaces"
     ],
-    image: "/images/services/service_team_building_1783333338151.webp"
+    image: "./images/services/service_team_building_1783333338151.webp"
   },
   {
     id: "entertainment",
@@ -141,7 +141,7 @@ export const SERVICES_DATA: Service[] = [
       "A-List Presenters, MCs, and Regional Masters",
       "Interactive Laser Harp & Tech-Arts Fusion"
     ],
-    image: "/images/services/service_entertainment_1783333349846.webp"
+    image: "./images/services/service_entertainment_1783333349846.webp"
   },
   {
     id: "exhibitions",
@@ -156,7 +156,7 @@ export const SERVICES_DATA: Service[] = [
       "Zero-Waste Fully Modular Sustainable Booths",
       "Full Regulatory DWTC Submission & Permit Handlings"
     ],
-    image: "/images/services/service_exhibitions_1783333361785.webp"
+    image: "./images/services/service_exhibitions_1783333361785.webp"
   }
 ];
 
