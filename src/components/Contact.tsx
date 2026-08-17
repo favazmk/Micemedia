@@ -246,24 +246,27 @@ export default function Contact() {
 
 
   const buildWhatsAppEnquiryUrl = (code: string, inputs: ProposalFormInputs) => {
+    const eventName = inputs.eventType === 'Other' ? 'an event' : `a ${inputs.eventType}`;
+    const companyText = inputs.companyName ? ` with ${inputs.companyName}` : '';
+
     const lines = [
-      `*NEW EVENT PROPOSAL ENQUIRY*`,
-      `━━━━━━━━━━━━━━━━━━━━━`,
-      `*Reference Code:* ${code}`,
+      `Hi MICE Media team 👋`,
       ``,
-      `*CLIENT INFORMATION*`,
-      `• *Full Name:* ${inputs.fullName}`,
-      `• *Company / Organisation:* ${inputs.companyName || 'Not Specified'}`,
-      `• *Email Address:* ${inputs.email}`,
-      `• *Phone Number:* ${inputs.phone}`,
+      `I was planning ${eventName}${companyText} and wanted to enquire about your event management and production services.`,
       ``,
-      `*EVENT SPECIFICATIONS*`,
-      `• *Event Type:* ${inputs.eventType}`,
-      `• *Estimated Guests:* ${inputs.estimatedGuests} Guests`,
-      `• *Preferred Target Date:* ${inputs.preferredDate || 'To Be Arranged'}`,
-      ...(inputs.comments?.trim() ? [``, `*PROJECT BRIEF / REQUIREMENTS:*`, `${inputs.comments.trim()}`] : []),
-      `━━━━━━━━━━━━━━━━━━━━━`,
-      `_Sent via MICE Media Events (Dubai, UAE)_`
+      `*Event Overview:*`,
+      `• *Type:* ${inputs.eventType}`,
+      `• *Estimated Guests:* ${inputs.estimatedGuests} guests`,
+      `• *Target Date:* ${inputs.preferredDate || 'To be decided'}`,
+      ...(inputs.comments?.trim() ? [``, `*Here is a quick note on what we have in mind:*`, `"${inputs.comments.trim()}"`] : []),
+      ``,
+      `*My Details:*`,
+      `• *Name:* ${inputs.fullName}`,
+      ...(inputs.companyName?.trim() ? [`• *Company:* ${inputs.companyName.trim()}`] : []),
+      `• *Email:* ${inputs.email}`,
+      `• *Phone:* ${inputs.phone}`,
+      ``,
+      `Looking forward to hearing from you and discussing this further! (Ref: ${code})`
     ];
 
     return `https://wa.me/971508408655?text=${encodeURIComponent(lines.join('\n'))}`;
