@@ -19,7 +19,8 @@ import {
   Globe, 
   AlertCircle,
   ChevronDown,
-  Check
+  Check,
+  ExternalLink
 } from 'lucide-react';
 import { BRAND_INFO } from '../data';
 import { ProposalFormInputs } from '../types';
@@ -403,18 +404,34 @@ export default function Contact() {
 
             </div>
 
-            {/* Quick action WhatsApp link */}
-            <div className="mt-8 pt-6 border-t border-white/5 flex flex-wrap gap-4 items-center">
-              <a
-                href={BRAND_INFO.whatsapp}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2.5 bg-green-600 hover:bg-green-500 text-white font-mono text-xs uppercase font-extrabold px-5 py-3 rounded-full shadow-lg shadow-green-600/10 cursor-pointer"
-              >
-                <MessageSquare className="w-4 h-4 fill-white" />
-                Direct WhatsApp Chat
-              </a>
-
+            {/* Embedded Location Map */}
+            <div className="mt-6 pt-6 border-t border-white/5 flex flex-col gap-3">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-mono text-neutral-400 uppercase tracking-wider flex items-center gap-1.5">
+                  <MapPin className="w-3.5 h-3.5 text-red-500" />
+                  Hub Location Map
+                </span>
+                <a 
+                  href="https://maps.google.com/?q=The+Meydan+Hotel+Dubai" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-[11px] font-mono text-red-400 hover:text-red-300 transition-colors inline-flex items-center gap-1 uppercase tracking-wider"
+                >
+                  <span>Open in Maps</span>
+                  <ExternalLink className="w-3 h-3" />
+                </a>
+              </div>
+              
+              <div className="w-full h-52 sm:h-60 rounded-2xl overflow-hidden border border-white/10 relative bg-neutral-900 shadow-inner group">
+                <iframe
+                  title="MICE Media Office Location Map"
+                  src="https://maps.google.com/maps?q=The%20Meydan%20Hotel,%20Grandstand,%20Nad%20Al%20Sheba%201,%20Dubai,%20UAE&t=&z=14&ie=UTF8&iwloc=&output=embed"
+                  className="w-full h-full border-0 grayscale contrast-[1.15] opacity-80 group-hover:opacity-100 group-hover:grayscale-0 transition-all duration-500"
+                  loading="lazy"
+                  allowFullScreen
+                  referrerPolicy="no-referrer-when-downgrade"
+                ></iframe>
+              </div>
             </div>
           </div>
 
