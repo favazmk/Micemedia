@@ -1,82 +1,78 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { useScroll, useSpring, useMotionValueEvent } from 'motion/react';
 
-const DESKTOP_FRAMES = 120;
-const MOBILE_FRAMES = 217;
+const TOTAL_FRAMES = 216;
 
-// Global cache to prevent reloading images when navigating between pages
-const globalCache: Record<string, { images: HTMLImageElement[], loaded: number, isComplete: boolean }> = {
+// Global cache for desktop and mobile to prevent reloading images
+const globalCache: Record<'desktop' | 'mobile', { images: HTMLImageElement[]; loaded: number; isComplete: boolean }> = {
   desktop: { images: [], loaded: 0, isComplete: false },
   mobile: { images: [], loaded: 0, isComplete: false }
 };
 
 interface EventScrollProps {
-  scrollContainerRef: React.RefObject<HTMLElement | null>;
+  scrollContainerRef?: React.RefObject<HTMLElement | null>;
 }
 
 export default function EventScroll({ scrollContainerRef }: EventScrollProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [images, setImages] = useState<HTMLImageElement[]>([]);
   const [loadedCount, setLoadedCount] = useState(0);
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState(() => typeof window !== 'undefined' ? window.innerWidth < 768 : false);
 
   useEffect(() => {
-    // Initial check and resize listener
-    const checkMobile = () => setIsMobile(window.innerWidth < 768);
-    checkMobile(); // Run once on mount
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
+    const handleResize = () => {
+      const mobile = window.innerWidth < 768;
+      setIsMobile((prev) => (prev !== mobile ? mobile : prev));
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const frameCount = isMobile ? MOBILE_FRAMES : DESKTOP_FRAMES;
-  const folder = isMobile ? 'New_fps-sequences-mobile' : 'fps-sequence';
+  const cacheKey = isMobile ? 'mobile' : 'desktop';
+  const folder = isMobile ? 'fps-sequence-mobile' : 'fps-sequence';
 
-  const { scrollYProgress } = useScroll({
-    target: scrollContainerRef,
-    offset: ["start start", "end end"]
-  });
+  const { scrollYProgress } = useScroll(
+    scrollContainerRef
+      ? { target: scrollContainerRef, offset: ["start start", "end end"] }
+      : {}
+  );
 
   const smoothProgress = useSpring(scrollYProgress, { stiffness: 60, damping: 20, restDelta: 0.001 });
 
   useEffect(() => {
     let isCancelled = false;
-    const cacheKey = isMobile ? 'mobile' : 'desktop';
 
     // If already fully loaded globally, skip loading and use cache
     if (globalCache[cacheKey].isComplete) {
-      setLoadedCount(frameCount);
+      setLoadedCount(TOTAL_FRAMES);
       setImages(globalCache[cacheKey].images);
       return;
     }
 
-    const loadedImages: HTMLImageElement[] = new Array(frameCount).fill(null);
+    const loadedImages: HTMLImageElement[] = new Array(TOTAL_FRAMES).fill(null);
     let loaded = 0;
     setLoadedCount(0);
     setImages(loadedImages);
 
-    const loadImagesSequentially = async () => {
+    const loadImages = async () => {
       const loadImage = (i: number): Promise<void> => {
         return new Promise((resolve) => {
           if (isCancelled) return resolve();
           const img = new Image();
           const indexStr = (i + 1).toString().padStart(3, '0');
-          const ext = folder.includes('mobile') ? 'webp' : 'jpg';
-          img.src = `/${folder}/ezgif-frame-${indexStr}.${ext}`;
-          
+          img.src = `/${folder}/frame-${indexStr}.webp`;
+
           img.onload = () => {
             if (isCancelled) return resolve();
             loadedImages[i] = img;
             loaded++;
             setLoadedCount(loaded);
-            
-            // Only update the state array every 10 frames to reduce re-renders,
-            // or when we finish, so React knows about the new references.
-            if (loaded % 10 === 0 || loaded === frameCount) {
+
+            if (loaded % 10 === 0 || loaded === TOTAL_FRAMES) {
               setImages([...loadedImages]);
             }
 
-            // Save to global cache once everything is completely downloaded
-            if (loaded === frameCount) {
+            if (loaded === TOTAL_FRAMES) {
               globalCache[cacheKey].images = [...loadedImages];
               globalCache[cacheKey].loaded = loaded;
               globalCache[cacheKey].isComplete = true;
@@ -88,21 +84,31 @@ export default function EventScroll({ scrollContainerRef }: EventScrollProps) {
         });
       };
 
-      // Load sequentially to prevent CPU/Network spikes that cause heating
-      for (let i = 0; i < frameCount; i++) {
+      // First burst: Load first 12 frames immediately
+      const initialBurst = [];
+      for (let i = 0; i < Math.min(12, TOTAL_FRAMES); i++) {
+        initialBurst.push(loadImage(i));
+      }
+      await Promise.all(initialBurst);
+
+      // Load remaining frames in fast concurrent batches of 20
+      const BATCH_SIZE = 20;
+      for (let i = 12; i < TOTAL_FRAMES; i += BATCH_SIZE) {
         if (isCancelled) break;
-        await loadImage(i);
-        // Small 5ms pause between frames to let the main thread breathe
-        await new Promise(r => setTimeout(r, 5));
+        const batch = [];
+        for (let j = i; j < Math.min(i + BATCH_SIZE, TOTAL_FRAMES); j++) {
+          batch.push(loadImage(j));
+        }
+        await Promise.all(batch);
       }
     };
 
-    loadImagesSequentially();
+    loadImages();
 
     return () => {
       isCancelled = true;
     };
-  }, [isMobile, frameCount, folder]);
+  }, [cacheKey, folder]);
 
   const drawFrame = (frameIndex: number) => {
     if (!canvasRef.current || images.length === 0) return;
@@ -110,9 +116,9 @@ export default function EventScroll({ scrollContainerRef }: EventScrollProps) {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    const safeIndex = Math.max(0, Math.min(frameCount - 1, frameIndex));
+    const safeIndex = Math.max(0, Math.min(TOTAL_FRAMES - 1, frameIndex));
     let img = images[safeIndex];
-    
+
     // Fallback to the closest previously loaded frame if current isn't ready
     if (!img || !img.complete) {
       for (let j = safeIndex; j >= 0; j--) {
@@ -126,7 +132,7 @@ export default function EventScroll({ scrollContainerRef }: EventScrollProps) {
 
     const width = window.innerWidth;
     const height = window.innerHeight;
-    
+
     if (canvas.width !== width || canvas.height !== height) {
       canvas.width = width;
       canvas.height = height;
@@ -142,7 +148,7 @@ export default function EventScroll({ scrollContainerRef }: EventScrollProps) {
     let offsetX = 0;
     let offsetY = 0;
 
-    // object-fit: cover logic to ensure it fully fills the screen on mobile
+    // object-fit: cover logic
     if (imgRatio > canvasRatio) {
       drawHeight = height;
       drawWidth = height * imgRatio;
@@ -157,7 +163,7 @@ export default function EventScroll({ scrollContainerRef }: EventScrollProps) {
   };
 
   useMotionValueEvent(smoothProgress, "change", (latest) => {
-    const idx = Math.floor(latest * (frameCount - 1));
+    const idx = Math.floor(latest * (TOTAL_FRAMES - 1));
     requestAnimationFrame(() => drawFrame(idx));
   });
 
@@ -165,14 +171,17 @@ export default function EventScroll({ scrollContainerRef }: EventScrollProps) {
     if (loadedCount > 0) {
       drawFrame(0);
     }
-    const handleResize = () => drawFrame(Math.floor(smoothProgress.get() * (frameCount - 1)));
+    const handleResize = () => drawFrame(Math.floor(smoothProgress.get() * (TOTAL_FRAMES - 1)));
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, [loadedCount, images, frameCount]);
+  }, [loadedCount, images]);
 
-  // Block scrolling while frames are loading
+  const INITIAL_THRESHOLD = 10;
+  const isReady = loadedCount >= INITIAL_THRESHOLD || globalCache[cacheKey].isComplete;
+
+  // Block scrolling only until the initial burst of frames is loaded (< 0.3s)
   useEffect(() => {
-    if (loadedCount < frameCount) {
+    if (!isReady) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = '';
@@ -180,34 +189,41 @@ export default function EventScroll({ scrollContainerRef }: EventScrollProps) {
     return () => {
       document.body.style.overflow = '';
     };
-  }, [loadedCount, frameCount]);
+  }, [isReady]);
 
   return (
     <>
-      <div className="fixed inset-0 z-0 bg-[#050505] pointer-events-none" style={{ willChange: "transform" }}>
+      <div className="fixed inset-0 z-0 bg-[#050505] pointer-events-none overflow-hidden" style={{ willChange: "transform" }}>
         <canvas ref={canvasRef} className="w-full h-full block opacity-50" />
+        {/* Ultra-soft extended gaussian-feathered corner diffusion (desktop only) */}
+        {!isMobile && (
+          <div 
+            className="absolute -bottom-14 -right-14 w-72 sm:w-96 h-52 sm:h-72 bg-[#050505] rounded-full blur-[52px] pointer-events-none" 
+            style={{ transform: "translate3d(0,0,0)" }}
+          />
+        )}
       </div>
-      
-      {/* Blocking full-screen loading screen */}
-      {loadedCount < frameCount && (
-        <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#050505] backdrop-blur-sm">
+
+      {/* Instant graceful loading screen that dismisses as soon as initial frames are ready */}
+      {!isReady && (
+        <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#050505] transition-opacity duration-500">
           <div className="w-12 h-12 border-2 border-white/10 border-t-red-500 rounded-full animate-spin mb-6"></div>
           <h2 className="text-white font-display text-lg sm:text-xl uppercase tracking-[0.2em] mb-4 font-bold [text-shadow:0_2px_10px_rgba(229,91,91,0.3)]">
             Loading Experience
           </h2>
           <div className="w-48 sm:w-64 h-1 bg-white/10 rounded-full overflow-hidden shadow-[0_0_15px_rgba(229,91,91,0.2)]">
-            <div 
-              className="h-full bg-red-500 transition-all duration-300 relative" 
-              style={{ width: `${(loadedCount / frameCount) * 100}%` }}
+            <div
+              className="h-full bg-red-500 transition-all duration-200 relative"
+              style={{ width: `${(loadedCount / INITIAL_THRESHOLD) * 100}%` }}
             >
               <div className="absolute top-0 right-0 bottom-0 w-8 bg-gradient-to-r from-transparent to-white/50 blur-[2px]"></div>
             </div>
           </div>
-          <p className="text-white/40 font-mono text-[10px] uppercase tracking-widest mt-4">
-            {Math.round((loadedCount / frameCount) * 100)}%
-          </p>
         </div>
       )}
     </>
   );
 }
+
+
+

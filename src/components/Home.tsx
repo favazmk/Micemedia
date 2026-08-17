@@ -82,33 +82,6 @@ interface HomeProps {
   setSelectedPortfolioId?: (id: string | null) => void;
 }
 
-// --- ServiceBackground for dynamic crossfading image sequence ---
-const ServiceBackground = ({ image, index, total, scrollYProgress }: { image?: string; index: number; total: number; scrollYProgress: any; key?: string }) => {
-  // calculate when this index should be visible
-  const rangeStart = (index - 0.5) / (total - 1);
-  const rangeMid = index / (total - 1);
-  const rangeEnd = (index + 0.5) / (total - 1);
-  
-  // Use clamping to ensure 0/1 range logic is handled properly
-  const opacity = useTransform(scrollYProgress, 
-    [Math.max(0, rangeStart), rangeMid, Math.min(1, rangeEnd)], 
-    [index === 0 ? 1 : 0, 1, index === total - 1 ? 1 : 0]
-  );
-  
-  const scale = useTransform(scrollYProgress, 
-    [Math.max(0, rangeStart), Math.min(1, rangeEnd)], 
-    [1.05, 1.15]
-  );
-  
-  if (!image) return null;
-  
-  return (
-    <motion.div 
-      className="absolute inset-0 z-0 bg-cover bg-center transition-all duration-300"
-      style={{ backgroundImage: `url(${image})`, opacity, scale }}
-    />
-  );
-};
 
 export default function Home({
  setActivePage, setSelectedServiceId, setSelectedPortfolioId }: HomeProps) {
@@ -141,23 +114,36 @@ export default function Home({
     const handleResize = () => {
       if (trackRef.current && trackRef.current.parentElement) {
         const trackWidth = trackRef.current.scrollWidth;
-        const viewWidth = trackRef.current.parentElement.clientWidth;
-        const style = window.getComputedStyle(trackRef.current.parentElement);
+        const parent = trackRef.current.parentElement;
+        const viewWidth = parent.clientWidth;
+        const style = window.getComputedStyle(parent);
         const paddingLeft = parseFloat(style.paddingLeft) || 0;
         const paddingRight = parseFloat(style.paddingRight) || 0;
         const contentWidth = viewWidth - paddingLeft - paddingRight;
-        setMaxScroll(Math.max(0, trackWidth - contentWidth));
+        const newMax = Math.max(0, trackWidth - contentWidth);
+        setMaxScroll(newMax);
       }
     };
 
     handleResize();
+
+    let resizeObserver: ResizeObserver | null = null;
+    if (typeof ResizeObserver !== 'undefined') {
+      resizeObserver = new ResizeObserver(() => {
+        handleResize();
+      });
+      if (trackRef.current) resizeObserver.observe(trackRef.current);
+      if (trackRef.current?.parentElement) resizeObserver.observe(trackRef.current.parentElement);
+    }
+
     window.addEventListener('resize', handleResize);
     
     const timer1 = setTimeout(handleResize, 100);
-    const timer2 = setTimeout(handleResize, 500);
-    const timer3 = setTimeout(handleResize, 1500);
+    const timer2 = setTimeout(handleResize, 400);
+    const timer3 = setTimeout(handleResize, 1000);
 
     return () => {
+      if (resizeObserver) resizeObserver.disconnect();
       window.removeEventListener('resize', handleResize);
       clearTimeout(timer1);
       clearTimeout(timer2);
@@ -314,7 +300,7 @@ export default function Home({
     offset: ["start start", "end end"]
   });
   const smoothServicesScroll = useSpring(servicesScroll, { stiffness: 75, damping: 25, restDelta: 0.001 });
-  const servicesX = useTransform(smoothServicesScroll, [0, 1], [0, -maxScroll]);
+  const servicesX = useTransform(smoothServicesScroll, (v) => -v * maxScroll);
 
   // Section 4 (Portfolio) calculations
   const { scrollYProgress: portfolioScroll } = useScroll({
@@ -723,16 +709,13 @@ export default function Home({
       {/* SECTION 3: FEATURED SERVICES */}
       <div
         ref={servicesRef}
-        className={`relative w-full ${isMobile ? 'h-auto' : 'h-[350vh]'}`}
+        className="relative w-full h-[350vh]"
       >
-        <div className={`w-full flex items-center justify-center ${isMobile ? 'relative py-10 flex-col' : 'overflow-hidden sticky top-0 h-screen'}`}>
+        <div className="w-full flex items-center justify-center overflow-hidden sticky top-0 h-screen">
           <motion.section
             style={isMobile ? {
               opacity: 1,
               filter: "none",
-              scale: mobileServicesScale,
-              rotateX: mobileServicesRotateX,
-              y: mobileServicesY,
               transformPerspective: 1200
             } : {
               scale: servicesScale,
@@ -742,64 +725,46 @@ export default function Home({
               transformPerspective: 1200
             }}
             id="home-services"
-            className="w-full max-w-7xl mx-auto px-6 sm:px-12 md:px-16 py-8 sm:py-12 md:py-20 relative z-10 flex flex-col justify-between border border-white/40 rounded-[2rem] lg:rounded-[3rem] mt-10 shadow-[0_0_50px_rgba(255,255,255,0.05)] overflow-hidden"
+            className="w-full max-w-7xl mx-auto px-4 sm:px-12 md:px-16 py-6 sm:py-12 md:py-20 relative z-10 flex flex-col justify-between border border-white/40 rounded-[2rem] lg:rounded-[3rem] shadow-[0_0_30px_rgba(255,255,255,0.08)] overflow-hidden"
           >
-            {/* Jaw-Dropping Image Sequence Backgrounds */}
-            {!isMobile && SERVICES_DATA.map((srv, index) => (
-              <ServiceBackground 
-                key={`bg-${srv.id}`}
-                image={srv.image}
-                index={index}
-                total={SERVICES_DATA.length}
-                scrollYProgress={smoothServicesScroll}
-              />
-            ))}
+            {/* Ambient backlighting blob matching other sections */}
+            <div className="absolute -top-24 -left-24 w-96 h-96 bg-red-650/5 rounded-full blur-[100px] pointer-events-none"></div>
             
-            {/* Deep overlay to ensure text remains highly readable over images */}
-            {!isMobile && (
-              <>
-                <div className="absolute inset-0 z-0 bg-gradient-to-t from-black/90 via-black/60 to-black/90 mix-blend-multiply pointer-events-none"></div>
-                <div className="absolute inset-0 z-0 bg-black/40 backdrop-blur-[2px] pointer-events-none"></div>
-              </>
-            )}
-
-            <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-red-650/15 rounded-full blur-[120px] pointer-events-none z-0"></div>
-            
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-12 relative z-10 drop-shadow-[0_4px_8px_rgba(0,0,0,0.8)]">
-              <div className="flex flex-col gap-2">
-                <span className="text-xs font-mono tracking-widest text-[#E55B5B] uppercase font-bold [text-shadow:0_2px_4px_rgba(0,0,0,0.8)]">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 sm:gap-6 mb-6 sm:mb-12 relative z-10 drop-shadow-[0_4px_8px_rgba(0,0,0,0.8)]">
+              <div className="flex flex-col gap-1.5 sm:gap-2">
+                <span className="text-[10px] sm:text-xs font-mono tracking-widest text-[#E55B5B] uppercase font-bold [text-shadow:0_2px_4px_rgba(0,0,0,0.8)]">
                   WHAT WE DO
                 </span>
-                <h2 className="font-display text-3xl md:text-[40px] font-semibold text-white tracking-tight leading-none [text-shadow:0_4px_16px_rgba(0,0,0,1)]">
+                <h2 className="font-display text-2xl sm:text-3xl md:text-[40px] font-semibold text-white tracking-tight leading-none [text-shadow:0_4px_16px_rgba(0,0,0,1)]">
                   Every Event. Every Scale.
                 </h2>
               </div>
               <button
                 onClick={() => setActivePage('services')}
-                className="font-mono text-xs px-6 py-3 bg-white/10 backdrop-blur-md border border-white/20 rounded-full hover:bg-white/20 transition-all flex items-center gap-2 cursor-pointer text-white tracking-widest font-bold uppercase hover:border-white/40 hover:-translate-y-1 duration-300 shadow-[0_4px_12px_rgba(0,0,0,0.5)] group"
+                className="font-mono text-[10px] sm:text-xs px-4 sm:px-6 py-2.5 sm:py-3 bg-white/10 backdrop-blur-md border border-white/20 rounded-full hover:bg-white/20 transition-all flex items-center gap-2 cursor-pointer text-white tracking-widest font-bold uppercase hover:border-white/40 hover:-translate-y-1 duration-300 shadow-[0_4px_12px_rgba(0,0,0,0.5)] group"
               >
                 ALL DISCIPLINES
-                <ArrowUpRight className="w-4 h-4 text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                <ArrowUpRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
               </button>
             </div>
 
-            {/* Horizontal Scroll Layout with beautiful cards */}
-            <div className={`w-full relative z-10 ${isMobile ? 'flex flex-col gap-6 mt-4' : 'overflow-hidden'}`}>
+            {/* Horizontal Scroll Layout with all 9 beautiful glass cards */}
+            <div className="w-full relative z-10 overflow-hidden">
               <motion.div
                 ref={trackRef}
-                style={isMobile ? { x: 0 } : { x: servicesX }}
-                className={isMobile ? 'flex flex-col gap-6 w-full' : 'flex gap-6 w-max'}
+                style={{ x: servicesX }}
+                className="flex gap-4 sm:gap-6 w-max"
               >
-                {(isMobile ? SERVICES_DATA.slice(0, 3) : SERVICES_DATA).map((srv) => {
+                {SERVICES_DATA.map((srv) => {
                   const IconComponent = serviceIconMap[srv.iconName] || Sparkles;
                   return (
                     <div
                       key={srv.id}
                       onClick={() => handleServiceClick(srv.id)}
-                      className={`group relative bg-[#121212]/90 border p-8 sm:p-10 overflow-hidden rounded-3xl cursor-pointer transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] flex flex-col justify-between min-h-[320px] sm:min-h-[350px] w-[280px] sm:w-[350px] mx-auto shrink-0 shadow-2xl ${
+                      className={`group relative bg-black/20 sm:bg-neutral-950/30 sm:backdrop-blur-md sm:[-webkit-backdrop-filter:blur(12px)] border border-white/20 sm:border-white/10 p-8 sm:p-10 overflow-hidden rounded-3xl cursor-pointer transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] flex flex-col justify-between min-h-[350px] w-[310px] sm:w-[350px] shrink-0 shadow-2xl ${
                         activeTouchServiceId === srv.id
-                          ? 'border-[#E55B5B]/40 -translate-y-2 z-20'
-                          : 'border-white/5 hover:-translate-y-2 hover:border-[#E55B5B]/40'
+                          ? 'border-[#E55B5B]/60 bg-black/40 sm:bg-neutral-950/50 -translate-y-2 z-20 shadow-[0_10px_30px_rgba(229,91,91,0.15)]'
+                          : 'hover:-translate-y-2 hover:border-[#E55B5B]/40 hover:bg-black/35 sm:hover:bg-neutral-950/50'
                       }`}
                     >
                       {/* Faint ambient light glow */}
@@ -809,20 +774,20 @@ export default function Home({
                       
                       <div className="relative z-10 flex flex-col justify-between h-full">
                         <div>
-                          <span className="font-mono text-xs tracking-widest text-neutral-500 block mb-10 uppercase">
+                          <span className="font-mono text-xs tracking-widest text-neutral-400 block mb-10 uppercase drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
                             SERVICE #{srv.number}
                           </span>
-                          <h3 className={`font-display text-xl sm:text-2xl font-extrabold text-white mb-5 leading-snug transition-colors ${
+                          <h3 className={`font-display text-xl sm:text-2xl font-extrabold text-white mb-5 leading-snug drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)] transition-colors ${
                             activeTouchServiceId === srv.id ? 'text-red-500' : 'group-hover:text-red-500'
                           }`}>
                             {srv.title}
                           </h3>
-                          <p className="text-neutral-400 font-sans text-sm leading-relaxed mb-8 min-h-[72px]">
+                          <p className="text-neutral-300 font-sans text-sm leading-relaxed mb-8 min-h-[72px] drop-shadow-[0_2px_6px_rgba(0,0,0,0.9)]">
                             {srv.description}
                           </p>
                         </div>
 
-                        <div className={`flex items-center gap-2 font-mono text-xs text-[#E55B5B] transition-all duration-300 font-semibold uppercase tracking-wider text-left ${
+                        <div className={`flex items-center gap-2 font-mono text-xs text-[#E55B5B] transition-all duration-300 font-semibold uppercase tracking-wider text-left drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] ${
                           activeTouchServiceId === srv.id ? 'gap-4' : 'group-hover:gap-4'
                         }`}>
                           <span>Explore Specialties</span>
@@ -831,7 +796,7 @@ export default function Home({
                       </div>
 
                       {/* Massive faint icon in background */}
-                      <div className={`absolute -right-8 -bottom-8 ${isMobile ? 'opacity-[0.08]' : 'opacity-[0.03]'} text-white scale-150 transition-transform duration-700 pointer-events-none flex items-center justify-center ${
+                      <div className={`absolute -right-8 -bottom-8 opacity-[0.04] text-white scale-150 transition-transform duration-700 pointer-events-none flex items-center justify-center ${
                         activeTouchServiceId === srv.id ? 'scale-125' : 'group-hover:scale-125'
                       }`}>
                         <IconComponent className="w-full h-full stroke-[1.2]" />
