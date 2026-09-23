@@ -106,7 +106,7 @@ export default function Footer({ setActivePage, setSelectedServiceId }: FooterPr
             <ul className="flex flex-col gap-3.5 text-sm text-neutral-400">
               <li>
                 <button onClick={() => handlePageClick('home')} className="hover:text-red-500 transition-colors cursor-pointer text-left">
-                  Home Screen
+                  Home
                 </button>
               </li>
               <li>

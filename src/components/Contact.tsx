@@ -269,7 +269,7 @@ export default function Contact() {
       `Looking forward to hearing from you and discussing this further! (Ref: ${code})`
     ];
 
-    return `https://wa.me/971508408655?text=${encodeURIComponent(lines.join('\n'))}`;
+    return `${BRAND_INFO.whatsapp}?text=${encodeURIComponent(lines.join('\n'))}`;
   };
 
   const handleInputChange = (field: keyof ProposalFormInputs, value: string) => {
