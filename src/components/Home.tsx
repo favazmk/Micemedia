@@ -246,28 +246,24 @@ export default function Home({
   const [isLogosHovered, setIsLogosHovered] = useState(false);
   useSlowMoMarquee(logosRef, isLogosHovered);
 
-  // Setup scroll listeners with a spring damping system for ultimate premium smoothness
+  // Pinned hero: progress 0..1 across the tall hero wrapper drives both the frame
+  // sequence and the chapter captions layered on top of it
   const { scrollYProgress: heroScroll } = useScroll({
     target: heroRef,
-    offset: ["start start", "end start"]
+    offset: ["start start", "end end"]
   });
-  const smoothHeroScroll = useSpring(heroScroll, { stiffness: 85, damping: 28, restDelta: 0.001 });
+  const heroProgress = useSpring(heroScroll, { stiffness: 60, damping: 20, restDelta: 0.001 });
 
-  // Hero calculations
-  const heroScale = useTransform(smoothHeroScroll, [0, 1], [1, 0.82]);
-  const heroY = useTransform(smoothHeroScroll, [0, 1], [0, 220]);
-  const headingOpacity = useTransform(smoothHeroScroll, [0, 0.4, 0.7], [1, 1, 0]);
-  const headingScale = useTransform(smoothHeroScroll, [0, 0.4, 0.8], [1, 0.9, 0.6]);
-  const headingBlurValue = useTransform(smoothHeroScroll, [0, 0.4, 0.8], [0, 0, 20]);
-  const headingBlur = useTransform(headingBlurValue, (val) => `blur(${val}px)`);
-  const headingRotateX = useTransform(smoothHeroScroll, [0, 0.4, 0.8], [0, 0, 45]);
-  const headingY = useTransform(smoothHeroScroll, [0, 0.4, 0.8], [0, -50, -150]);
-  const bgTextY = useTransform(smoothHeroScroll, [0, 1], ["0%", "85%"]);
-  const bgTextOpacity = useTransform(smoothHeroScroll, [0, 0.8], [0.07, 0.01]);
-  const cardsOpacity = useTransform(smoothHeroScroll, [0, 0.5, 0.9], [1, 1, 0]);
-  const heroCard1Y = useTransform(smoothHeroScroll, [0, 1], [0, -130]);
-  const heroCard2Y = useTransform(smoothHeroScroll, [0, 1], [0, -240]);
-  const heroCard3Y = useTransform(smoothHeroScroll, [0, 1], [0, -130]);
+  const introOpacity = useTransform(heroProgress, [0, 0.12, 0.2], [1, 1, 0]);
+  const introY = useTransform(heroProgress, [0, 0.2], [0, -80]);
+  const chapter1Opacity = useTransform(heroProgress, [0.2, 0.28, 0.42, 0.5], [0, 1, 1, 0]);
+  const chapter1Y = useTransform(heroProgress, [0.2, 0.28, 0.42, 0.5], [60, 0, 0, -60]);
+  const chapter2Opacity = useTransform(heroProgress, [0.5, 0.58, 0.72, 0.8], [0, 1, 1, 0]);
+  const chapter2Y = useTransform(heroProgress, [0.5, 0.58, 0.72, 0.8], [60, 0, 0, -60]);
+  const chapter3Opacity = useTransform(heroProgress, [0.82, 0.92, 1], [0, 1, 1]);
+  const chapter3Y = useTransform(heroProgress, [0.82, 0.92], [60, 0]);
+  // Keep the invisible final chapter from swallowing clicks meant for the intro CTAs
+  const chapter3Pointer = useTransform(chapter3Opacity, (v) => (v > 0.5 ? 'auto' : 'none'));
 
   // Section 2 (About) calculations
   const { scrollYProgress: aboutScroll } = useScroll({
@@ -377,86 +373,46 @@ export default function Home({
   return (
     <div ref={containerRef} className="flex flex-col w-full relative" id="homepage-root">
       
-      {/* Global Canvas Sequence */}
-      <EventScroll scrollContainerRef={containerRef} />
+      {/* SECTION 1: PINNED SCROLL-SEQUENCE HERO
+          The frame sequence (blueprint → live event) only plays while this tall
+          wrapper scrolls past; the sticky child keeps it filling the viewport. */}
+      <section ref={heroRef} id="hero-section" className="relative w-full h-[320vh]">
+        <div className="sticky top-0 h-screen w-full overflow-hidden bg-[#050505]">
+          <EventScroll progress={heroProgress} />
 
-      {/* SECTION 1: HERO CONTAINER */}
-      <section ref={heroRef} id="hero-section" className="relative min-h-screen flex items-center justify-center pt-32 pb-10 md:pb-24 overflow-hidden [perspective:1200px]">
-        {/* Cinematic Backdrop Spotlights */}
-        <div className="absolute inset-0 z-0 bg-transparent pointer-events-none">
-            {/* Spotlight 1: Center-Top Red dramatic glow */}
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-5xl h-[80vh] bg-gradient-to-b from-red-650/15 via-red-950/2 to-transparent rounded-full blur-[120px]"></div>
-            {/* Spotlight 2: Stage light pillar effect - softened to avoid sharp lines */}
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[40px] md:w-[60px] h-[75vh] bg-gradient-to-b from-red-500/10 via-red-500/2 to-transparent blur-[8px]"></div>
-            {/* Ambient dust overlay */}
-            <div className="absolute inset-0 bg-[radial-gradient(#ffffff03_1px,transparent_1px)] [background-size:16px_16px] opacity-60"></div>
-          </div>
+          {/* Readability overlays: dim, vignette, header fade, and a bottom fade into the page background */}
+          <div className="absolute inset-0 bg-black/35 pointer-events-none"></div>
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_35%,rgba(0,0,0,0.7)_100%)] pointer-events-none"></div>
+          <div className="absolute top-0 inset-x-0 h-40 bg-gradient-to-b from-black/80 to-transparent pointer-events-none"></div>
+          <div className="absolute bottom-0 inset-x-0 h-48 bg-gradient-to-t from-[#121213] via-[#121213]/70 to-transparent pointer-events-none"></div>
 
-          {/* Massive 3D Parallax Background Title Outline */}
+          {/* Chapter 0: intro headline + CTAs */}
           <motion.div
-            style={{ y: bgTextY, opacity: bgTextOpacity, WebkitTextStroke: "1.5px rgba(200, 138, 115, 0.15)" }}
-            className="absolute inset-0 flex items-center justify-center z-0 select-none pointer-events-none overflow-hidden"
+            style={{ opacity: introOpacity, y: introY }}
+            className="absolute inset-0 flex flex-col items-center justify-center text-center px-6 pt-20"
           >
-            <span className="font-display text-[15vw] font-black text-transparent uppercase tracking-[0.1em] leading-none whitespace-nowrap block select-none">
-              MICE MEDIA
-            </span>
-          </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="inline-flex items-center gap-2 px-4.5 py-2 rounded-full bg-neutral-900/80 border border-pop-mint/30 backdrop-blur-md mb-8 shadow-xl"
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-pop-mint animate-ping"></span>
+              <span className="font-mono text-[10px] md:text-xs tracking-[0.2em] uppercase font-bold text-neutral-200">
+                Dubai's Leading Corporate Event Agency
+              </span>
+            </motion.div>
 
-          <motion.div
-            style={{ y: heroY, transformPerspective: 1200 }}
-            className="max-w-7xl mx-auto px-6 relative z-10 w-full text-center flex flex-col items-center [transform-style:preserve-3d]"
-          >
-          
-          {/* Dynamic Entrance Badge */}
-          <motion.div
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="inline-flex items-center gap-2 px-4.5 py-2 rounded-full bg-neutral-900/80 border border-red-500/20 backdrop-blur-md mb-8 shadow-xl shadow-red-950/10"
-          >
-            <span className="w-1.5 h-1.5 rounded-full bg-red-650 animate-ping"></span>
-            <span className="font-mono text-[10px] md:text-xs tracking-[0.2em] uppercase font-bold text-neutral-300">
-              Dubai's Leading Corporate Event Agency
-            </span>
-          </motion.div>
-
-          {/* Majestic Layered Headline */}
-          <motion.div
-            style={isMobile ? { opacity: 1, scale: 1, filter: "none", rotateX: 0, y: 0 } : { 
-              opacity: headingOpacity, 
-              scale: headingScale, 
-              filter: headingBlur, 
-              rotateX: headingRotateX, 
-              y: headingY,
-            }}
-            className="w-full flex justify-center [transform-style:preserve-3d]"
-          >
             <motion.h1
               initial={{ opacity: 0, y: 25 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.15 }}
-              className="font-display text-4xl sm:text-6xl md:text-8xl font-black tracking-tight text-white uppercase leading-[1.05] max-w-5xl"
+              className="font-display text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tight text-white leading-[1.05] max-w-5xl [text-shadow:0_4px_24px_rgba(0,0,0,0.8)]"
             >
-              Where Every <br />
-              Event Becomes <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-red-400 text-glow inline-block italic font-light tracking-wide normal-case py-1">
-                A Legacy.
-              </span>
+              Where every event <br className="hidden sm:block" />
+              becomes a <span className="script-accent text-pop-mint text-[1.15em]">legacy.</span>
             </motion.h1>
-          </motion.div>
 
-
-          {/* Action CTAs */}
-          <motion.div 
-            style={isMobile ? { opacity: 1, scale: 1, filter: "none", rotateX: 0, y: 0 } : { 
-              opacity: headingOpacity, 
-              scale: headingScale, 
-              filter: headingBlur, 
-              rotateX: headingRotateX, 
-              y: headingY,
-            }}
-            className="w-full flex justify-center [transform-style:preserve-3d]"
-          >
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -467,142 +423,95 @@ export default function Home({
               <GetStartedButton
                 onClick={() => setActivePage('portfolio')}
                 text="Explore Our Work"
-                className="shadow-white/5 whitespace-nowrap text-[10px] sm:text-xs px-2 sm:px-8 flex-1 w-full justify-center"
+                className="shadow-white/5 whitespace-nowrap text-[10px] sm:text-xs px-2 sm:px-8 sm:flex-1 w-full justify-center"
               />
               <PrimaryButton
                 onClick={() => setActivePage('contact')}
                 text="Start Your Event"
-                className="whitespace-nowrap text-[10px] sm:text-xs px-2 sm:px-8 flex-1 w-full justify-center"
+                className="whitespace-nowrap text-[10px] sm:text-xs px-2 sm:px-8 sm:flex-1 w-full justify-center"
               />
             </motion.div>
-          </motion.div>
 
-          {/* Advanced 3D Stage Deck projection */}
-          <motion.div
-            style={isMobile ? { opacity: 1 } : { opacity: cardsOpacity }}
-            className="relative w-full max-w-4xl h-[280px] sm:h-[350px] mt-16 sm:mt-24 flex items-center justify-center [perspective:1200px]"
-            id="hologram-stage-canvas"
-          >
-            {/* Background elements removed as per user request */}
-
-            {/* Floating, Tilted 3D holographic Cards (similar to Cinedaily's layout) */}
-            <div className="absolute inset-0 flex items-center justify-center gap-3 sm:gap-8 pointer-events-auto [transform-style:preserve-3d] z-10">
-              
-              {/* Card 1: Left */}
-              <motion.div
-                style={isMobile ? { y: 0 } : {
-                  y: heroCard1Y
-                }}
-                animate={{
-                  rotateY: isMobile ? (activeTouchHeroCardId === 'portfolio' ? 0 : -10) : -20,
-                  rotateX: isMobile ? (activeTouchHeroCardId === 'portfolio' ? 12 : 6) : 6,
-                  z: isMobile ? (activeTouchHeroCardId === 'portfolio' ? 60 : 10) : 10,
-                  scale: 1
-                }}
-                whileHover={{ 
-                  scale: 1.08, 
-                  rotateY: 0, 
-                  rotateX: 12, 
-                  z: 100
-                }}
-                onClick={() => handleHeroCardClick('portfolio')}
-                transition={{ type: "spring", stiffness: 350, damping: 25 }}
-                className={`w-[105px] sm:w-[220px] h-[180px] sm:h-[280px] bg-neutral-900/90 rounded-2xl border p-3 sm:p-5 flex flex-col justify-between shadow-2xl shadow-black text-left cursor-pointer transition-colors duration-150 ${
-                  activeTouchHeroCardId === 'portfolio' ? 'bg-[#171717]/95 border-red-500/60 z-50' : 'hover:bg-[#171717]/95 border-white/20 hover:border-red-500/60'
-                }`}
-              >
-                <div>
-                  <span className="font-mono text-[8px] sm:text-[10px] text-red-500 uppercase tracking-widest font-bold">01 / EXPERIENCE</span>
-                  <h4 className="font-display text-[10px] sm:text-base font-black text-white uppercase mt-1 sm:mt-2 leading-tight">EVENTS THAT LEAVE A MARK</h4>
-                </div>
-                <p className="font-sans text-[8px] sm:text-[11px] text-neutral-400 leading-relaxed mt-2 line-clamp-4 sm:line-clamp-none">
-                  We don't produce occasions — we engineer experiences people talk about long after the night ends.
-                </p>
-              </motion.div>
-
-              {/* Card 2: Center (Featured Card popping forward) */}
-              <motion.div
-                style={isMobile ? { y: 0 } : {
-                  y: heroCard2Y
-                }}
-                animate={{
-                  rotateX: isMobile ? (activeTouchHeroCardId === 'services' ? 12 : 12) : 12,
-                  z: isMobile ? (activeTouchHeroCardId === 'services' ? 140 : 60) : 60,
-                  scale: 1
-                }}
-                whileHover={{ 
-                  scale: 1.08, 
-                  rotateX: 12, 
-                  z: 140
-                }}
-                onClick={() => handleHeroCardClick('services')}
-                transition={{ type: "spring", stiffness: 350, damping: 25 }}
-                className={`w-[125px] sm:w-[240px] h-[210px] sm:h-[310px] bg-neutral-900/95 rounded-2xl border p-3 sm:p-5 flex flex-col justify-between shadow-2xl shadow-red-950/30 relative overflow-hidden text-left cursor-pointer transition-colors duration-150 ${
-                  activeTouchHeroCardId === 'services' ? 'bg-[#171717]/95 border-red-500/60 z-50' : 'hover:bg-[#171717]/95 border-red-500/25 hover:border-red-500/60'
-                }`}
-              >
-                <div className="absolute -top-12 -right-12 w-24 h-24 bg-red-650/10 rounded-full blur-xl pointer-events-none"></div>
-                <div>
-                  <div className="flex justify-between items-center">
-                    <span className="font-mono text-[8px] sm:text-[10px] text-red-500 uppercase tracking-widest font-bold">02 / STANDARD</span>
-                    <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span>
-                  </div>
-                  <h4 className="font-display text-[11px] sm:text-lg font-black text-white uppercase mt-1 sm:mt-2 leading-tight">PRECISION MEETS CREATIVITY</h4>
-                </div>
-                <div>
-                  <p className="font-sans text-[8px] sm:text-[11px] text-neutral-300 leading-relaxed mb-2 sm:mb-4 line-clamp-5 sm:line-clamp-none">
-                    Two things most agencies can't balance. We refuse to choose between them — on every project, at every scale, without exception.
-                  </p>
-                  <span className="text-[8px] sm:text-[11px] font-mono uppercase tracking-widest text-red-400 font-bold hover:text-red-300 transition-colors inline-flex items-center gap-1 group/link">
-                    OUR SERVICES <span className="transform group-hover/link:translate-x-1 transition-transform">â†’</span>
-                  </span>
-                </div>
-              </motion.div>
-
-              {/* Card 3: Right */}
-              <motion.div
-                style={isMobile ? { y: 0 } : {
-                  y: heroCard3Y
-                }}
-                animate={{
-                  rotateY: isMobile ? (activeTouchHeroCardId === 'about-us' ? 0 : 10) : 20,
-                  rotateX: isMobile ? (activeTouchHeroCardId === 'about-us' ? 12 : 6) : 6,
-                  z: isMobile ? (activeTouchHeroCardId === 'about-us' ? 60 : 10) : 10,
-                  scale: 1
-                }}
-                whileHover={{ 
-                  scale: 1.08, 
-                  rotateY: 0, 
-                  rotateX: 12, 
-                  z: 100
-                }}
-                onClick={() => handleHeroCardClick('about-us')}
-                transition={{ type: "spring", stiffness: 350, damping: 25 }}
-                className={`w-[105px] sm:w-[220px] h-[180px] sm:h-[280px] bg-neutral-900/90 rounded-2xl border p-3 sm:p-5 flex flex-col justify-between shadow-2xl shadow-black text-left cursor-pointer transition-colors duration-150 ${
-                  activeTouchHeroCardId === 'about-us' ? 'bg-[#171717]/95 border-red-500/60 z-50' : 'hover:bg-[#171717]/95 border-white/20 hover:border-red-500/60'
-                }`}
-              >
-                <div>
-                  <span className="font-mono text-[8px] sm:text-[10px] text-red-500 uppercase tracking-widest font-bold">03 / PROMISE</span>
-                  <h4 className="font-display text-[10px] sm:text-base font-black text-white uppercase mt-1 sm:mt-2 leading-tight">YOUR VISION, AMPLIFIED</h4>
-                </div>
-                <p className="font-sans text-[8px] sm:text-[11px] text-neutral-400 leading-relaxed mt-2 line-clamp-4 sm:line-clamp-none">
-                  We take what you imagine and build something that exceeds it — every single time.
-                </p>
-              </motion.div>
-
+            {/* Scroll cue */}
+            <div className="absolute bottom-24 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-neutral-300">
+              <span className="font-mono text-[10px] tracking-[0.3em] uppercase">Scroll to build it</span>
+              <motion.span
+                animate={{ y: [0, 8, 0] }}
+                transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
+                className="w-[1px] h-8 bg-gradient-to-b from-pop-mint to-transparent"
+              />
             </div>
-
-            {/* Spotlights removed */}
           </motion.div>
 
-        </motion.div>
+          {/* Chapter 1: blueprint */}
+          <motion.div
+            style={{ opacity: chapter1Opacity, y: chapter1Y }}
+            className="absolute inset-0 flex items-center px-6 sm:px-12 md:px-20 pointer-events-none"
+          >
+            <div className="max-w-xl">
+              <span className="font-mono text-[10px] sm:text-xs tracking-[0.3em] uppercase text-pop-mint font-bold">Phase 01 — Concept & Design</span>
+              <h2 className="font-display text-4xl sm:text-5xl md:text-6xl font-bold text-white leading-[1.05] mt-4 [text-shadow:0_4px_24px_rgba(0,0,0,0.9)]">
+                It starts as a <span className="script-accent text-pop-mint text-[1.15em]">blueprint.</span>
+              </h2>
+              <p className="font-sans text-sm sm:text-base text-neutral-200 mt-5 max-w-md leading-relaxed [text-shadow:0_2px_10px_rgba(0,0,0,0.9)]">
+                Every stage, truss and table is mapped before a single cable is laid.
+              </p>
+            </div>
+          </motion.div>
 
-        {/* Decorative Spotlight Visual Ring */}
-        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-4/5 h-[1px] bg-gradient-to-r from-transparent via-red-500/30 to-transparent"></div>
+          {/* Chapter 2: build */}
+          <motion.div
+            style={{ opacity: chapter2Opacity, y: chapter2Y }}
+            className="absolute inset-0 flex items-center justify-end px-6 sm:px-12 md:px-20 pointer-events-none"
+          >
+            <div className="max-w-xl text-right">
+              <span className="font-mono text-[10px] sm:text-xs tracking-[0.3em] uppercase text-pop-sun font-bold">Phase 02 — Production & Build</span>
+              <h2 className="font-display text-4xl sm:text-5xl md:text-6xl font-bold text-white leading-[1.05] mt-4 [text-shadow:0_4px_24px_rgba(0,0,0,0.9)]">
+                Then we build every <span className="script-accent text-pop-sun text-[1.15em]">detail.</span>
+              </h2>
+              <p className="font-sans text-sm sm:text-base text-neutral-200 mt-5 max-w-md ml-auto leading-relaxed [text-shadow:0_2px_10px_rgba(0,0,0,0.9)]">
+                Lighting, AV, staging and styling, run end-to-end under our direct supervision.
+              </p>
+            </div>
+          </motion.div>
+
+          {/* Chapter 3: showtime */}
+          <motion.div
+            style={{ opacity: chapter3Opacity, y: chapter3Y, pointerEvents: chapter3Pointer }}
+            className="absolute inset-0 flex flex-col items-center justify-end text-center px-6 pb-28 sm:pb-32"
+          >
+            <span className="font-mono text-[10px] sm:text-xs tracking-[0.3em] uppercase text-pop-pink font-bold">Phase 03 — Showtime</span>
+            <h2 className="font-display text-4xl sm:text-5xl md:text-7xl font-bold text-white leading-[1.05] mt-4 [text-shadow:0_4px_24px_rgba(0,0,0,0.9)]">
+              And the world <span className="script-accent text-pop-pink text-[1.15em]">remembers.</span>
+            </h2>
+            <div className="mt-8 w-full max-w-xs sm:max-w-none flex justify-center">
+              <PrimaryButton
+                onClick={() => setActivePage('contact')}
+                text="Plan Your Event"
+                className="whitespace-nowrap text-[10px] sm:text-xs"
+              />
+            </div>
+          </motion.div>
+
+          {/* Progress rail: Blueprint → Build → Showtime */}
+          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 w-[60%] sm:w-[80%] max-w-md pointer-events-none">
+            <div className="flex justify-between font-mono text-[9px] sm:text-[10px] tracking-[0.2em] uppercase text-neutral-400 mb-2">
+              <span>Blueprint</span>
+              <span>Build</span>
+              <span>Showtime</span>
+            </div>
+            <div className="h-[3px] w-full bg-white/10 rounded-full overflow-hidden">
+              <motion.div
+                style={{ scaleX: heroProgress }}
+                className="h-full origin-left bg-gradient-to-r from-pop-mint via-pop-sun to-pop-pink"
+              />
+            </div>
+          </div>
+        </div>
       </section>
 
       {/* TICKER STRIP */}
+
       <div className="bg-[#dc4d49] border-y border-white/5 py-4.5 overflow-hidden w-full relative z-40">
         <div 
           ref={tickerRef}
@@ -651,6 +560,122 @@ export default function Home({
         </div>
       </div>
 
+      {/* SECTION 1B: WHAT MAKES US DIFFERENT — 3D card deck (previously inside the hero) */}
+      <section id="home-pillars" className="relative w-full max-w-7xl mx-auto px-6 pt-20 md:pt-28 pb-6 z-10 flex flex-col items-center">
+        <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-white text-center tracking-tight leading-tight">
+          Why brands <span className="script-accent text-pop-mint text-[1.15em]">choose</span> us.
+        </h2>
+
+      {/* Advanced 3D Stage Deck projection */}
+      <motion.div
+        className="relative w-full max-w-4xl h-[280px] sm:h-[350px] mt-6 sm:mt-10 flex items-center justify-center [perspective:1200px]"
+        id="hologram-stage-canvas"
+      >
+        {/* Background elements removed as per user request */}
+
+        {/* Floating, Tilted 3D holographic Cards (similar to Cinedaily's layout) */}
+        <div className="absolute inset-0 flex items-center justify-center gap-3 sm:gap-8 pointer-events-auto [transform-style:preserve-3d] z-10">
+          
+          {/* Card 1: Left */}
+          <motion.div
+            animate={{
+              rotateY: isMobile ? (activeTouchHeroCardId === 'portfolio' ? 0 : -10) : -20,
+              rotateX: isMobile ? (activeTouchHeroCardId === 'portfolio' ? 12 : 6) : 6,
+              z: isMobile ? (activeTouchHeroCardId === 'portfolio' ? 60 : 10) : 10,
+              scale: 1
+            }}
+            whileHover={{ 
+              scale: 1.08, 
+              rotateY: 0, 
+              rotateX: 12, 
+              z: 100
+            }}
+            onClick={() => handleHeroCardClick('portfolio')}
+            transition={{ type: "spring", stiffness: 350, damping: 25 }}
+            className={`w-[105px] sm:w-[220px] h-[180px] sm:h-[280px] bg-neutral-900/90 rounded-2xl border p-3 sm:p-5 flex flex-col justify-between shadow-2xl shadow-black text-left cursor-pointer transition-colors duration-150 ${
+              activeTouchHeroCardId === 'portfolio' ? 'bg-[#171717]/95 border-red-500/60 z-50' : 'hover:bg-[#171717]/95 border-white/20 hover:border-red-500/60'
+            }`}
+          >
+            <div>
+              <span className="font-mono text-[8px] sm:text-[10px] text-red-500 uppercase tracking-widest font-bold">01 / EXPERIENCE</span>
+              <h4 className="font-display text-[10px] sm:text-base font-black text-white uppercase mt-1 sm:mt-2 leading-tight">EVENTS THAT LEAVE A MARK</h4>
+            </div>
+            <p className="font-sans text-[8px] sm:text-[11px] text-neutral-400 leading-relaxed mt-2 line-clamp-4 sm:line-clamp-none">
+              We don't produce occasions — we engineer experiences people talk about long after the night ends.
+            </p>
+          </motion.div>
+
+          {/* Card 2: Center (Featured Card popping forward) */}
+          <motion.div
+            animate={{
+              rotateX: isMobile ? (activeTouchHeroCardId === 'services' ? 12 : 12) : 12,
+              z: isMobile ? (activeTouchHeroCardId === 'services' ? 140 : 60) : 60,
+              scale: 1
+            }}
+            whileHover={{ 
+              scale: 1.08, 
+              rotateX: 12, 
+              z: 140
+            }}
+            onClick={() => handleHeroCardClick('services')}
+            transition={{ type: "spring", stiffness: 350, damping: 25 }}
+            className={`w-[125px] sm:w-[240px] h-[210px] sm:h-[310px] bg-neutral-900/95 rounded-2xl border p-3 sm:p-5 flex flex-col justify-between shadow-2xl shadow-red-950/30 relative overflow-hidden text-left cursor-pointer transition-colors duration-150 ${
+              activeTouchHeroCardId === 'services' ? 'bg-[#171717]/95 border-red-500/60 z-50' : 'hover:bg-[#171717]/95 border-red-500/25 hover:border-red-500/60'
+            }`}
+          >
+            <div className="absolute -top-12 -right-12 w-24 h-24 bg-red-650/10 rounded-full blur-xl pointer-events-none"></div>
+            <div>
+              <div className="flex justify-between items-center">
+                <span className="font-mono text-[8px] sm:text-[10px] text-red-500 uppercase tracking-widest font-bold">02 / STANDARD</span>
+                <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span>
+              </div>
+              <h4 className="font-display text-[11px] sm:text-lg font-black text-white uppercase mt-1 sm:mt-2 leading-tight">PRECISION MEETS CREATIVITY</h4>
+            </div>
+            <div>
+              <p className="font-sans text-[8px] sm:text-[11px] text-neutral-300 leading-relaxed mb-2 sm:mb-4 line-clamp-5 sm:line-clamp-none">
+                Two things most agencies can't balance. We refuse to choose between them — on every project, at every scale, without exception.
+              </p>
+              <span className="text-[8px] sm:text-[11px] font-mono uppercase tracking-widest text-red-400 font-bold hover:text-red-300 transition-colors inline-flex items-center gap-1 group/link">
+                OUR SERVICES <span className="transform group-hover/link:translate-x-1 transition-transform">â†’</span>
+              </span>
+            </div>
+          </motion.div>
+
+          {/* Card 3: Right */}
+          <motion.div
+            animate={{
+              rotateY: isMobile ? (activeTouchHeroCardId === 'about-us' ? 0 : 10) : 20,
+              rotateX: isMobile ? (activeTouchHeroCardId === 'about-us' ? 12 : 6) : 6,
+              z: isMobile ? (activeTouchHeroCardId === 'about-us' ? 60 : 10) : 10,
+              scale: 1
+            }}
+            whileHover={{ 
+              scale: 1.08, 
+              rotateY: 0, 
+              rotateX: 12, 
+              z: 100
+            }}
+            onClick={() => handleHeroCardClick('about-us')}
+            transition={{ type: "spring", stiffness: 350, damping: 25 }}
+            className={`w-[105px] sm:w-[220px] h-[180px] sm:h-[280px] bg-neutral-900/90 rounded-2xl border p-3 sm:p-5 flex flex-col justify-between shadow-2xl shadow-black text-left cursor-pointer transition-colors duration-150 ${
+              activeTouchHeroCardId === 'about-us' ? 'bg-[#171717]/95 border-red-500/60 z-50' : 'hover:bg-[#171717]/95 border-white/20 hover:border-red-500/60'
+            }`}
+          >
+            <div>
+              <span className="font-mono text-[8px] sm:text-[10px] text-red-500 uppercase tracking-widest font-bold">03 / PROMISE</span>
+              <h4 className="font-display text-[10px] sm:text-base font-black text-white uppercase mt-1 sm:mt-2 leading-tight">YOUR VISION, AMPLIFIED</h4>
+            </div>
+            <p className="font-sans text-[8px] sm:text-[11px] text-neutral-400 leading-relaxed mt-2 line-clamp-4 sm:line-clamp-none">
+              We take what you imagine and build something that exceeds it — every single time.
+            </p>
+          </motion.div>
+
+        </div>
+
+        {/* Spotlights removed */}
+      </motion.div>
+      </section>
+
       {/* SECTION 2: ABOUT SUMMARY (MINIMAL & BOLD) */}
       <motion.section
         ref={aboutRef}
@@ -673,7 +698,7 @@ export default function Home({
           
           <h2 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tighter text-white leading-[1.1] [text-shadow:0_4px_20px_rgba(0,0,0,1)] uppercase">
             Engineering <br className="hidden sm:block" />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-red-400 text-glow inline-block py-1 drop-shadow-xl">Extraordinary Moments.</span>
+            <span className="script-accent text-pop-mint text-[1.1em] py-2">Extraordinary</span> Moments.
           </h2>
           
           <p className="text-neutral-300 font-sans text-sm sm:text-base md:text-lg leading-relaxed mt-2 max-w-2xl font-medium [text-shadow:0_2px_8px_rgba(0,0,0,1)]">
@@ -736,7 +761,7 @@ export default function Home({
                   WHAT WE DO
                 </span>
                 <h2 className="font-display text-2xl sm:text-3xl md:text-[40px] font-semibold text-white tracking-tight leading-none [text-shadow:0_4px_16px_rgba(0,0,0,1)]">
-                  Every Event. Every Scale.
+                  Every Event. Every <span className="script-accent text-pop-pink text-[1.15em]">Scale.</span>
                 </h2>
               </div>
               <button
@@ -839,7 +864,7 @@ export default function Home({
               Our Work
             </span>
             <h2 className="font-display text-3xl md:text-5xl font-extrabold tracking-tight text-white uppercase leading-none [text-shadow:0_4px_16px_rgba(0,0,0,1)]">
-              Events That <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-red-400 text-glow inline-block py-1 drop-shadow-lg">Speak.</span>
+              What We <span className="script-accent text-pop-sun text-[1.15em]">Done</span>
             </h2>
           </div>
           <PrimaryButton
@@ -934,7 +959,7 @@ export default function Home({
             Trusted By
           </span>
           <h2 className="font-display text-2xl md:text-3xl font-extrabold text-white [text-shadow:0_4px_16px_rgba(0,0,0,1)]">
-            The Brands That Chose Us
+            The Brands That <span className="script-accent text-pop-sky text-[1.15em]">Chose Us</span>
           </h2>
           <p className="text-neutral-300 text-xs font-mono mt-1 font-medium [text-shadow:0_2px_8px_rgba(0,0,0,1)]">
             Leading organisations across UAE and the GCC region.
@@ -1010,7 +1035,7 @@ export default function Home({
             Client Voices
           </span>
           <h2 className="font-display text-3xl md:text-5xl font-extrabold uppercase text-white mt-3 [text-shadow:0_4px_16px_rgba(0,0,0,1)]">
-            Straight From The Source
+            Straight From The <span className="script-accent text-pop-mint text-[1.15em]">Source</span>
           </h2>
           <div className="w-12 h-[2px] bg-red-650 mt-4 rounded-full"></div>
         </div>
@@ -1030,7 +1055,7 @@ export default function Home({
           <Sparkles className="w-8 h-8 text-red-600 mb-6 animate-pulse" />
           <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-black uppercase text-white tracking-tight leading-tight [text-shadow:0_4px_16px_rgba(0,0,0,1)]">
             Ready to Design <br className="sm:hidden" />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-red-400 text-glow inline-block py-1 drop-shadow-lg">Your Event Legacy?</span>
+            Your Event <span className="script-accent text-pop-pink text-[1.15em]">Legacy?</span>
           </h2>
           <p className="mt-6 text-neutral-300 font-sans text-sm md:text-base leading-relaxed max-w-xl font-medium [text-shadow:0_2px_8px_rgba(0,0,0,1)]">
             Join Dubai's leading organizations. Complete our direct briefing questionnaire, estimate attendance, and receive a customized concept draft from our executive management board.

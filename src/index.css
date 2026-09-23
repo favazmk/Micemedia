@@ -1,9 +1,10 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Space+Grotesk:wght@300;400;500;600;700&family=Kaushan+Script&family=JetBrains+Mono:wght@400;500&display=swap');
 @import "tailwindcss";
 
 @theme {
   --font-sans: "Inter", system-ui, -apple-system, sans-serif;
-  --font-display: "Outfit", system-ui, sans-serif;
+  --font-display: "Space Grotesk", system-ui, sans-serif;
+  --font-script: "Kaushan Script", cursive;
   --font-mono: "JetBrains Mono", monospace;
 
   --color-red-50: #fdf4f4;
@@ -26,6 +27,12 @@
   --color-red-glow: rgba(220, 77, 73, 0.15);
   --color-gold-lux: #e46561; /* Cyber Coral Bright */
   --color-gold-dark: #dc4d49; /* Coral Brand */
+
+  /* Playful accent palette for hand-lettered highlight words */
+  --color-pop-mint: #2cf59e;
+  --color-pop-sun: #ffd23f;
+  --color-pop-pink: #ff5fa2;
+  --color-pop-sky: #4cc9f0;
 }
 
 /* Base custom styles */
@@ -100,6 +107,19 @@
 
 .text-glow-gold {
   text-shadow: none;
+}
+
+/* Hand-lettered accent word (e.g. <span class="script-accent text-pop-mint">humble</span>).
+   Resets the uppercase/tracking most headings use so the script reads naturally. */
+.script-accent {
+  font-family: "Kaushan Script", cursive;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+  display: inline-block;
+  transform: rotate(-3deg);
+  padding: 0 0.08em;
+  line-height: 1;
 }
 
 /* Underline effects */

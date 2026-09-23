@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { useScroll, useSpring, useMotionValueEvent } from 'motion/react';
+import { useMotionValueEvent, type MotionValue } from 'motion/react';
 
 const TOTAL_FRAMES = 216;
 
@@ -10,10 +10,11 @@ const globalCache: Record<'desktop' | 'mobile', { images: HTMLImageElement[]; lo
 };
 
 interface EventScrollProps {
-  scrollContainerRef?: React.RefObject<HTMLElement | null>;
+  // 0..1 progress through the pinned hero; the parent owns the scroll tracking
+  progress: MotionValue<number>;
 }
 
-export default function EventScroll({ scrollContainerRef }: EventScrollProps) {
+export default function EventScroll({ progress }: EventScrollProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [images, setImages] = useState<HTMLImageElement[]>([]);
   const [loadedCount, setLoadedCount] = useState(0);
@@ -30,14 +31,6 @@ export default function EventScroll({ scrollContainerRef }: EventScrollProps) {
 
   const cacheKey = isMobile ? 'mobile' : 'desktop';
   const folder = isMobile ? 'fps-sequence-mobile' : 'fps-sequence';
-
-  const { scrollYProgress } = useScroll(
-    scrollContainerRef
-      ? { target: scrollContainerRef, offset: ["start start", "end end"] }
-      : {}
-  );
-
-  const smoothProgress = useSpring(scrollYProgress, { stiffness: 60, damping: 20, restDelta: 0.001 });
 
   useEffect(() => {
     let isCancelled = false;
@@ -130,8 +123,9 @@ export default function EventScroll({ scrollContainerRef }: EventScrollProps) {
     }
     if (!img || !img.complete) return;
 
-    const width = window.innerWidth;
-    const height = window.innerHeight;
+    // Canvas lives inside the sticky hero viewport, so size it to its own box
+    const width = canvas.clientWidth;
+    const height = canvas.clientHeight;
 
     if (canvas.width !== width || canvas.height !== height) {
       canvas.width = width;
@@ -162,7 +156,7 @@ export default function EventScroll({ scrollContainerRef }: EventScrollProps) {
     ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
   };
 
-  useMotionValueEvent(smoothProgress, "change", (latest) => {
+  useMotionValueEvent(progress, "change", (latest) => {
     const idx = Math.floor(latest * (TOTAL_FRAMES - 1));
     requestAnimationFrame(() => drawFrame(idx));
   });
@@ -171,7 +165,7 @@ export default function EventScroll({ scrollContainerRef }: EventScrollProps) {
     if (loadedCount > 0) {
       drawFrame(0);
     }
-    const handleResize = () => drawFrame(Math.floor(smoothProgress.get() * (TOTAL_FRAMES - 1)));
+    const handleResize = () => drawFrame(Math.floor(progress.get() * (TOTAL_FRAMES - 1)));
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, [loadedCount, images]);
@@ -193,16 +187,7 @@ export default function EventScroll({ scrollContainerRef }: EventScrollProps) {
 
   return (
     <>
-      <div className="fixed inset-0 z-0 bg-[#050505] pointer-events-none overflow-hidden" style={{ willChange: "transform" }}>
-        <canvas ref={canvasRef} className="w-full h-full block opacity-50" />
-        {/* Ultra-soft extended gaussian-feathered corner diffusion (desktop only) */}
-        {!isMobile && (
-          <div 
-            className="absolute -bottom-14 -right-14 w-72 sm:w-96 h-52 sm:h-72 bg-[#050505] rounded-full blur-[52px] pointer-events-none" 
-            style={{ transform: "translate3d(0,0,0)" }}
-          />
-        )}
-      </div>
+      <canvas ref={canvasRef} className="absolute inset-0 w-full h-full block" />
 
       {/* Instant graceful loading screen that dismisses as soon as initial frames are ready */}
       {!isReady && (
