@@ -38,3 +38,14 @@ function toAlbums(files: Record<string, string>, root: string): GalleryAlbum[] {
 
 export const EVENT_ALBUMS = toAlbums(eventFiles, '/src/assets/gallery/events');
 export const EXHIBITION_ALBUMS = toAlbums(exhibitionFiles, '/src/assets/gallery/exhibitions');
+
+/** Look up specific gallery photos by file name (e.g. 'dsc09020.webp'), in the order given. */
+export function pickPhotos(fileNames: string[]): { src: string; alt: string }[] {
+  const all = { ...eventFiles, ...exhibitionFiles };
+  return fileNames.flatMap((name) => {
+    const path = Object.keys(all).find((p) => p.endsWith(`/${name}`));
+    if (!path) return [];
+    const album = path.split('/').slice(-2, -1)[0];
+    return [{ src: all[path], alt: album }];
+  });
+}

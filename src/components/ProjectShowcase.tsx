@@ -7,9 +7,10 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { X, MapPin, Calendar, Sparkles, ChevronLeft, ChevronRight } from 'lucide-react';
 import { EVENTS_DATA, EXHIBITIONS_DATA } from '../data';
-import { EVENT_ALBUMS, EXHIBITION_ALBUMS } from '../gallery';
+import { EVENT_ALBUMS, EXHIBITION_ALBUMS, pickPhotos } from '../gallery';
 import { PortfolioItem } from '../types';
 import { PrimaryButton } from '@/components/ui/primary-button';
+import StackSpread from '@/components/ui/stack-spread';
 import ChromaGrid, { ChromaItem } from './ChromaGrid';
 import Particles from './Particles';
 
@@ -23,6 +24,15 @@ const VARIANTS = {
     intro: 'Conferences, galas, launches and celebrations, staged end-to-end across Dubai and the wider GCC.',
     items: EVENTS_DATA,
     albums: EVENT_ALBUMS,
+    // Scroll-to-scatter showcase of the latest client photos (stack order: back -> front)
+    spread: {
+      photos: pickPhotos([
+        'dsc09020.webp', 'haz02651.webp', 'dsc09268.webp', 'dsc09160.webp',
+        'haz04027.webp', 'dsc09219.webp', 'dsc09609.webp', 'haz03529.webp',
+      ]),
+      title: <>Moments we <span className="accent-word text-red-500">made.</span></>,
+      subtitle: 'Awards nights, team days and grand openings, produced end-to-end by MICE Media.',
+    },
   },
   exhibition: {
     eyebrow: 'Exhibitions',
@@ -32,6 +42,14 @@ const VARIANTS = {
     intro: 'Custom and modular exhibition stands, designed, built and run on the show floor from concept to handover.',
     items: EXHIBITIONS_DATA,
     albums: EXHIBITION_ALBUMS,
+    spread: {
+      photos: pickPhotos([
+        'img_4154.webp', 'pic-5.webp', 'img_4038.webp', 'img_4143.webp',
+        'img_4152.webp', 'img_4027.webp', 'img_4179.webp', 'pic-6.webp',
+      ]),
+      title: <>Built to <span className="accent-word text-red-500">stand out.</span></>,
+      subtitle: 'Brand stands, photo moments and activation zones, designed and built on site.',
+    },
   },
 } as const;
 
@@ -127,6 +145,16 @@ export default function ProjectShowcase({ variant, selectedPortfolioId, setSelec
 
         <div className="w-12 h-[2px] bg-red-650 mx-auto mt-6 rounded-full"></div>
       </section>
+
+      {/* SECTION 1B: STACK SPREAD — latest client photos scatter out as you scroll */}
+      {config.spread.photos.length > 0 && (
+        <StackSpread
+          images={config.spread.photos}
+          title={config.spread.title}
+          subtitle={config.spread.subtitle}
+          scrollLength={300}
+        />
+      )}
 
       {/* SECTION 2: CHROMAGRID */}
       <section className="px-6 max-w-7xl mx-auto w-full mb-16" id={`${variant}-chroma-grid`}>
