@@ -120,8 +120,13 @@ export default function Footer({ setActivePage, setSelectedServiceId }: FooterPr
                 </button>
               </li>
               <li>
-                <button onClick={() => handlePageClick('portfolio')} className="hover:text-red-500 transition-colors cursor-pointer text-left">
-                  Portfolio Exhibits
+                <button onClick={() => handlePageClick('exhibition')} className="hover:text-red-500 transition-colors cursor-pointer text-left">
+                  Exhibition
+                </button>
+              </li>
+              <li>
+                <button onClick={() => handlePageClick('events')} className="hover:text-red-500 transition-colors cursor-pointer text-left">
+                  Events
                 </button>
               </li>
               <li>

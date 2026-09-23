@@ -11,7 +11,7 @@ import Footer from './components/Footer';
 import Home from './components/Home';
 import About from './components/About';
 import Services from './components/Services';
-import Portfolio from './components/Portfolio';
+import ProjectShowcase from './components/ProjectShowcase';
 import Contact from './components/Contact';
 import { BRAND_INFO } from './data';
 
@@ -29,14 +29,19 @@ const idToSlugMap: Record<string, string> = {
   'incentives-travel': 'incentives-and-travel-rewards'
 };
 
+// Old portfolio.html links now land on the Events page
+const pageAliases: Record<string, string> = { portfolio: 'events' };
+
+const pageFromPath = () => {
+  let path = window.location.pathname.split('/').pop() || '';
+  path = path.replace('.html', ''); // Handle MPA routes
+  path = pageAliases[path] || path;
+  const validPages = ['home', 'about-us', 'services', 'exhibition', 'events', 'contact'];
+  return validPages.includes(path) ? path : 'home';
+};
+
 export default function App() {
-  const [activePage, setActivePage] = useState<string>(() => {
-    let path = window.location.pathname.split('/').pop() || '';
-    path = path.replace('.html', ''); // Handle MPA routes
-    const validPages = ['home', 'about-us', 'services', 'portfolio', 'contact', 'index'];
-    if (path === 'index' || path === '') return 'home';
-    return validPages.includes(path) ? path : 'home';
-  });
+  const [activePage, setActivePage] = useState<string>(pageFromPath);
 
   const [selectedServiceId, setSelectedServiceId] = useState<string | null>(() => {
     // If on services.html#id, use hash. Otherwise check path for backward compatibility.
@@ -88,9 +93,7 @@ export default function App() {
   // Sync browser back/forward buttons TO the state
   useEffect(() => {
     const handlePopState = () => {
-      let path = window.location.pathname.split('/').pop() || '';
-      path = path.replace('.html', '');
-      const page = path === 'index' || path === '' ? 'home' : path;
+      const page = pageFromPath();
       setActivePage(page);
       
       if (page === 'services' && window.location.hash) {
@@ -123,9 +126,11 @@ export default function App() {
             setActivePage={setActivePage}
           />
         );
-      case 'portfolio':
+      case 'events':
+      case 'exhibition':
         return (
-          <Portfolio
+          <ProjectShowcase
+            variant={activePage}
             selectedPortfolioId={selectedPortfolioId}
             setSelectedPortfolioId={setSelectedPortfolioId}
             setActivePage={setActivePage}

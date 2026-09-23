@@ -24,9 +24,20 @@ import {
 } from 'lucide-react';
 import { GetStartedButton } from '@/components/ui/get-started-button';
 import { PrimaryButton } from '@/components/ui/primary-button';
-import { BRAND_INFO, CLIENT_LOGOS, PORTFOLIO_DATA, SERVICES_DATA } from '../data';
+import { BRAND_INFO, CLIENT_LOGOS, EVENTS_DATA, EXHIBITIONS_DATA, SERVICES_DATA } from '../data';
+import { PortfolioItem } from '../types';
 import TestimonialsSlider from './TestimonialsSlider';
 import EventScroll from './EventScroll';
+import ZoomShowcase from './ZoomShowcase';
+
+// Mix of events and exhibition stands for the "What We Done" zoom reel
+const FEATURED_WORK: PortfolioItem[] = [
+  EVENTS_DATA[0],
+  EXHIBITIONS_DATA[0],
+  EVENTS_DATA[3],
+  EVENTS_DATA[1],
+  EXHIBITIONS_DATA[1],
+].filter(Boolean);
 
 const serviceIconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   Presentation,
@@ -90,7 +101,6 @@ export default function Home({
   const heroRef = useRef<HTMLElement>(null);
   const aboutRef = useRef<HTMLElement>(null);
   const servicesRef = useRef<HTMLElement>(null);
-  const portfolioRef = useRef<HTMLElement>(null);
   const testimonialsRef = useRef<HTMLElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const [maxScroll, setMaxScroll] = useState(0);
@@ -98,7 +108,6 @@ export default function Home({
   // Mobile specific states
   const [isMobile, setIsMobile] = useState(false);
   const [activeTouchHeroCardId, setActiveTouchHeroCardId] = useState<string | null>(null);
-  const [activeTouchPortfolioId, setActiveTouchPortfolioId] = useState<string | null>(null);
   const [activeTouchServiceId, setActiveTouchServiceId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -298,22 +307,6 @@ export default function Home({
   const smoothServicesScroll = useSpring(servicesScroll, { stiffness: 75, damping: 25, restDelta: 0.001 });
   const servicesX = useTransform(smoothServicesScroll, (v) => -v * maxScroll);
 
-  // Section 4 (Portfolio) calculations
-  const { scrollYProgress: portfolioScroll } = useScroll({
-    target: portfolioRef,
-    offset: ["start end", "end start"]
-  });
-  const smoothPortfolioScroll = useSpring(portfolioScroll, { stiffness: 75, damping: 25, restDelta: 0.001 });
-  const portfolioScale = useTransform(smoothPortfolioScroll, [0, 0.25, 0.75, 1], [1.4, 1, 1, 0.6]);
-  const portfolioOpacity = useTransform(smoothPortfolioScroll, [0, 0.25, 0.75, 1], [0, 1, 1, 0]);
-  const portfolioBlurValue = useTransform(smoothPortfolioScroll, [0, 0.25, 0.75, 1], [40, 0, 0, 30]);
-  const portfolioBlur = useTransform(portfolioBlurValue, (v) => `blur(${v}px)`);
-  const portfolioY = useTransform(smoothPortfolioScroll, [0, 0.25, 0.75, 1], [200, 0, 0, -200]);
-
-  const mobilePortfolioScale = useTransform(smoothPortfolioScroll, [0, 0.45, 0.9], [0.82, 1, 0.85]);
-  const mobilePortfolioRotateX = useTransform(smoothPortfolioScroll, [0, 0.45, 0.9], [15, 0, -15]);
-  const mobilePortfolioY = useTransform(smoothPortfolioScroll, [0, 0.45, 0.9], [120, 0, -120]);
-
   // Section 6 (Testimonials) — Horizontal stage-slide + perspective flatten
   const { scrollYProgress: testimonialsScroll } = useScroll({
     target: testimonialsRef,
@@ -334,17 +327,15 @@ export default function Home({
 
 
 
-  const handlePortfolioClick = (itemId: string) => {
-    if (isMobile && activeTouchPortfolioId !== itemId) {
-      setActiveTouchPortfolioId(itemId);
-      setActiveTouchServiceId(null);
-      return;
-    }
-    if (setSelectedPortfolioId) {
-      setSelectedPortfolioId(itemId);
-    }
-    setActivePage('portfolio');
+  const goToPage = (page: string) => {
+    setActivePage(page);
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // Open a featured project on its own page (events or exhibition) with its detail view up
+  const openProject = (item: PortfolioItem) => {
+    setSelectedPortfolioId?.(item.id);
+    goToPage(item.category === 'Exhibition' ? 'exhibition' : 'events');
   };
 
   const handleHeroCardClick = (page: string) => {
@@ -360,7 +351,6 @@ export default function Home({
     if (isMobile && activeTouchServiceId !== itemId) {
       setActiveTouchServiceId(itemId);
       setActiveTouchHeroCardId(null);
-      setActiveTouchPortfolioId(null);
       return;
     }
     if (setSelectedServiceId) {
@@ -421,7 +411,7 @@ export default function Home({
               id="hero-cta-group"
             >
               <GetStartedButton
-                onClick={() => setActivePage('portfolio')}
+                onClick={() => setActivePage('events')}
                 text="Explore Our Work"
                 className="shadow-white/5 whitespace-nowrap text-[10px] sm:text-xs px-2 sm:px-8 sm:flex-1 w-full justify-center"
               />
@@ -579,9 +569,9 @@ export default function Home({
           {/* Card 1: Left */}
           <motion.div
             animate={{
-              rotateY: isMobile ? (activeTouchHeroCardId === 'portfolio' ? 0 : -10) : -20,
-              rotateX: isMobile ? (activeTouchHeroCardId === 'portfolio' ? 12 : 6) : 6,
-              z: isMobile ? (activeTouchHeroCardId === 'portfolio' ? 60 : 10) : 10,
+              rotateY: isMobile ? (activeTouchHeroCardId === 'events' ? 0 : -10) : -20,
+              rotateX: isMobile ? (activeTouchHeroCardId === 'events' ? 12 : 6) : 6,
+              z: isMobile ? (activeTouchHeroCardId === 'events' ? 60 : 10) : 10,
               scale: 1
             }}
             whileHover={{ 
@@ -590,10 +580,10 @@ export default function Home({
               rotateX: 12, 
               z: 100
             }}
-            onClick={() => handleHeroCardClick('portfolio')}
+            onClick={() => handleHeroCardClick('events')}
             transition={{ type: "spring", stiffness: 350, damping: 25 }}
             className={`w-[105px] sm:w-[220px] h-[180px] sm:h-[280px] bg-neutral-900/90 rounded-2xl border p-3 sm:p-5 flex flex-col justify-between shadow-2xl shadow-black text-left cursor-pointer transition-colors duration-150 ${
-              activeTouchHeroCardId === 'portfolio' ? 'bg-[#171717]/95 border-red-500/60 z-50' : 'hover:bg-[#171717]/95 border-white/20 hover:border-red-500/60'
+              activeTouchHeroCardId === 'events' ? 'bg-[#171717]/95 border-red-500/60 z-50' : 'hover:bg-[#171717]/95 border-white/20 hover:border-red-500/60'
             }`}
           >
             <div>
@@ -835,122 +825,65 @@ export default function Home({
         </div>
       </div>
 
-      {/* SECTION 4: RECENT PORTFOLIO EXHIBITS (3 items highlight) */}
-      <motion.section
-        ref={portfolioRef}
-        style={isMobile ? {
-          opacity: 1,
-          filter: "none",
-          scale: mobilePortfolioScale,
-          rotateX: mobilePortfolioRotateX,
-          y: mobilePortfolioY,
-          transformPerspective: 1200
-        } : {
-          scale: portfolioScale,
-          opacity: portfolioOpacity,
-          filter: portfolioBlur,
-          y: portfolioY,
-          transformPerspective: 1200
-        }}
-        id="home-portfolio"
-        className="py-10 md:py-24 max-w-7xl mx-auto px-6 sm:px-12 md:px-16 relative z-10 w-full my-10 md:my-20 border border-white/40 rounded-[2rem] lg:rounded-[3rem] shadow-[0_0_30px_rgba(255,255,255,0.08)]"
-      >
-        {/* Ambient backlighting blobs */}
-        <div className="absolute -top-24 -left-24 w-96 h-96 bg-red-650/5 rounded-full blur-[100px] pointer-events-none"></div>
-
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-16 relative z-10 drop-shadow-[0_4px_8px_rgba(0,0,0,0.8)]">
+      {/* SECTION 4: WHAT WE DONE — each project pins and zooms in as you scroll */}
+      <section id="home-portfolio" className="relative z-10 w-full mt-10 md:mt-20">
+        <div className="max-w-7xl mx-auto px-6 sm:px-12 md:px-16 flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-4 md:mb-0">
           <div className="flex flex-col gap-4">
-            <span className="text-xs font-mono tracking-widest text-red-500 uppercase font-bold [text-shadow:0_2px_4px_rgba(0,0,0,0.8)]">
+            <span className="text-xs font-mono tracking-widest text-red-500 uppercase font-bold">
               Our Work
             </span>
-            <h2 className="font-display text-3xl md:text-5xl font-extrabold tracking-tight text-white uppercase leading-none [text-shadow:0_4px_16px_rgba(0,0,0,1)]">
+            <h2 className="font-display text-3xl md:text-5xl font-bold tracking-tight text-white uppercase leading-none">
               What We <span className="script-accent text-pop-sun text-[1.15em]">Done</span>
             </h2>
           </div>
-          <PrimaryButton
-            onClick={() => setActivePage('portfolio')}
-            text="View All Case Studies"
-          />
-        </div>
-
-        {/* 3 Premium highlights with cards - Interactive CSS Fan-out deck */}
-        <div className="flex flex-col items-center justify-center py-12 relative z-10 w-full overflow-visible" id="home-portfolio-deck">
-          <div className="portfolio-deck-container w-full max-w-lg sm:max-w-4xl min-h-[380px] sm:min-h-[460px]">
-            {PORTFOLIO_DATA.slice(0, 3).map((item, index) => {
-              const IconComponent = index === 0 ? Users : index === 1 ? Sparkles : Trophy;
-              return (
-                <div
-                  key={item.id}
-                  onClick={() => handlePortfolioClick(item.id)}
-                  className={`portfolio-deck-card w-[180px] sm:w-[260px] md:w-[285px] h-[260px] sm:h-[350px] md:h-[385px] flex flex-col overflow-hidden cursor-pointer group/card select-none transition-all duration-300 ${
-                    activeTouchPortfolioId === item.id 
-                      ? 'scale-105 border-red-500/30' 
-                      : ''
-                  } ${isMobile ? 'backdrop-blur-2xl bg-black/60' : ''}`}
-                >
-                  {/* Image Frame inside the glass card */}
-                  <div className="relative w-[92%] h-[50%] mx-auto mt-3 rounded-xl overflow-hidden bg-neutral-950/40 border border-white/5 flex items-center justify-center">
-                    <div className="absolute inset-0 bg-gradient-to-t from-neutral-950/80 via-neutral-950/20 to-transparent z-10 opacity-90"></div>
-                    <img
-                      src={item.image}
-                      alt={item.title}
-                      referrerPolicy="no-referrer"
-                      className={`absolute inset-0 w-full h-full object-cover transition-all duration-500 ease-out ${
-                        activeTouchPortfolioId === item.id 
-                          ? 'scale-110 grayscale-0' 
-                          : `group-hover/card:scale-110 group-hover/card:grayscale-0 ${!isMobile ? 'grayscale' : ''}`
-                      }`}
-                    />
-                    
-                    {/* Centered Floating Icon mimicking user's code */}
-                    <div className={`relative z-20 w-11 h-11 sm:w-14 sm:h-14 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-white shadow-lg transition-all duration-300 ${
-                      activeTouchPortfolioId === item.id 
-                        ? 'scale-110 bg-red-650/20 border-red-500/30' 
-                        : 'group-hover/card:scale-110 group-hover/card:bg-red-650/20 group-hover/card:border-red-500/30'
-                    }`}>
-                      <IconComponent className="w-5 h-5 sm:w-6.5 sm:h-6.5 text-white transition-colors" />
-                    </div>
-
-                    {/* Tag label */}
-                    <span className="absolute top-2.5 left-2.5 z-20 px-2.5 py-0.5 rounded-full text-[8px] sm:text-[9px] font-mono font-bold tracking-wider uppercase bg-red-650 text-white shadow-sm">
-                      {item.category}
-                    </span>
-                  </div>
-
-                  {/* Bottom Text Info & View Case Study strip mimicking .glass::before */}
-                  <div className="flex-1 flex flex-col justify-between p-4.5 relative z-20">
-                    <div className="text-left">
-                      <h3 className={`font-display text-sm sm:text-base font-bold text-white transition-colors duration-300 truncate ${
-                        activeTouchPortfolioId === item.id ? 'text-red-500' : 'group-hover/card:text-red-500'
-                      }`}>
-                        {item.title}
-                      </h3>
-                      <p className="text-neutral-400 text-[10px] sm:text-xs mt-1 sm:mt-1.5 line-clamp-2 leading-relaxed">
-                        {item.caption}
-                      </p>
-                    </div>
-
-                    {/* Styled bottom strip bar */}
-                    <div className="mt-3 pt-3 border-t border-white/5 flex items-center justify-between text-left">
-                      <span className={`text-[9px] sm:text-[10px] font-mono tracking-wider uppercase transition-colors ${
-                        activeTouchPortfolioId === item.id ? 'text-neutral-400' : 'text-neutral-500 group-hover/card:text-neutral-400'
-                      }`}>
-                        {item.tag}
-                      </span>
-                      <div className={`flex items-center gap-1 text-[9px] sm:text-[10px] font-mono uppercase font-bold text-red-500 transition-opacity duration-300 ${
-                        activeTouchPortfolioId === item.id ? 'opacity-100' : 'opacity-0 group-hover/card:opacity-100'
-                      }`}>
-                        <span>Case Study</span>
-                        <ArrowUpRight className="w-3 h-3" />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
+          <div className="flex flex-col sm:flex-row gap-3">
+            <PrimaryButton onClick={() => goToPage('events')} text="All Events" />
+            <PrimaryButton onClick={() => goToPage('exhibition')} text="All Exhibitions" />
           </div>
         </div>
-      </motion.section>
+
+        <ZoomShowcase items={FEATURED_WORK} onOpen={openProject} />
+      </section>
+
+      {/* SECTION 4B: PARTY VIDEO → EXHIBITION PAGE
+          Plays public/videos/party.mp4 when present, otherwise falls back to the existing event reel. */}
+      <section id="home-video" className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 my-16 md:my-24">
+        <button
+          type="button"
+          onClick={() => goToPage('exhibition')}
+          className="group relative block w-full h-[70vh] min-h-[420px] rounded-[2rem] lg:rounded-[3rem] overflow-hidden border border-white/15 cursor-pointer text-left"
+          aria-label="See our exhibitions"
+        >
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="metadata"
+            poster="./images/services/service_gala_1783333277608.webp"
+            className="absolute inset-0 w-full h-full object-cover transition-transform duration-[1.5s] group-hover:scale-105"
+          >
+            <source src="./videos/party.mp4" type="video/mp4" />
+            <source src="./images/hero-color.mp4" type="video/mp4" />
+          </video>
+          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-black/20" />
+
+          <div className="absolute inset-x-0 bottom-0 p-6 sm:p-12 md:p-16 flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <div className="max-w-2xl">
+              <span className="font-mono text-[10px] sm:text-xs tracking-[0.3em] uppercase font-bold text-pop-mint">
+                Exhibitions & Experiences
+              </span>
+              <h2 className="font-display text-3xl sm:text-5xl md:text-6xl font-bold text-white leading-[1.05] mt-4">
+                We build the stand. <br className="hidden sm:block" />
+                Then we throw the <span className="script-accent text-pop-pink text-[1.15em]">party.</span>
+              </h2>
+            </div>
+            <span className="inline-flex items-center gap-2 font-mono text-[10px] sm:text-xs tracking-widest uppercase font-bold text-black bg-white rounded-full px-6 py-4 shrink-0 self-start md:self-auto group-hover:bg-pop-mint transition-colors">
+              See Our Exhibitions <ArrowUpRight className="w-4 h-4" />
+            </span>
+          </div>
+        </button>
+      </section>
 
       {/* SECTION 5: CLIENT LOGOS INFINITE SCROLLER */}
       <section id="home-partners" className="py-10 md:py-20 relative z-20 w-full overflow-hidden max-w-7xl mx-auto my-10 md:my-20 border border-white/40 rounded-[2rem] lg:rounded-[3rem] shadow-[0_0_30px_rgba(255,255,255,0.08)]">
