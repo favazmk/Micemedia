@@ -160,7 +160,8 @@ export const SERVICES_DATA: Service[] = [
   }
 ];
 
-export const PORTFOLIO_DATA: PortfolioItem[] = [
+// Event case studies (everything except exhibition stands)
+export const EVENTS_DATA: PortfolioItem[] = [
   {
     id: "portfolio-01",
     title: "AIA: AirlinePros International Assembly",
@@ -200,7 +201,11 @@ export const PORTFOLIO_DATA: PortfolioItem[] = [
     caption: "Purpose-built team experience that reignited culture and reconnected a high-performing organisation.",
     image: "https://www.micemediaevents.com/wp-content/uploads/2024/05/Swizz-teambuilding-3.jpg",
     tag: "Corporate Culture"
-  },
+  }
+];
+
+// Exhibition stand case studies
+export const EXHIBITIONS_DATA: PortfolioItem[] = [
   {
     id: "portfolio-06",
     title: "AMH Tourism: Exhibition Stand, ATM 2024",
@@ -218,6 +223,8 @@ export const PORTFOLIO_DATA: PortfolioItem[] = [
     tag: "Bespoke Booth"
   }
 ];
+
+export const PORTFOLIO_DATA: PortfolioItem[] = [...EVENTS_DATA, ...EXHIBITIONS_DATA];
 
 export const CLIENT_LOGOS: ClientLogo[] = [
   { id: "1", name: "AirlinePros", logoUrl: "https://www.micemediaevents.com/wp-content/uploads/2024/04/AirlinePros-logo_Final-1024x247.png" },

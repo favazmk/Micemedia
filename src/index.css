@@ -1,9 +1,9 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Bricolage+Grotesque:opsz,wght@12..96,300..800&family=Instrument+Serif:ital@1&family=JetBrains+Mono:wght@400;500&display=swap');
 @import "tailwindcss";
 
 @theme {
   --font-sans: "Inter", system-ui, -apple-system, sans-serif;
-  --font-display: "Outfit", system-ui, sans-serif;
+  --font-display: "Bricolage Grotesque", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", monospace;
 
   --color-red-50: #fdf4f4;
@@ -26,6 +26,7 @@
   --color-red-glow: rgba(220, 77, 73, 0.15);
   --color-gold-lux: #e46561; /* Cyber Coral Bright */
   --color-gold-dark: #dc4d49; /* Coral Brand */
+
 }
 
 /* Base custom styles */
@@ -100,6 +101,19 @@
 
 .text-glow-gold {
   text-shadow: none;
+}
+
+/* Highlight word inside a heading (e.g. <span class="accent-word text-red-500">legacy</span>).
+   Resets the uppercase/tracking most headings use so the italic serif reads naturally. */
+.accent-word {
+  font-family: "Instrument Serif", Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: -0.01em;
+  display: inline-block;
+  padding: 0 0.06em;
+  line-height: 1;
 }
 
 /* Underline effects */
@@ -275,84 +289,6 @@ input[type="range"]::-webkit-slider-thumb {
 input[type="range"]::-webkit-slider-thumb:hover {
   transform: scale(1.2);
 }
-
-/* Interactive overlapping fanning cards for Portfolio section */
-.portfolio-deck-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: relative;
-}
-
-.portfolio-deck-card {
-  position: absolute !important;
-  transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-  transform: rotate(calc(var(--r) * 1deg)) translateY(var(--ty, 0px));
-  backdrop-filter: blur(16px);
-  background: linear-gradient(rgba(255, 255, 255, 0.09), transparent);
-  box-shadow: 0 25px 45px rgba(0, 0, 0, 0.5);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 1.25rem;
-}
-
-/* On hover of the deck, fan them out horizontally, remove rotation, and re-arrange spacing */
-.portfolio-deck-container:hover .portfolio-deck-card {
-  transform: rotate(0deg) translate(var(--tx-hover, 0px), 0px) scale(1.02) !important;
-  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.65), 0 0 40px rgba(59, 20, 20, 0.25);
-}
-
-/* Custom hover state for individual cards within the container */
-.portfolio-deck-card:hover {
-  border-color: rgba(220, 77, 73, 0.6) !important;
-  background: linear-gradient(rgba(255, 255, 255, 0.14), rgba(59, 20, 20, 0.15)) !important;
-}
-
-/* Let the hovered card be on top of all others */
-.portfolio-deck-container .portfolio-deck-card:hover {
-  z-index: 40 !important;
-  transform: rotate(0deg) translate(var(--tx-hover, 0px), -12px) scale(1.08) !important;
-}
-
-.portfolio-deck-card {
-  --tx-hover: 0px;
-}
-.portfolio-deck-card:nth-child(1) {
-  --r: -12;
-  --ty: 12px;
-  --tx-hover: -90px;
-  z-index: 10;
-}
-.portfolio-deck-card:nth-child(2) {
-  --r: 2;
-  --ty: -10px;
-  --tx-hover: 0px;
-  z-index: 20;
-}
-.portfolio-deck-card:nth-child(3) {
-  --r: 14;
-  --ty: 16px;
-  --tx-hover: 90px;
-  z-index: 10;
-}
-
-@media (min-width: 640px) {
-  .portfolio-deck-card:nth-child(1) {
-    --tx-hover: -270px;
-  }
-  .portfolio-deck-card:nth-child(3) {
-    --tx-hover: 270px;
-  }
-}
-
-@media (min-width: 1024px) {
-  .portfolio-deck-card:nth-child(1) {
-    --tx-hover: -315px;
-  }
-  .portfolio-deck-card:nth-child(3) {
-    --tx-hover: 315px;
-  }
-}
-
 
 /* Hero Image Reveal */
 .hero-image{

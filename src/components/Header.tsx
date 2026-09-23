@@ -33,7 +33,8 @@ export default function Header({ activePage, setActivePage }: HeaderProps) {
     { label: 'Home', value: 'home' },
     { label: 'About', value: 'about-us' },
     { label: 'Services', value: 'services' },
-    { label: 'Portfolio', value: 'portfolio' },
+    { label: 'Exhibition', value: 'exhibition' },
+    { label: 'Events', value: 'events' },
     { label: 'Contact', value: 'contact' },
   ];
 

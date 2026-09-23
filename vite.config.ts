@@ -32,7 +32,9 @@ export default defineConfig(() => {
           main: path.resolve(__dirname, 'index.html'),
           about: path.resolve(__dirname, 'about-us.html'),
           services: path.resolve(__dirname, 'services.html'),
-          portfolio: path.resolve(__dirname, 'portfolio.html'),
+          exhibition: path.resolve(__dirname, 'exhibition.html'),
+          events: path.resolve(__dirname, 'events.html'),
+          portfolio: path.resolve(__dirname, 'portfolio.html'), // legacy URL, redirects to Events in-app
           contact: path.resolve(__dirname, 'contact.html'),
         },
       },

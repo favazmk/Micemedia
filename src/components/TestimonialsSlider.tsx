@@ -70,7 +70,7 @@ export default function TestimonialsSlider() {
   return (
     <div className="w-full relative mt-4 select-none" id="testimonials-marquee-viewport">
       {/* Absolute Ambient Backlight center glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] sm:w-[600px] h-[150px] bg-red-650/4 rounded-full blur-[100px] pointer-events-none z-0"></div>
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] sm:w-[600px] h-[150px] bg-[radial-gradient(circle,rgba(59,20,20,0.1)_0%,transparent_70%)] pointer-events-none z-0"></div>
 
       {/* Side masking removed per user request */}
 
