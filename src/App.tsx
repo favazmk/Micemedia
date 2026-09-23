@@ -13,6 +13,7 @@ import About from './components/About';
 import Services from './components/Services';
 import Portfolio from './components/Portfolio';
 import Contact from './components/Contact';
+import { BRAND_INFO } from './data';
 
 const slugToIdMap: Record<string, string> = {
   'conferences-and-seminars': 'conferences-seminars',
@@ -198,7 +199,7 @@ export default function App() {
             >
               {/* WhatsApp Button */}
               <a 
-                href="https://wa.me/971501234567" // Placeholder WhatsApp link
+                href={BRAND_INFO.whatsapp}
                 target="_blank" 
                 rel="noreferrer"
                 className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center shadow-lg hover:scale-110 hover:bg-green-400 transition-all duration-300"
@@ -208,7 +209,7 @@ export default function App() {
               </a>
               {/* Call Button */}
               <a 
-                href="tel:+971501234567" // Placeholder Phone link
+                href={`tel:${BRAND_INFO.phone1}`}
                 className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center shadow-lg hover:scale-110 hover:bg-blue-400 transition-all duration-300"
                 aria-label="Call Us"
               >
