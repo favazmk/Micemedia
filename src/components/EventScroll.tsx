@@ -123,15 +123,20 @@ export default function EventScroll({ progress }: EventScrollProps) {
     }
     if (!img || !img.complete) return;
 
-    // Canvas lives inside the sticky hero viewport, so size it to its own box
+    // Canvas lives inside the sticky hero viewport, so size it to its own box.
+    // Back it with device pixels (capped at 2x) so retina screens don't get a blurry upscale.
     const width = canvas.clientWidth;
     const height = canvas.clientHeight;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
 
-    if (canvas.width !== width || canvas.height !== height) {
-      canvas.width = width;
-      canvas.height = height;
+    if (canvas.width !== Math.round(width * dpr) || canvas.height !== Math.round(height * dpr)) {
+      canvas.width = Math.round(width * dpr);
+      canvas.height = Math.round(height * dpr);
     }
 
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
     ctx.clearRect(0, 0, width, height);
 
     const imgRatio = img.width / img.height;

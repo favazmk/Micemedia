@@ -371,10 +371,10 @@ export default function Home({
           <EventScroll progress={heroProgress} />
 
           {/* Readability overlays: dim, vignette, header fade, and a bottom fade into the page background */}
-          <div className="absolute inset-0 bg-black/35 pointer-events-none"></div>
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_35%,rgba(0,0,0,0.7)_100%)] pointer-events-none"></div>
+          <div className="absolute inset-0 bg-black/15 pointer-events-none"></div>
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_50%,rgba(0,0,0,0.55)_100%)] pointer-events-none"></div>
           <div className="absolute top-0 inset-x-0 h-40 bg-gradient-to-b from-black/80 to-transparent pointer-events-none"></div>
-          <div className="absolute bottom-0 inset-x-0 h-48 bg-gradient-to-t from-[#121213] via-[#121213]/70 to-transparent pointer-events-none"></div>
+          <div className="absolute bottom-0 inset-x-0 h-[55%] bg-gradient-to-t from-[#121213] via-black/45 to-transparent pointer-events-none"></div>
 
           {/* Chapter 0: intro headline + CTAs */}
           <motion.div
