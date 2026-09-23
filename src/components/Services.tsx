@@ -241,7 +241,7 @@ export default function Services({ selectedServiceId, setSelectedServiceId, setA
                             setActivePage('exhibition');
                             window.scrollTo({ top: 0, behavior: 'smooth' });
                           }}
-                          className="font-mono text-[10px] sm:text-xs tracking-widest uppercase font-bold text-pop-mint hover:text-white transition-colors cursor-pointer text-left"
+                          className="font-mono text-[10px] sm:text-xs tracking-widest uppercase font-bold text-red-500 hover:text-white transition-colors cursor-pointer text-left"
                         >
                           See our exhibition stands →
                         </button>
@@ -338,7 +338,7 @@ export default function Services({ selectedServiceId, setSelectedServiceId, setA
                         setActivePage('exhibition');
                         window.scrollTo({ top: 0, behavior: 'smooth' });
                       }}
-                      className="font-mono text-[10px] sm:text-xs tracking-widest uppercase font-bold text-pop-mint hover:text-white transition-colors cursor-pointer text-left"
+                      className="font-mono text-[10px] sm:text-xs tracking-widest uppercase font-bold text-red-500 hover:text-white transition-colors cursor-pointer text-left"
                     >
                       See our exhibition stands →
                     </button>

@@ -8,73 +8,75 @@ import { motion, useScroll, useSpring, useTransform } from 'motion/react';
 import { ArrowUpRight } from 'lucide-react';
 import { PortfolioItem } from '../types';
 
-interface ZoomPanelProps {
+interface ZoomRowProps {
   item: PortfolioItem;
   index: number;
   total: number;
   onOpen: (item: PortfolioItem) => void;
 }
 
-// One project: pinned for a scroll's length while the frame grows from an inset,
-// rounded card to full-bleed and the photo slowly zooms in behind it.
-function ZoomPanel({ item, index, total, onOpen }: ZoomPanelProps) {
+// One project in the zig-zag: the photo slowly zooms in while the row scrolls
+// through the viewport; even rows put the photo left, odd rows put it right.
+function ZoomRow({ item, index, total, onOpen }: ZoomRowProps) {
   const ref = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end end'] });
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] });
   const progress = useSpring(scrollYProgress, { stiffness: 80, damping: 24, restDelta: 0.001 });
-
-  const insetY = useTransform(progress, [0.35, 0.85], [14, 0]);
-  const insetX = useTransform(progress, [0.35, 0.85], [18, 0]);
-  const radius = useTransform(progress, [0.35, 0.85], [32, 0]);
-  const clipPath = useTransform(
-    [insetY, insetX, radius],
-    ([y, x, r]: number[]) => `inset(${y}% ${x}% round ${r}px)`
-  );
-  const imageScale = useTransform(progress, [0.35, 1], [1, 1.3]);
-  const textOpacity = useTransform(progress, [0.7, 0.9], [0, 1]);
-  const textY = useTransform(progress, [0.7, 0.9], [40, 0]);
+  const imageScale = useTransform(progress, [0, 1], [1, 1.35]);
+  const flipped = index % 2 === 1;
 
   return (
-    <div ref={ref} className="relative h-[180vh] w-full">
-      <div className="sticky top-0 h-screen w-full overflow-hidden">
-        <motion.button
+    <div
+      ref={ref}
+      className={`flex flex-col md:flex-row items-center gap-6 md:gap-14 ${flipped ? 'md:flex-row-reverse' : ''}`}
+    >
+      <motion.button
+        type="button"
+        onClick={() => onOpen(item)}
+        initial={{ opacity: 0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: '-80px' }}
+        transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+        className="group relative w-full md:w-[46%] lg:w-[42%] aspect-[4/3] rounded-3xl overflow-hidden border border-white/10 hover:border-red-500/50 cursor-pointer shrink-0 bg-neutral-950"
+        aria-label={`Open ${item.title}`}
+      >
+        <motion.img
+          src={item.image}
+          alt={item.title}
+          referrerPolicy="no-referrer"
+          loading="lazy"
+          style={{ scale: imageScale }}
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+        <span className="absolute top-4 left-4 px-2.5 py-1 rounded-full bg-red-600 text-white font-mono text-[9px] sm:text-[10px] tracking-wider uppercase font-bold">
+          {item.category}
+        </span>
+      </motion.button>
+
+      <motion.div
+        initial={{ opacity: 0, x: flipped ? -30 : 30 }}
+        whileInView={{ opacity: 1, x: 0 }}
+        viewport={{ once: true, margin: '-80px' }}
+        transition={{ duration: 0.7, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+        className={`w-full md:flex-1 ${flipped ? 'md:text-right md:items-end' : ''} flex flex-col`}
+      >
+        <span className="font-mono text-[10px] sm:text-xs tracking-[0.25em] uppercase font-bold text-red-500">
+          {String(index + 1).padStart(2, '0')} / {String(total).padStart(2, '0')} · {item.tag}
+        </span>
+        <h3 className="font-display text-2xl sm:text-3xl md:text-4xl font-bold text-white leading-tight mt-3">
+          {item.title}
+        </h3>
+        <p className="font-sans text-sm sm:text-base text-neutral-400 mt-3 max-w-md leading-relaxed">
+          {item.caption}
+        </p>
+        <button
           type="button"
           onClick={() => onOpen(item)}
-          style={{ clipPath }}
-          className="absolute inset-0 w-full h-full cursor-pointer block text-left bg-neutral-950"
-          aria-label={`Open ${item.title}`}
+          className="mt-5 inline-flex items-center gap-2 font-mono text-[10px] sm:text-xs tracking-widest uppercase font-bold text-white hover:text-red-500 transition-colors cursor-pointer w-fit"
         >
-          <motion.img
-            src={item.image}
-            alt={item.title}
-            referrerPolicy="no-referrer"
-            loading="lazy"
-            style={{ scale: imageScale }}
-            className="absolute inset-0 w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-black/10" />
-
-          <motion.div
-            style={{ opacity: textOpacity, y: textY }}
-            className="absolute inset-x-0 bottom-0 px-6 sm:px-12 md:px-20 pb-16 sm:pb-20 flex flex-col sm:flex-row sm:items-end justify-between gap-6"
-          >
-            <div className="max-w-2xl">
-              <div className="flex items-center gap-3 font-mono text-[10px] sm:text-xs tracking-[0.25em] uppercase font-bold">
-                <span className="text-pop-sun">{String(index + 1).padStart(2, '0')} / {String(total).padStart(2, '0')}</span>
-                <span className="px-2.5 py-1 rounded-full bg-red-600 text-white tracking-wider">{item.category}</span>
-              </div>
-              <h3 className="font-display text-3xl sm:text-5xl md:text-6xl font-bold text-white leading-[1.05] mt-4">
-                {item.title}
-              </h3>
-              <p className="font-sans text-sm sm:text-base text-neutral-200 mt-4 max-w-xl leading-relaxed">
-                {item.caption}
-              </p>
-            </div>
-            <span className="inline-flex items-center gap-2 font-mono text-[10px] sm:text-xs tracking-widest uppercase font-bold text-white border border-white/30 rounded-full px-5 py-3 backdrop-blur-md bg-white/10 shrink-0 self-start sm:self-auto">
-              View Project <ArrowUpRight className="w-4 h-4" />
-            </span>
-          </motion.div>
-        </motion.button>
-      </div>
+          View Project <ArrowUpRight className="w-4 h-4" />
+        </button>
+      </motion.div>
     </div>
   );
 }
@@ -86,10 +88,10 @@ interface ZoomShowcaseProps {
 
 export default function ZoomShowcase({ items, onOpen }: ZoomShowcaseProps) {
   return (
-    <div className="w-full">
+    <div className="w-full max-w-6xl mx-auto px-6 sm:px-12 flex flex-col gap-16 md:gap-24 py-12 md:py-20">
       {items.map((item, index) => (
         <div key={item.id}>
-          <ZoomPanel item={item} index={index} total={items.length} onOpen={onOpen} />
+          <ZoomRow item={item} index={index} total={items.length} onOpen={onOpen} />
         </div>
       ))}
     </div>

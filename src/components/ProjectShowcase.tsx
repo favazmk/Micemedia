@@ -19,7 +19,7 @@ const VARIANTS = {
     eyebrow: 'Our Events',
     title: 'Events That Speak',
     accent: 'for themselves.',
-    accentClass: 'text-pop-sun',
+    accentClass: 'text-red-500',
     intro: 'Conferences, galas, launches and celebrations, staged end-to-end across Dubai and the wider GCC.',
     items: EVENTS_DATA,
     albums: EVENT_ALBUMS,
@@ -28,7 +28,7 @@ const VARIANTS = {
     eyebrow: 'Exhibitions',
     title: 'Stands That Pull',
     accent: 'a crowd.',
-    accentClass: 'text-pop-mint',
+    accentClass: 'text-red-500',
     intro: 'Custom and modular exhibition stands, designed, built and run on the show floor from concept to handover.',
     items: EXHIBITIONS_DATA,
     albums: EXHIBITION_ALBUMS,
@@ -118,7 +118,7 @@ export default function ProjectShowcase({ variant, selectedPortfolioId, setSelec
           className="font-display text-4xl sm:text-5xl md:text-6xl font-bold uppercase text-white tracking-tight"
         >
           {config.title} <br />
-          <span className={`script-accent text-[1.15em] py-2 ${config.accentClass}`}>{config.accent}</span>
+          <span className={`accent-word text-[1.15em] py-2 ${config.accentClass}`}>{config.accent}</span>
         </motion.h1>
         
         <p className="text-neutral-400 font-sans text-sm md:text-base leading-relaxed mt-4 max-w-xl mx-auto">

@@ -385,9 +385,9 @@ export default function Home({
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
-              className="inline-flex items-center gap-2 px-4.5 py-2 rounded-full bg-neutral-900/80 border border-pop-mint/30 backdrop-blur-md mb-8 shadow-xl"
+              className="inline-flex items-center gap-2 px-4.5 py-2 rounded-full bg-neutral-900/80 border border-red-500/30 backdrop-blur-md mb-8 shadow-xl"
             >
-              <span className="w-1.5 h-1.5 rounded-full bg-pop-mint animate-ping"></span>
+              <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-ping"></span>
               <span className="font-mono text-[10px] md:text-xs tracking-[0.2em] uppercase font-bold text-neutral-200">
                 Dubai's Leading Corporate Event Agency
               </span>
@@ -400,7 +400,7 @@ export default function Home({
               className="font-display text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tight text-white leading-[1.05] max-w-5xl [text-shadow:0_4px_24px_rgba(0,0,0,0.8)]"
             >
               Where every event <br className="hidden sm:block" />
-              becomes a <span className="script-accent text-pop-mint text-[1.15em]">legacy.</span>
+              becomes a <span className="accent-word text-red-500 text-[1.15em]">legacy.</span>
             </motion.h1>
 
             <motion.div
@@ -428,7 +428,7 @@ export default function Home({
               <motion.span
                 animate={{ y: [0, 8, 0] }}
                 transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
-                className="w-[1px] h-8 bg-gradient-to-b from-pop-mint to-transparent"
+                className="w-[1px] h-8 bg-gradient-to-b from-red-500 to-transparent"
               />
             </div>
           </motion.div>
@@ -439,9 +439,9 @@ export default function Home({
             className="absolute inset-0 flex items-center px-6 sm:px-12 md:px-20 pointer-events-none"
           >
             <div className="max-w-xl">
-              <span className="font-mono text-[10px] sm:text-xs tracking-[0.3em] uppercase text-pop-mint font-bold">Phase 01 — Concept & Design</span>
+              <span className="font-mono text-[10px] sm:text-xs tracking-[0.3em] uppercase text-red-500 font-bold">Phase 01 — Concept & Design</span>
               <h2 className="font-display text-4xl sm:text-5xl md:text-6xl font-bold text-white leading-[1.05] mt-4 [text-shadow:0_4px_24px_rgba(0,0,0,0.9)]">
-                It starts as a <span className="script-accent text-pop-mint text-[1.15em]">blueprint.</span>
+                It starts as a <span className="accent-word text-red-500 text-[1.15em]">blueprint.</span>
               </h2>
               <p className="font-sans text-sm sm:text-base text-neutral-200 mt-5 max-w-md leading-relaxed [text-shadow:0_2px_10px_rgba(0,0,0,0.9)]">
                 Every stage, truss and table is mapped before a single cable is laid.
@@ -455,9 +455,9 @@ export default function Home({
             className="absolute inset-0 flex items-center justify-end px-6 sm:px-12 md:px-20 pointer-events-none"
           >
             <div className="max-w-xl text-right">
-              <span className="font-mono text-[10px] sm:text-xs tracking-[0.3em] uppercase text-pop-sun font-bold">Phase 02 — Production & Build</span>
+              <span className="font-mono text-[10px] sm:text-xs tracking-[0.3em] uppercase text-red-500 font-bold">Phase 02 — Production & Build</span>
               <h2 className="font-display text-4xl sm:text-5xl md:text-6xl font-bold text-white leading-[1.05] mt-4 [text-shadow:0_4px_24px_rgba(0,0,0,0.9)]">
-                Then we build every <span className="script-accent text-pop-sun text-[1.15em]">detail.</span>
+                Then we build every <span className="accent-word text-red-500 text-[1.15em]">detail.</span>
               </h2>
               <p className="font-sans text-sm sm:text-base text-neutral-200 mt-5 max-w-md ml-auto leading-relaxed [text-shadow:0_2px_10px_rgba(0,0,0,0.9)]">
                 Lighting, AV, staging and styling, run end-to-end under our direct supervision.
@@ -470,9 +470,9 @@ export default function Home({
             style={{ opacity: chapter3Opacity, y: chapter3Y, pointerEvents: chapter3Pointer }}
             className="absolute inset-0 flex flex-col items-center justify-end text-center px-6 pb-28 sm:pb-32"
           >
-            <span className="font-mono text-[10px] sm:text-xs tracking-[0.3em] uppercase text-pop-pink font-bold">Phase 03 — Showtime</span>
+            <span className="font-mono text-[10px] sm:text-xs tracking-[0.3em] uppercase text-red-500 font-bold">Phase 03 — Showtime</span>
             <h2 className="font-display text-4xl sm:text-5xl md:text-7xl font-bold text-white leading-[1.05] mt-4 [text-shadow:0_4px_24px_rgba(0,0,0,0.9)]">
-              And the world <span className="script-accent text-pop-pink text-[1.15em]">remembers.</span>
+              And the world <span className="accent-word text-red-500 text-[1.15em]">remembers.</span>
             </h2>
             <div className="mt-8 w-full max-w-xs sm:max-w-none flex justify-center">
               <PrimaryButton
@@ -493,7 +493,7 @@ export default function Home({
             <div className="h-[3px] w-full bg-white/10 rounded-full overflow-hidden">
               <motion.div
                 style={{ scaleX: heroProgress }}
-                className="h-full origin-left bg-gradient-to-r from-pop-mint via-pop-sun to-pop-pink"
+                className="h-full origin-left bg-gradient-to-r from-red-600 via-red-500 to-red-400"
               />
             </div>
           </div>
@@ -553,7 +553,7 @@ export default function Home({
       {/* SECTION 1B: WHAT MAKES US DIFFERENT — 3D card deck (previously inside the hero) */}
       <section id="home-pillars" className="relative w-full max-w-7xl mx-auto px-6 pt-20 md:pt-28 pb-6 z-10 flex flex-col items-center">
         <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-white text-center tracking-tight leading-tight">
-          Why brands <span className="script-accent text-pop-mint text-[1.15em]">choose</span> us.
+          Why brands <span className="accent-word text-red-500 text-[1.15em]">choose</span> us.
         </h2>
 
       {/* Advanced 3D Stage Deck projection */}
@@ -688,7 +688,7 @@ export default function Home({
           
           <h2 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tighter text-white leading-[1.1] [text-shadow:0_4px_20px_rgba(0,0,0,1)] uppercase">
             Engineering <br className="hidden sm:block" />
-            <span className="script-accent text-pop-mint text-[1.1em] py-2">Extraordinary</span> Moments.
+            <span className="accent-word text-red-500 text-[1.1em] py-2">Extraordinary</span> Moments.
           </h2>
           
           <p className="text-neutral-300 font-sans text-sm sm:text-base md:text-lg leading-relaxed mt-2 max-w-2xl font-medium [text-shadow:0_2px_8px_rgba(0,0,0,1)]">
@@ -751,7 +751,7 @@ export default function Home({
                   WHAT WE DO
                 </span>
                 <h2 className="font-display text-2xl sm:text-3xl md:text-[40px] font-semibold text-white tracking-tight leading-none [text-shadow:0_4px_16px_rgba(0,0,0,1)]">
-                  Every Event. Every <span className="script-accent text-pop-pink text-[1.15em]">Scale.</span>
+                  Every Event. Every <span className="accent-word text-red-500 text-[1.15em]">Scale.</span>
                 </h2>
               </div>
               <button
@@ -825,27 +825,7 @@ export default function Home({
         </div>
       </div>
 
-      {/* SECTION 4: WHAT WE DONE — each project pins and zooms in as you scroll */}
-      <section id="home-portfolio" className="relative z-10 w-full mt-10 md:mt-20">
-        <div className="max-w-7xl mx-auto px-6 sm:px-12 md:px-16 flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-4 md:mb-0">
-          <div className="flex flex-col gap-4">
-            <span className="text-xs font-mono tracking-widest text-red-500 uppercase font-bold">
-              Our Work
-            </span>
-            <h2 className="font-display text-3xl md:text-5xl font-bold tracking-tight text-white uppercase leading-none">
-              What We <span className="script-accent text-pop-sun text-[1.15em]">Done</span>
-            </h2>
-          </div>
-          <div className="flex flex-col sm:flex-row gap-3">
-            <PrimaryButton onClick={() => goToPage('events')} text="All Events" />
-            <PrimaryButton onClick={() => goToPage('exhibition')} text="All Exhibitions" />
-          </div>
-        </div>
-
-        <ZoomShowcase items={FEATURED_WORK} onOpen={openProject} />
-      </section>
-
-      {/* SECTION 4B: PARTY VIDEO → EXHIBITION PAGE
+      {/* SECTION 3B: PARTY VIDEO → EXHIBITION PAGE
           Sources are tried in order: a self-hosted public/videos/party.mp4 if one is added, then the
           hotlinked Mixkit clip ("Front of a concert with the crowd dancing in slow motion", free under
           the Mixkit License), then the existing event reel if the remote file can't be reached. */}
@@ -874,19 +854,39 @@ export default function Home({
 
           <div className="absolute inset-x-0 bottom-0 p-6 sm:p-12 md:p-16 flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div className="max-w-2xl">
-              <span className="font-mono text-[10px] sm:text-xs tracking-[0.3em] uppercase font-bold text-pop-mint">
+              <span className="font-mono text-[10px] sm:text-xs tracking-[0.3em] uppercase font-bold text-red-500">
                 Exhibitions & Experiences
               </span>
               <h2 className="font-display text-3xl sm:text-5xl md:text-6xl font-bold text-white leading-[1.05] mt-4">
                 We build the stand. <br className="hidden sm:block" />
-                Then we throw the <span className="script-accent text-pop-pink text-[1.15em]">party.</span>
+                Then we throw the <span className="accent-word text-red-500 text-[1.15em]">party.</span>
               </h2>
             </div>
-            <span className="inline-flex items-center gap-2 font-mono text-[10px] sm:text-xs tracking-widest uppercase font-bold text-black bg-white rounded-full px-6 py-4 shrink-0 self-start md:self-auto group-hover:bg-pop-mint transition-colors">
+            <span className="inline-flex items-center gap-2 font-mono text-[10px] sm:text-xs tracking-widest uppercase font-bold text-black bg-white rounded-full px-6 py-4 shrink-0 self-start md:self-auto group-hover:bg-red-500 group-hover:text-white transition-colors">
               See Our Exhibitions <ArrowUpRight className="w-4 h-4" />
             </span>
           </div>
         </button>
+      </section>
+
+      {/* SECTION 4: WHAT WE DONE — zig-zag rows, each photo zooms in as you scroll */}
+      <section id="home-portfolio" className="relative z-10 w-full mt-10 md:mt-20">
+        <div className="max-w-7xl mx-auto px-6 sm:px-12 md:px-16 flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-4 md:mb-0">
+          <div className="flex flex-col gap-4">
+            <span className="text-xs font-mono tracking-widest text-red-500 uppercase font-bold">
+              Our Work
+            </span>
+            <h2 className="font-display text-3xl md:text-5xl font-bold tracking-tight text-white uppercase leading-none">
+              What We <span className="accent-word text-red-500 text-[1.15em]">Done</span>
+            </h2>
+          </div>
+          <div className="flex flex-col sm:flex-row gap-3">
+            <PrimaryButton onClick={() => goToPage('events')} text="All Events" />
+            <PrimaryButton onClick={() => goToPage('exhibition')} text="All Exhibitions" />
+          </div>
+        </div>
+
+        <ZoomShowcase items={FEATURED_WORK} onOpen={openProject} />
       </section>
 
       {/* SECTION 5: CLIENT LOGOS INFINITE SCROLLER */}
@@ -896,7 +896,7 @@ export default function Home({
             Trusted By
           </span>
           <h2 className="font-display text-2xl md:text-3xl font-extrabold text-white [text-shadow:0_4px_16px_rgba(0,0,0,1)]">
-            The Brands That <span className="script-accent text-pop-sky text-[1.15em]">Chose Us</span>
+            The Brands That <span className="accent-word text-red-500 text-[1.15em]">Chose Us</span>
           </h2>
           <p className="text-neutral-300 text-xs font-mono mt-1 font-medium [text-shadow:0_2px_8px_rgba(0,0,0,1)]">
             Leading organisations across UAE and the GCC region.
@@ -972,7 +972,7 @@ export default function Home({
             Client Voices
           </span>
           <h2 className="font-display text-3xl md:text-5xl font-extrabold uppercase text-white mt-3 [text-shadow:0_4px_16px_rgba(0,0,0,1)]">
-            Straight From The <span className="script-accent text-pop-mint text-[1.15em]">Source</span>
+            Straight From The <span className="accent-word text-red-500 text-[1.15em]">Source</span>
           </h2>
           <div className="w-12 h-[2px] bg-red-650 mt-4 rounded-full"></div>
         </div>
@@ -992,7 +992,7 @@ export default function Home({
           <Sparkles className="w-8 h-8 text-red-600 mb-6 animate-pulse" />
           <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-black uppercase text-white tracking-tight leading-tight [text-shadow:0_4px_16px_rgba(0,0,0,1)]">
             Ready to Design <br className="sm:hidden" />
-            Your Event <span className="script-accent text-pop-pink text-[1.15em]">Legacy?</span>
+            Your Event <span className="accent-word text-red-500 text-[1.15em]">Legacy?</span>
           </h2>
           <p className="mt-6 text-neutral-300 font-sans text-sm md:text-base leading-relaxed max-w-xl font-medium [text-shadow:0_2px_8px_rgba(0,0,0,1)]">
             Join Dubai's leading organizations. Complete our direct briefing questionnaire, estimate attendance, and receive a customized concept draft from our executive management board.
