@@ -5,78 +5,56 @@
 
 import { useRef } from 'react';
 import { motion, useScroll, useSpring, useTransform } from 'motion/react';
-import { ArrowUpRight } from 'lucide-react';
 import { PortfolioItem } from '../types';
 
-interface ZoomRowProps {
+// Deliberately uneven collage: each card gets its own width, horizontal offset,
+// aspect ratio and zoom range so the zig-zag never feels like a uniform grid.
+const LAYOUT = [
+  { width: 'md:w-[40%]', offset: 'md:ml-[4%]',  aspect: 'aspect-[4/3]', from: 0.72, to: 1.08 },
+  { width: 'md:w-[30%]', offset: 'md:ml-[62%]', aspect: 'aspect-[3/4]', from: 0.6,  to: 1.15 },
+  { width: 'md:w-[34%]', offset: 'md:ml-[18%]', aspect: 'aspect-square', from: 0.8, to: 1.05 },
+  { width: 'md:w-[38%]', offset: 'md:ml-[54%]', aspect: 'aspect-[16/10]', from: 0.65, to: 1.12 },
+  { width: 'md:w-[28%]', offset: 'md:ml-[8%]',  aspect: 'aspect-[4/5]', from: 0.75, to: 1.1 },
+];
+
+interface ZoomCardProps {
   item: PortfolioItem;
   index: number;
-  total: number;
   onOpen: (item: PortfolioItem) => void;
 }
 
-// One project in the zig-zag: the photo slowly zooms in while the row scrolls
-// through the viewport; even rows put the photo left, odd rows put it right.
-function ZoomRow({ item, index, total, onOpen }: ZoomRowProps) {
+// The whole card (border included) scales up as it travels through the viewport.
+function ZoomCard({ item, index, onOpen }: ZoomCardProps) {
   const ref = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] });
-  const progress = useSpring(scrollYProgress, { stiffness: 80, damping: 24, restDelta: 0.001 });
-  const imageScale = useTransform(progress, [0, 1], [1, 1.35]);
-  const flipped = index % 2 === 1;
+  const layout = LAYOUT[index % LAYOUT.length];
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'center center'] });
+  const progress = useSpring(scrollYProgress, { stiffness: 80, damping: 22, restDelta: 0.001 });
+  // Phones show one full-width card at a time, so zoom gently and never past 100%
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+  const scale = useTransform(progress, [0, 1], isMobile ? [0.82, 1] : [layout.from, layout.to]);
+  const opacity = useTransform(progress, [0, 0.35], [0, 1]);
 
   return (
-    <div
-      ref={ref}
-      className={`flex flex-col md:flex-row items-center gap-6 md:gap-14 ${flipped ? 'md:flex-row-reverse' : ''}`}
-    >
+    <div ref={ref} className={`w-full ${layout.width} ${layout.offset} ${index > 0 ? 'md:-mt-24' : ''}`}>
       <motion.button
         type="button"
         onClick={() => onOpen(item)}
-        initial={{ opacity: 0, y: 40 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: '-80px' }}
-        transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-        className="group relative w-full md:w-[46%] lg:w-[42%] aspect-[4/3] rounded-3xl overflow-hidden border border-white/10 hover:border-red-500/50 cursor-pointer shrink-0 bg-neutral-950"
+        style={{ scale, opacity }}
+        className={`group relative block w-full ${layout.aspect} rounded-3xl overflow-hidden border border-white/15 hover:border-red-500/60 cursor-pointer bg-neutral-950 shadow-2xl shadow-black/60 transition-colors`}
         aria-label={`Open ${item.title}`}
       >
-        <motion.img
+        <img
           src={item.image}
           alt={item.title}
           referrerPolicy="no-referrer"
           loading="lazy"
-          style={{ scale: imageScale }}
           className="absolute inset-0 w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-        <span className="absolute top-4 left-4 px-2.5 py-1 rounded-full bg-red-600 text-white font-mono text-[9px] sm:text-[10px] tracking-wider uppercase font-bold">
-          {item.category}
+        <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/80 to-transparent" />
+        <span className="absolute left-4 bottom-4 right-4 font-display text-sm sm:text-base font-bold text-white text-left leading-tight group-hover:text-red-500 transition-colors">
+          {item.title}
         </span>
       </motion.button>
-
-      <motion.div
-        initial={{ opacity: 0, x: flipped ? -30 : 30 }}
-        whileInView={{ opacity: 1, x: 0 }}
-        viewport={{ once: true, margin: '-80px' }}
-        transition={{ duration: 0.7, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-        className={`w-full md:flex-1 ${flipped ? 'md:text-right md:items-end' : ''} flex flex-col`}
-      >
-        <span className="font-mono text-[10px] sm:text-xs tracking-[0.25em] uppercase font-bold text-red-500">
-          {String(index + 1).padStart(2, '0')} / {String(total).padStart(2, '0')} · {item.tag}
-        </span>
-        <h3 className="font-display text-2xl sm:text-3xl md:text-4xl font-bold text-white leading-tight mt-3">
-          {item.title}
-        </h3>
-        <p className="font-sans text-sm sm:text-base text-neutral-400 mt-3 max-w-md leading-relaxed">
-          {item.caption}
-        </p>
-        <button
-          type="button"
-          onClick={() => onOpen(item)}
-          className="mt-5 inline-flex items-center gap-2 font-mono text-[10px] sm:text-xs tracking-widest uppercase font-bold text-white hover:text-red-500 transition-colors cursor-pointer w-fit"
-        >
-          View Project <ArrowUpRight className="w-4 h-4" />
-        </button>
-      </motion.div>
     </div>
   );
 }
@@ -88,10 +66,10 @@ interface ZoomShowcaseProps {
 
 export default function ZoomShowcase({ items, onOpen }: ZoomShowcaseProps) {
   return (
-    <div className="w-full max-w-6xl mx-auto px-6 sm:px-12 flex flex-col gap-16 md:gap-24 py-12 md:py-20">
+    <div className="w-full max-w-6xl mx-auto px-6 sm:px-12 flex flex-col gap-10 md:gap-0 py-12 md:py-20">
       {items.map((item, index) => (
         <div key={item.id}>
-          <ZoomRow item={item} index={index} total={items.length} onOpen={onOpen} />
+          <ZoomCard item={item} index={index} onOpen={onOpen} />
         </div>
       ))}
     </div>
