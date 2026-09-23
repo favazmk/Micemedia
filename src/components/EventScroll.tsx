@@ -55,13 +55,17 @@ export default function EventScroll({ progress }: EventScrollProps) {
           const indexStr = (i + 1).toString().padStart(3, '0');
           img.src = `./${folder}/frame-${indexStr}.webp`;
 
-          img.onload = () => {
+          img.onload = async () => {
+            if (isCancelled) return resolve();
+            // Decode off the scroll path so the first draw of each frame doesn't hitch
+            await img.decode?.().catch(() => {});
             if (isCancelled) return resolve();
             loadedImages[i] = img;
             loaded++;
-            setLoadedCount(loaded);
 
-            if (loaded % 10 === 0 || loaded === TOTAL_FRAMES) {
+            // Batch React updates: every image re-rendering the component was costly
+            if (loaded <= 12 || loaded % 20 === 0 || loaded === TOTAL_FRAMES) {
+              setLoadedCount(loaded);
               setImages([...loadedImages]);
             }
 
@@ -161,19 +165,34 @@ export default function EventScroll({ progress }: EventScrollProps) {
     ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
   };
 
-  useMotionValueEvent(progress, "change", (latest) => {
-    const idx = Math.floor(latest * (TOTAL_FRAMES - 1));
-    requestAnimationFrame(() => drawFrame(idx));
-  });
+  // Draw at most once per display frame, and only when the frame index actually changes
+  const drawFrameRef = useRef(drawFrame);
+  drawFrameRef.current = drawFrame;
+  const lastDrawnRef = useRef(-1);
+  const rafRef = useRef(0);
+  const scheduleDraw = (force = false) => {
+    if (force) lastDrawnRef.current = -1;
+    if (rafRef.current) return;
+    rafRef.current = requestAnimationFrame(() => {
+      rafRef.current = 0;
+      const idx = Math.floor(progress.get() * (TOTAL_FRAMES - 1));
+      if (idx === lastDrawnRef.current) return;
+      lastDrawnRef.current = idx;
+      drawFrameRef.current(idx);
+    });
+  };
 
+  useMotionValueEvent(progress, "change", () => scheduleDraw());
+
+  // New frames arrived (or the viewport changed): redraw wherever the user currently is
   useEffect(() => {
-    if (loadedCount > 0) {
-      drawFrame(0);
-    }
-    const handleResize = () => drawFrame(Math.floor(progress.get() * (TOTAL_FRAMES - 1)));
+    if (loadedCount > 0) scheduleDraw(true);
+    const handleResize = () => scheduleDraw(true);
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, [loadedCount, images]);
+
+  useEffect(() => () => cancelAnimationFrame(rafRef.current), []);
 
   const INITIAL_THRESHOLD = 10;
   const isReady = loadedCount >= INITIAL_THRESHOLD || globalCache[cacheKey].isComplete;

@@ -261,7 +261,8 @@ export default function Home({
     target: heroRef,
     offset: ["start start", "end end"]
   });
-  const heroProgress = useSpring(heroScroll, { stiffness: 60, damping: 20, restDelta: 0.001 });
+  // Light smoothing only: a loose spring made the sequence visibly trail behind the scroll
+  const heroProgress = useSpring(heroScroll, { stiffness: 180, damping: 34, restDelta: 0.001 });
 
   const introOpacity = useTransform(heroProgress, [0, 0.12, 0.2], [1, 1, 0]);
   const introY = useTransform(heroProgress, [0, 0.2], [0, -80]);
@@ -743,7 +744,7 @@ export default function Home({
             className="w-full max-w-7xl mx-auto px-4 sm:px-12 md:px-16 py-6 sm:py-12 md:py-20 relative z-10 flex flex-col justify-between border border-white/40 rounded-[2rem] lg:rounded-[3rem] shadow-[0_0_30px_rgba(255,255,255,0.08)] overflow-hidden"
           >
             {/* Ambient backlighting blob matching other sections */}
-            <div className="absolute -top-24 -left-24 w-96 h-96 bg-red-650/5 rounded-full blur-[100px] pointer-events-none"></div>
+            <div className="absolute -top-24 -left-24 w-96 h-96 bg-[radial-gradient(circle,rgba(59,20,20,0.12)_0%,transparent_70%)] pointer-events-none"></div>
             
             <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 sm:gap-6 mb-6 sm:mb-12 relative z-10 drop-shadow-[0_4px_8px_rgba(0,0,0,0.8)]">
               <div className="flex flex-col gap-1.5 sm:gap-2">
@@ -965,7 +966,7 @@ export default function Home({
         className="py-20 md:py-24 max-w-7xl mx-auto px-6 sm:px-12 md:px-16 relative z-10 w-full my-20 border border-white/40 rounded-[2rem] lg:rounded-[3rem] shadow-[0_0_30px_rgba(255,255,255,0.08)]"
       >
         {/* Soft backlight spot */}
-        <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-red-650/5 rounded-full blur-[100px] pointer-events-none"></div>
+        <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-[radial-gradient(circle,rgba(59,20,20,0.12)_0%,transparent_70%)] pointer-events-none"></div>
 
         <div className="text-center mb-10 flex flex-col items-center relative z-10 drop-shadow-[0_4px_8px_rgba(0,0,0,0.8)]">
           <span className="text-xs font-mono tracking-widest text-red-500 uppercase font-bold [text-shadow:0_2px_4px_rgba(0,0,0,0.8)]">
@@ -985,7 +986,7 @@ export default function Home({
       {/* SECTION 7: CALL TO ACTION BOTTOM BANNER */}
       <section id="cta-bottom" className="py-24 border-t border-white/5 relative overflow-hidden z-20">
         <div className="absolute inset-0 z-0 pointer-events-none">
-          <div className="absolute bottom-[-100px] left-1/2 -translate-x-1/2 w-4/5 h-[300px] bg-red-650/10 rounded-full blur-[100px]"></div>
+          <div className="absolute bottom-[-100px] left-1/2 -translate-x-1/2 w-4/5 h-[300px] bg-[radial-gradient(circle,rgba(59,20,20,0.2)_0%,transparent_70%)]"></div>
         </div>
 
         <div className="max-w-4xl mx-auto px-6 text-center relative z-10 flex flex-col items-center drop-shadow-[0_4px_8px_rgba(0,0,0,0.8)]">
