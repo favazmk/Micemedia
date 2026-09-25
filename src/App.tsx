@@ -77,8 +77,10 @@ export default function App() {
             }
         }
       }
-      // Only scroll to top if we are actually changing pages, not just expanding a service accordion
-      if (currentPath.split('/')[1] !== newPath.split('/')[1]) {
+      // Only scroll to top if we are actually changing pages, not just updating the hash
+      const currentBasePage = window.location.pathname.split('/').pop()?.replace('.html', '') || 'home';
+      const newBasePage = activePage === 'index' ? 'home' : activePage;
+      if (currentBasePage !== newBasePage) {
         window.scrollTo(0, 0);
       }
     }
