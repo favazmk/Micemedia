@@ -28,6 +28,8 @@
     "vite": "^6.2.3"
   },
   "devDependencies": {
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-legacy": "^6.1.1",
     "tailwindcss": "^4.1.14",
     "terser": "^5.50.0",

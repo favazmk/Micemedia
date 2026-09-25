@@ -11,8 +11,9 @@ import Footer from './components/Footer';
 import Home from './components/Home';
 import About from './components/About';
 import Services from './components/Services';
-import Portfolio from './components/Portfolio';
+import ProjectShowcase from './components/ProjectShowcase';
 import Contact from './components/Contact';
+import { BRAND_INFO } from './data';
 
 const slugToIdMap: Record<string, string> = {
   'conferences-and-seminars': 'conferences-seminars',
@@ -28,14 +29,19 @@ const idToSlugMap: Record<string, string> = {
   'incentives-travel': 'incentives-and-travel-rewards'
 };
 
+// Old portfolio.html links now land on the Events page
+const pageAliases: Record<string, string> = { portfolio: 'events' };
+
+const pageFromPath = () => {
+  let path = window.location.pathname.split('/').pop() || '';
+  path = path.replace('.html', ''); // Handle MPA routes
+  path = pageAliases[path] || path;
+  const validPages = ['home', 'about-us', 'services', 'exhibition', 'events', 'contact'];
+  return validPages.includes(path) ? path : 'home';
+};
+
 export default function App() {
-  const [activePage, setActivePage] = useState<string>(() => {
-    let path = window.location.pathname.split('/').pop() || '';
-    path = path.replace('.html', ''); // Handle MPA routes
-    const validPages = ['home', 'about-us', 'services', 'portfolio', 'contact', 'index'];
-    if (path === 'index' || path === '') return 'home';
-    return validPages.includes(path) ? path : 'home';
-  });
+  const [activePage, setActivePage] = useState<string>(pageFromPath);
 
   const [selectedServiceId, setSelectedServiceId] = useState<string | null>(() => {
     // If on services.html#id, use hash. Otherwise check path for backward compatibility.
@@ -89,9 +95,7 @@ export default function App() {
   // Sync browser back/forward buttons TO the state
   useEffect(() => {
     const handlePopState = () => {
-      let path = window.location.pathname.split('/').pop() || '';
-      path = path.replace('.html', '');
-      const page = path === 'index' || path === '' ? 'home' : path;
+      const page = pageFromPath();
       setActivePage(page);
       
       if (page === 'services' && window.location.hash) {
@@ -124,9 +128,11 @@ export default function App() {
             setActivePage={setActivePage}
           />
         );
-      case 'portfolio':
+      case 'events':
+      case 'exhibition':
         return (
-          <Portfolio
+          <ProjectShowcase
+            variant={activePage}
             selectedPortfolioId={selectedPortfolioId}
             setSelectedPortfolioId={setSelectedPortfolioId}
             setActivePage={setActivePage}
@@ -154,10 +160,10 @@ export default function App() {
         <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.005)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.005)_1px,transparent_1px)] [background-size:120px_120px]"></div>
         
         {/* Dynamic moving orbs/blobs to eliminate flat black */}
-        <div className="absolute top-[-10%] left-[-10%] w-[60vw] h-[60vw] rounded-full bg-red-900/10 blur-[150px] transform-gpu will-change-transform"></div>
-        <div className="absolute bottom-[10%] right-[-10%] w-[50vw] h-[50vw] rounded-full bg-red-950/12 blur-[130px] transform-gpu will-change-transform"></div>
-        <div className="absolute top-[35%] right-[10%] w-[45vw] h-[45vw] rounded-full bg-red-900/8 blur-[160px] transform-gpu will-change-transform"></div>
-        <div className="absolute bottom-[-10%] left-[10%] w-[55vw] h-[55vw] rounded-full bg-red-950/10 blur-[140px] transform-gpu will-change-transform"></div>
+        <div className="absolute top-[-10%] left-[-10%] w-[60vw] h-[60vw] bg-[radial-gradient(circle,rgba(130,24,26,0.16)_0%,transparent_70%)]"></div>
+        <div className="absolute bottom-[10%] right-[-10%] w-[50vw] h-[50vw] bg-[radial-gradient(circle,rgba(59,20,20,0.22)_0%,transparent_70%)]"></div>
+        <div className="absolute top-[35%] right-[10%] w-[45vw] h-[45vw] bg-[radial-gradient(circle,rgba(130,24,26,0.13)_0%,transparent_70%)]"></div>
+        <div className="absolute bottom-[-10%] left-[10%] w-[55vw] h-[55vw] bg-[radial-gradient(circle,rgba(59,20,20,0.18)_0%,transparent_70%)]"></div>
         
         {/* Top dramatic red laser backlight */}
         <div className="absolute top-0 inset-x-0 h-[500px] bg-gradient-to-b from-red-650/14 via-red-950/3 to-transparent opacity-90"></div>
@@ -200,7 +206,7 @@ export default function App() {
             >
               {/* WhatsApp Button */}
               <a 
-                href="https://wa.me/971501234567" // Placeholder WhatsApp link
+                href={BRAND_INFO.whatsapp}
                 target="_blank" 
                 rel="noreferrer"
                 className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center shadow-lg hover:scale-110 hover:bg-green-400 transition-all duration-300"
@@ -210,7 +216,7 @@ export default function App() {
               </a>
               {/* Call Button */}
               <a 
-                href="tel:+971501234567" // Placeholder Phone link
+                href={`tel:${BRAND_INFO.phone1}`}
                 className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center shadow-lg hover:scale-110 hover:bg-blue-400 transition-all duration-300"
                 aria-label="Call Us"
               >

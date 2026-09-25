@@ -235,6 +235,17 @@ export default function Services({ selectedServiceId, setSelectedServiceId, setA
                         }}
                         text="Enquire for this"
                       />
+                      {srv.id === 'exhibitions' && (
+                        <button
+                          onClick={() => {
+                            setActivePage('exhibition');
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                          }}
+                          className="font-mono text-[10px] sm:text-xs tracking-widest uppercase font-bold text-red-500 hover:text-white transition-colors cursor-pointer text-left"
+                        >
+                          See our exhibition stands →
+                        </button>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -321,6 +332,17 @@ export default function Services({ selectedServiceId, setSelectedServiceId, setA
                     text="Enquire for this"
                     className="w-full justify-center"
                   />
+                  {srv.id === 'exhibitions' && (
+                    <button
+                      onClick={() => {
+                        setActivePage('exhibition');
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                      }}
+                      className="font-mono text-[10px] sm:text-xs tracking-widest uppercase font-bold text-red-500 hover:text-white transition-colors cursor-pointer text-left"
+                    >
+                      See our exhibition stands →
+                    </button>
+                  )}
                 </div>
               </div>
             ))}

@@ -32,7 +32,7 @@ export default function Footer({ setActivePage, setSelectedServiceId }: FooterPr
   return (
     <footer id="main-footer" className="bg-black border-t border-white/5 relative overflow-hidden mt-20 z-20">
       {/* Visual Ambient Blur */}
-      <div className="absolute bottom-0 right-1/4 w-[350px] h-[350px] bg-red-600/5 rounded-full blur-[100px] pointer-events-none"></div>
+      <div className="absolute bottom-0 right-1/4 w-[350px] h-[350px] bg-[radial-gradient(circle,rgba(197,58,54,0.08)_0%,transparent_70%)] pointer-events-none"></div>
 
       <div className="max-w-7xl mx-auto px-6 pt-20 pb-10 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 pb-16 border-b border-white/5">
@@ -106,7 +106,7 @@ export default function Footer({ setActivePage, setSelectedServiceId }: FooterPr
             <ul className="flex flex-col gap-3.5 text-sm text-neutral-400">
               <li>
                 <button onClick={() => handlePageClick('home')} className="hover:text-red-500 transition-colors cursor-pointer text-left">
-                  Home Screen
+                  Home
                 </button>
               </li>
               <li>
@@ -120,8 +120,13 @@ export default function Footer({ setActivePage, setSelectedServiceId }: FooterPr
                 </button>
               </li>
               <li>
-                <button onClick={() => handlePageClick('portfolio')} className="hover:text-red-500 transition-colors cursor-pointer text-left">
-                  Portfolio Exhibits
+                <button onClick={() => handlePageClick('exhibition')} className="hover:text-red-500 transition-colors cursor-pointer text-left">
+                  Exhibition
+                </button>
+              </li>
+              <li>
+                <button onClick={() => handlePageClick('events')} className="hover:text-red-500 transition-colors cursor-pointer text-left">
+                  Events
                 </button>
               </li>
               <li>

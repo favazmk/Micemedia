@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { useScroll, useSpring, useMotionValueEvent } from 'motion/react';
+import { useMotionValueEvent, type MotionValue } from 'motion/react';
 
 const TOTAL_FRAMES = 216;
 
@@ -10,10 +10,11 @@ const globalCache: Record<'desktop' | 'mobile', { images: HTMLImageElement[]; lo
 };
 
 interface EventScrollProps {
-  scrollContainerRef?: React.RefObject<HTMLElement | null>;
+  // 0..1 progress through the pinned hero; the parent owns the scroll tracking
+  progress: MotionValue<number>;
 }
 
-export default function EventScroll({ scrollContainerRef }: EventScrollProps) {
+export default function EventScroll({ progress }: EventScrollProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [images, setImages] = useState<HTMLImageElement[]>([]);
   const [loadedCount, setLoadedCount] = useState(0);
@@ -30,14 +31,6 @@ export default function EventScroll({ scrollContainerRef }: EventScrollProps) {
 
   const cacheKey = isMobile ? 'mobile' : 'desktop';
   const folder = isMobile ? 'fps-sequence-mobile' : 'fps-sequence';
-
-  const { scrollYProgress } = useScroll(
-    scrollContainerRef
-      ? { target: scrollContainerRef, offset: ["start start", "end end"] }
-      : {}
-  );
-
-  const smoothProgress = useSpring(scrollYProgress, { stiffness: 60, damping: 20, restDelta: 0.001 });
 
   useEffect(() => {
     let isCancelled = false;
@@ -62,13 +55,17 @@ export default function EventScroll({ scrollContainerRef }: EventScrollProps) {
           const indexStr = (i + 1).toString().padStart(3, '0');
           img.src = `./${folder}/frame-${indexStr}.webp`;
 
-          img.onload = () => {
+          img.onload = async () => {
+            if (isCancelled) return resolve();
+            // Decode off the scroll path so the first draw of each frame doesn't hitch
+            await img.decode?.().catch(() => {});
             if (isCancelled) return resolve();
             loadedImages[i] = img;
             loaded++;
-            setLoadedCount(loaded);
 
-            if (loaded % 10 === 0 || loaded === TOTAL_FRAMES) {
+            // Batch React updates: every image re-rendering the component was costly
+            if (loaded <= 12 || loaded % 20 === 0 || loaded === TOTAL_FRAMES) {
+              setLoadedCount(loaded);
               setImages([...loadedImages]);
             }
 
@@ -130,14 +127,20 @@ export default function EventScroll({ scrollContainerRef }: EventScrollProps) {
     }
     if (!img || !img.complete) return;
 
-    const width = window.innerWidth;
-    const height = window.innerHeight;
+    // Canvas lives inside the sticky hero viewport, so size it to its own box.
+    // Back it with device pixels (capped at 2x) so retina screens don't get a blurry upscale.
+    const width = canvas.clientWidth;
+    const height = canvas.clientHeight;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
 
-    if (canvas.width !== width || canvas.height !== height) {
-      canvas.width = width;
-      canvas.height = height;
+    if (canvas.width !== Math.round(width * dpr) || canvas.height !== Math.round(height * dpr)) {
+      canvas.width = Math.round(width * dpr);
+      canvas.height = Math.round(height * dpr);
     }
 
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
     ctx.clearRect(0, 0, width, height);
 
     const imgRatio = img.width / img.height;
@@ -162,19 +165,34 @@ export default function EventScroll({ scrollContainerRef }: EventScrollProps) {
     ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
   };
 
-  useMotionValueEvent(smoothProgress, "change", (latest) => {
-    const idx = Math.floor(latest * (TOTAL_FRAMES - 1));
-    requestAnimationFrame(() => drawFrame(idx));
-  });
+  // Draw at most once per display frame, and only when the frame index actually changes
+  const drawFrameRef = useRef(drawFrame);
+  drawFrameRef.current = drawFrame;
+  const lastDrawnRef = useRef(-1);
+  const rafRef = useRef(0);
+  const scheduleDraw = (force = false) => {
+    if (force) lastDrawnRef.current = -1;
+    if (rafRef.current) return;
+    rafRef.current = requestAnimationFrame(() => {
+      rafRef.current = 0;
+      const idx = Math.floor(progress.get() * (TOTAL_FRAMES - 1));
+      if (idx === lastDrawnRef.current) return;
+      lastDrawnRef.current = idx;
+      drawFrameRef.current(idx);
+    });
+  };
 
+  useMotionValueEvent(progress, "change", () => scheduleDraw());
+
+  // New frames arrived (or the viewport changed): redraw wherever the user currently is
   useEffect(() => {
-    if (loadedCount > 0) {
-      drawFrame(0);
-    }
-    const handleResize = () => drawFrame(Math.floor(smoothProgress.get() * (TOTAL_FRAMES - 1)));
+    if (loadedCount > 0) scheduleDraw(true);
+    const handleResize = () => scheduleDraw(true);
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, [loadedCount, images]);
+
+  useEffect(() => () => cancelAnimationFrame(rafRef.current), []);
 
   const INITIAL_THRESHOLD = 10;
   const isReady = loadedCount >= INITIAL_THRESHOLD || globalCache[cacheKey].isComplete;
@@ -193,16 +211,7 @@ export default function EventScroll({ scrollContainerRef }: EventScrollProps) {
 
   return (
     <>
-      <div className="fixed inset-0 z-0 bg-[#050505] pointer-events-none overflow-hidden" style={{ willChange: "transform" }}>
-        <canvas ref={canvasRef} className="w-full h-full block opacity-50" />
-        {/* Ultra-soft extended gaussian-feathered corner diffusion (desktop only) */}
-        {!isMobile && (
-          <div 
-            className="absolute -bottom-14 -right-14 w-72 sm:w-96 h-52 sm:h-72 bg-[#050505] rounded-full blur-[52px] pointer-events-none" 
-            style={{ transform: "translate3d(0,0,0)" }}
-          />
-        )}
-      </div>
+      <canvas ref={canvasRef} className="absolute inset-0 w-full h-full block" />
 
       {/* Instant graceful loading screen that dismisses as soon as initial frames are ready */}
       {!isReady && (

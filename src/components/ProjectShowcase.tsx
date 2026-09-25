@@ -5,35 +5,96 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { X, MapPin, Calendar, Sparkles } from 'lucide-react';
-import { PORTFOLIO_DATA } from '../data';
+import { X, MapPin, Calendar, Sparkles, ChevronLeft, ChevronRight } from 'lucide-react';
+import { EVENTS_DATA, EXHIBITIONS_DATA } from '../data';
+import { EVENT_ALBUMS, EXHIBITION_ALBUMS, pickPhotos } from '../gallery';
 import { PortfolioItem } from '../types';
 import { PrimaryButton } from '@/components/ui/primary-button';
+import StackSpread from '@/components/ui/stack-spread';
 import ChromaGrid, { ChromaItem } from './ChromaGrid';
 import Particles from './Particles';
 
-interface PortfolioProps {
+// Copy and data for each showcase page; both pages share the same layout
+const VARIANTS = {
+  events: {
+    eyebrow: 'Our Events',
+    title: 'Events That Speak',
+    accent: 'for themselves.',
+    accentClass: 'text-red-500',
+    intro: 'Conferences, galas, launches and celebrations, staged end-to-end across Dubai and the wider GCC.',
+    items: EVENTS_DATA,
+    albums: EVENT_ALBUMS,
+    // Scroll-to-scatter showcase of the latest client photos (stack order: back -> front)
+    spread: {
+      photos: pickPhotos([
+        'dsc09020.webp', 'haz02651.webp', 'dsc09268.webp', 'dsc09160.webp',
+        'haz04027.webp', 'dsc09219.webp', 'dsc09609.webp', 'haz03529.webp',
+      ]),
+      title: <>Moments we <span className="accent-word text-red-500">made.</span></>,
+      subtitle: 'Awards nights, team days and grand openings, produced end-to-end by MICE Media.',
+    },
+  },
+  exhibition: {
+    eyebrow: 'Exhibitions',
+    title: 'Stands That Pull',
+    accent: 'a crowd.',
+    accentClass: 'text-red-500',
+    intro: 'Custom and modular exhibition stands, designed, built and run on the show floor from concept to handover.',
+    items: EXHIBITIONS_DATA,
+    albums: EXHIBITION_ALBUMS,
+    spread: {
+      photos: pickPhotos([
+        'img_4154.webp', 'pic-5.webp', 'img_4038.webp', 'img_4143.webp',
+        'img_4152.webp', 'img_4027.webp', 'img_4179.webp', 'pic-6.webp',
+      ]),
+      title: <>Built to <span className="accent-word text-red-500">stand out.</span></>,
+      subtitle: 'Brand stands, photo moments and activation zones, designed and built on site.',
+    },
+  },
+} as const;
+
+interface ProjectShowcaseProps {
+  variant: keyof typeof VARIANTS;
   selectedPortfolioId: string | null;
   setSelectedPortfolioId: (id: string | null) => void;
   setActivePage: (page: string) => void;
 }
 
-export default function Portfolio({ selectedPortfolioId, setSelectedPortfolioId, setActivePage }: PortfolioProps) {
+export default function ProjectShowcase({ variant, selectedPortfolioId, setSelectedPortfolioId, setActivePage }: ProjectShowcaseProps) {
+  const config = VARIANTS[variant];
+  const items: readonly PortfolioItem[] = config.items;
   const [selectedItem, setSelectedItem] = useState<PortfolioItem | null>(null);
+  // Photo lightbox: which album and which image within it
+  const [photo, setPhoto] = useState<{ album: number; index: number } | null>(null);
 
   // Handle deep linking from other page interactions
   useEffect(() => {
     if (selectedPortfolioId) {
-      const match = PORTFOLIO_DATA.find(item => item.id === selectedPortfolioId);
+      const match = items.find(item => item.id === selectedPortfolioId);
       if (match) setSelectedItem(match);
       setSelectedPortfolioId(null);
     }
-  }, [selectedPortfolioId, setSelectedPortfolioId]);
+  }, [selectedPortfolioId, setSelectedPortfolioId, items]);
 
-  const filteredItems = PORTFOLIO_DATA;
+  const showPhoto = (step: number) => {
+    if (!photo) return;
+    const images = config.albums[photo.album].images;
+    setPhoto({ album: photo.album, index: (photo.index + step + images.length) % images.length });
+  };
+
+  useEffect(() => {
+    if (!photo) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setPhoto(null);
+      if (e.key === 'ArrowRight') showPhoto(1);
+      if (e.key === 'ArrowLeft') showPhoto(-1);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  });
 
   return (
-    <div className="py-24 md:py-32 flex flex-col w-full relative min-h-screen" id="portfoliopage-root">
+    <div className="py-24 md:py-32 flex flex-col w-full relative min-h-screen" id={`${variant}page-root`}>
       
       {/* â”€â”€ Particles animated WebGL background â”€â”€ */}
       <div className="absolute inset-0 z-0 pointer-events-none" aria-hidden="true">
@@ -64,7 +125,7 @@ export default function Portfolio({ selectedPortfolioId, setSelectedPortfolioId,
         >
           <span className="w-1.5 h-1.5 rounded-full bg-red-650 animate-pulse"></span>
           <span className="font-mono text-[10px] tracking-widest uppercase text-neutral-400">
-            Our Portfolio
+            {config.eyebrow}
           </span>
         </motion.div>
 
@@ -72,23 +133,33 @@ export default function Portfolio({ selectedPortfolioId, setSelectedPortfolioId,
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="font-display text-4xl sm:text-5xl md:text-6xl font-black uppercase text-white tracking-tight"
+          className="font-display text-4xl sm:text-5xl md:text-6xl font-bold uppercase text-white tracking-tight"
         >
-          Events That Speak <br />
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-red-400 text-glow inline-block py-1">For Themselves.</span>
+          {config.title} <br />
+          <span className={`accent-word text-[1.15em] py-2 ${config.accentClass}`}>{config.accent}</span>
         </motion.h1>
         
         <p className="text-neutral-400 font-sans text-sm md:text-base leading-relaxed mt-4 max-w-xl mx-auto">
-          We bridge bold experiential strategy with flawless technical staging across Dubai and the larger GCC.
+          {config.intro}
         </p>
 
         <div className="w-12 h-[2px] bg-red-650 mx-auto mt-6 rounded-full"></div>
       </section>
 
+      {/* SECTION 1B: STACK SPREAD — latest client photos scatter out as you scroll */}
+      {config.spread.photos.length > 0 && (
+        <StackSpread
+          images={config.spread.photos}
+          title={config.spread.title}
+          subtitle={config.spread.subtitle}
+          scrollLength={300}
+        />
+      )}
+
       {/* SECTION 2: CHROMAGRID */}
-      <section className="px-6 max-w-7xl mx-auto w-full mb-16" id="portfolio-chroma-grid">
+      <section className="px-6 max-w-7xl mx-auto w-full mb-16" id={`${variant}-chroma-grid`}>
         <ChromaGrid
-          items={filteredItems.map((item): ChromaItem => ({
+          items={items.map((item): ChromaItem => ({
             image: item.image,
             title: item.title,
             subtitle: item.caption,
@@ -102,12 +173,70 @@ export default function Portfolio({ selectedPortfolioId, setSelectedPortfolioId,
           fadeOut={0.8}
           ease="power3.out"
           onCardClick={(chromaItem) => {
-            const match = PORTFOLIO_DATA.find(p => p.title === chromaItem.title);
+            const match = items.find(p => p.title === chromaItem.title);
             if (match) setSelectedItem(match);
           }}
         />
       </section>
 
+
+      {/* SECTION 3: PHOTO ALBUMS (auto-loaded from src/assets/gallery/<variant>) */}
+      {config.albums.map((album, albumIndex) => (
+        <section key={album.title} className="px-6 max-w-7xl mx-auto w-full mb-16" id={`${variant}-album-${albumIndex}`}>
+          <div className="flex items-end justify-between gap-4 mb-6">
+            <h2 className="font-display text-2xl md:text-3xl font-bold text-white tracking-tight">{album.title}</h2>
+            <span className="font-mono text-[10px] tracking-widest uppercase text-neutral-500">{album.images.length} photos</span>
+          </div>
+          <div className="columns-2 md:columns-3 lg:columns-4 gap-3 sm:gap-4">
+            {album.images.map((src, index) => (
+              <button
+                key={src}
+                onClick={() => setPhoto({ album: albumIndex, index })}
+                className="mb-3 sm:mb-4 block w-full overflow-hidden rounded-2xl border border-white/10 hover:border-red-500/50 cursor-zoom-in group break-inside-avoid"
+              >
+                <img
+                  src={src}
+                  alt={`${album.title} photo ${index + 1}`}
+                  loading="lazy"
+                  className="w-full h-auto block transition-transform duration-700 group-hover:scale-105"
+                />
+              </button>
+            ))}
+          </div>
+        </section>
+      ))}
+
+      {/* PHOTO LIGHTBOX */}
+      <AnimatePresence>
+        {photo && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[110] bg-black/95 backdrop-blur-md flex items-center justify-center p-4"
+            onClick={() => setPhoto(null)}
+          >
+            <img
+              src={config.albums[photo.album].images[photo.index]}
+              alt={config.albums[photo.album].title}
+              className="max-w-full max-h-[85vh] object-contain rounded-xl"
+              onClick={(e) => e.stopPropagation()}
+            />
+            <button onClick={(e) => { e.stopPropagation(); showPhoto(-1); }} className="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 bg-black/70 border border-white/10 p-3 rounded-full text-white cursor-pointer" aria-label="Previous photo">
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+            <button onClick={(e) => { e.stopPropagation(); showPhoto(1); }} className="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 bg-black/70 border border-white/10 p-3 rounded-full text-white cursor-pointer" aria-label="Next photo">
+              <ChevronRight className="w-5 h-5" />
+            </button>
+            <button onClick={() => setPhoto(null)} className="absolute top-4 right-4 bg-black/70 border border-white/10 p-2 rounded-full text-neutral-300 hover:text-white cursor-pointer" aria-label="Close photo">
+              <X className="w-5 h-5" />
+            </button>
+            <span className="absolute bottom-5 left-1/2 -translate-x-1/2 font-mono text-[10px] tracking-widest uppercase text-neutral-400">
+              {config.albums[photo.album].title} · {photo.index + 1} / {config.albums[photo.album].images.length}
+            </span>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* LIGHTBOX STAGE MODAL FOR SINGLE ITEM VIEW */}
       <AnimatePresence>
@@ -117,7 +246,7 @@ export default function Portfolio({ selectedPortfolioId, setSelectedPortfolioId,
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-50 bg-black/95 backdrop-blur-md flex items-center justify-center p-4 md:p-8"
-            id="portfolio-lightbox"
+            id={`${variant}-lightbox`}
           >
             {/* Click to close backdrop handler */}
             <div className="absolute inset-0 z-0 cursor-zoom-out" onClick={() => setSelectedItem(null)}></div>
