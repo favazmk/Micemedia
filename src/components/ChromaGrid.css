@@ -4,7 +4,7 @@
   height: 100%;
   display: grid;
   grid-template-columns: repeat(var(--cols, 3), 1fr);
-  grid-auto-rows: auto;
+  grid-auto-rows: 1fr;
   justify-content: center;
   gap: 1rem;
   max-width: 1200px;
@@ -93,6 +93,8 @@
   z-index: 1;
   width: 100%;
   aspect-ratio: 4/3;
+  /* non-visible overflow stops tall images from stretching past the aspect ratio */
+  overflow: hidden;
   padding: 10px;
   box-sizing: border-box;
   background: transparent;
