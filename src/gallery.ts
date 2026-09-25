@@ -7,6 +7,7 @@
  * and they show up automatically — no code changes needed. Put each event's photos
  * in its own subfolder (e.g. events/Tractebel EOY/) and the folder name becomes the
  * album title. Loose files directly in the root folder go into a "Highlights" album.
+ * Videos (.mp4/.webm) work too; add a same-named .webp to src/assets/gallery/posters/ for its thumbnail.
  */
 
 export interface GalleryAlbum {
@@ -15,14 +16,29 @@ export interface GalleryAlbum {
 }
 
 const eventFiles = import.meta.glob(
-  '/src/assets/gallery/events/**/*.{jpg,jpeg,png,webp,avif,JPG,JPEG,PNG,WEBP}',
+  '/src/assets/gallery/events/**/*.{jpg,jpeg,png,webp,avif,JPG,JPEG,PNG,WEBP,mp4,webm,MP4}',
   { eager: true, query: '?url', import: 'default' }
 ) as Record<string, string>;
 
 const exhibitionFiles = import.meta.glob(
-  '/src/assets/gallery/exhibitions/**/*.{jpg,jpeg,png,webp,avif,JPG,JPEG,PNG,WEBP}',
+  '/src/assets/gallery/exhibitions/**/*.{jpg,jpeg,png,webp,avif,JPG,JPEG,PNG,WEBP,mp4,webm,MP4}',
   { eager: true, query: '?url', import: 'default' }
 ) as Record<string, string>;
+
+const posterFiles = import.meta.glob('/src/assets/gallery/posters/*.webp', {
+  eager: true, query: '?url', import: 'default',
+}) as Record<string, string>;
+
+const baseName = (path: string) => path.split('/').pop()!.replace(/\.[^.]+$/, '');
+const posterByName = Object.fromEntries(Object.entries(posterFiles).map(([p, url]) => [baseName(p), url]));
+const posterByUrl: Record<string, string> = {};
+for (const [path, url] of Object.entries({ ...eventFiles, ...exhibitionFiles })) {
+  const poster = posterByName[baseName(path)];
+  if (poster) posterByUrl[url] = poster;
+}
+
+export const isVideo = (src: string) => /\.(mp4|webm)(\?|$)/i.test(src);
+export const posterFor = (src: string): string | undefined => posterByUrl[src];
 
 function toAlbums(files: Record<string, string>, root: string): GalleryAlbum[] {
   const albums = new Map<string, string[]>();
@@ -43,7 +59,7 @@ export const EXHIBITION_ALBUMS = toAlbums(exhibitionFiles, '/src/assets/gallery/
 export function pickPhotos(fileNames: string[]): { src: string; alt: string }[] {
   const all = { ...eventFiles, ...exhibitionFiles };
   return fileNames.flatMap((name) => {
-    const path = Object.keys(all).find((p) => p.endsWith(`/${name}`));
+    const path = Object.keys(all).find((p) => p.endsWith(`/${name}`) && !isVideo(p));
     if (!path) return [];
     const album = path.split('/').slice(-2, -1)[0];
     return [{ src: all[path], alt: album }];

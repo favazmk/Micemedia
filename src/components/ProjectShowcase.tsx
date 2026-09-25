@@ -5,9 +5,9 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { X, MapPin, Calendar, Sparkles, ChevronLeft, ChevronRight } from 'lucide-react';
+import { X, MapPin, Calendar, Sparkles, ChevronLeft, ChevronRight, Play } from 'lucide-react';
 import { EVENTS_DATA, EXHIBITIONS_DATA } from '../data';
-import { EVENT_ALBUMS, EXHIBITION_ALBUMS, pickPhotos } from '../gallery';
+import { EVENT_ALBUMS, EXHIBITION_ALBUMS, pickPhotos, isVideo, posterFor } from '../gallery';
 import { PortfolioItem } from '../types';
 import { PrimaryButton } from '@/components/ui/primary-button';
 import StackSpread from '@/components/ui/stack-spread';
@@ -185,21 +185,34 @@ export default function ProjectShowcase({ variant, selectedPortfolioId, setSelec
         <section key={album.title} className="px-6 max-w-7xl mx-auto w-full mb-16" id={`${variant}-album-${albumIndex}`}>
           <div className="flex items-end justify-between gap-4 mb-6">
             <h2 className="font-display text-2xl md:text-3xl font-bold text-white tracking-tight">{album.title}</h2>
-            <span className="font-mono text-[10px] tracking-widest uppercase text-neutral-500">{album.images.length} photos</span>
+            <span className="font-mono text-[10px] tracking-widest uppercase text-neutral-500">
+              {[
+                [album.images.filter((s) => !isVideo(s)).length, 'photo'],
+                [album.images.filter(isVideo).length, 'video'],
+              ].filter(([n]) => n).map(([n, w]) => `${n} ${w}${n === 1 ? '' : 's'}`).join(' · ')}
+            </span>
           </div>
           <div className="columns-2 md:columns-3 lg:columns-4 gap-3 sm:gap-4">
             {album.images.map((src, index) => (
               <button
                 key={src}
                 onClick={() => setPhoto({ album: albumIndex, index })}
-                className="mb-3 sm:mb-4 block w-full overflow-hidden rounded-2xl border border-white/10 hover:border-red-500/50 cursor-zoom-in group break-inside-avoid"
+                aria-label={isVideo(src) ? `Play ${album.title} video` : undefined}
+                className="relative mb-3 sm:mb-4 block w-full overflow-hidden rounded-2xl border border-white/10 hover:border-red-500/50 cursor-zoom-in group break-inside-avoid"
               >
                 <img
-                  src={src}
-                  alt={`${album.title} photo ${index + 1}`}
+                  src={isVideo(src) ? posterFor(src) : src}
+                  alt={`${album.title} ${isVideo(src) ? 'video' : 'photo'} ${index + 1}`}
                   loading="lazy"
                   className="w-full h-auto block transition-transform duration-700 group-hover:scale-105"
                 />
+                {isVideo(src) && (
+                  <span className="absolute inset-0 flex items-center justify-center bg-black/20">
+                    <span className="w-12 h-12 rounded-full bg-red-600/90 flex items-center justify-center shadow-lg transition-transform group-hover:scale-110">
+                      <Play className="w-5 h-5 text-white fill-white ml-0.5" />
+                    </span>
+                  </span>
+                )}
               </button>
             ))}
           </div>
@@ -216,12 +229,27 @@ export default function ProjectShowcase({ variant, selectedPortfolioId, setSelec
             className="fixed inset-0 z-[110] bg-black/95 backdrop-blur-md flex items-center justify-center p-4"
             onClick={() => setPhoto(null)}
           >
-            <img
-              src={config.albums[photo.album].images[photo.index]}
-              alt={config.albums[photo.album].title}
-              className="max-w-full max-h-[85vh] object-contain rounded-xl"
-              onClick={(e) => e.stopPropagation()}
-            />
+            {isVideo(config.albums[photo.album].images[photo.index]) ? (
+              <video
+                key={config.albums[photo.album].images[photo.index]}
+                src={config.albums[photo.album].images[photo.index]}
+                poster={posterFor(config.albums[photo.album].images[photo.index])}
+                controls
+                autoPlay
+                muted
+                loop
+                playsInline
+                className="max-w-full max-h-[85vh] object-contain rounded-xl"
+                onClick={(e) => e.stopPropagation()}
+              />
+            ) : (
+              <img
+                src={config.albums[photo.album].images[photo.index]}
+                alt={config.albums[photo.album].title}
+                className="max-w-full max-h-[85vh] object-contain rounded-xl"
+                onClick={(e) => e.stopPropagation()}
+              />
+            )}
             <button onClick={(e) => { e.stopPropagation(); showPhoto(-1); }} className="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 bg-black/70 border border-white/10 p-3 rounded-full text-white cursor-pointer" aria-label="Previous photo">
               <ChevronLeft className="w-5 h-5" />
             </button>

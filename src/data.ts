@@ -4,6 +4,9 @@
  */
 
 import { Service, PortfolioItem, ClientLogo, Testimonial, ProcessStep, WhyUsReason } from './types';
+import oberoiStand from './assets/gallery/exhibitions/Oberoi Hotels & Resorts – Exhibition Stand/oberoi-01.webp';
+import alhindStand from './assets/gallery/exhibitions/Alhind Group – Exhibition Stand/alhind-01.webp';
+import guntnerStand from './assets/gallery/posters/guntner-02.webp';
 
 export const BRAND_INFO = {
   name: "MICE MEDIA",
@@ -206,6 +209,30 @@ export const EVENTS_DATA: PortfolioItem[] = [
 
 // Exhibition stand case studies
 export const EXHIBITIONS_DATA: PortfolioItem[] = [
+  {
+    id: "portfolio-oberoi",
+    title: "Oberoi Hotels & Resorts: Exhibition Stand",
+    category: "Exhibition",
+    caption: "Open-plan navy and gold stand with backlit Arabic lattice screens, framed lightbox imagery and a relaxed meeting lounge.",
+    image: oberoiStand,
+    tag: "Custom Stand"
+  },
+  {
+    id: "portfolio-alhind",
+    title: "Alhind Group: Exhibition Stand",
+    category: "Exhibition",
+    caption: "Bold red-and-white corner stand showcasing the full Alhind brand family on an illuminated logo wall, with a lounge for client meetings.",
+    image: alhindStand,
+    tag: "Corner Stand"
+  },
+  {
+    id: "portfolio-guntner",
+    title: "Güntner: Exhibition Stand",
+    category: "Exhibition",
+    caption: "Clean, product-led stand for Güntner's Greener Food Cooling range, with LED fascia, live product display, green wall and meeting bar.",
+    image: guntnerStand,
+    tag: "Custom Stand"
+  },
   {
     id: "portfolio-06",
     title: "AMH Tourism: Exhibition Stand, ATM 2024",
