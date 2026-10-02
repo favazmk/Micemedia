@@ -63,13 +63,15 @@ export default function About({ setActivePage }: AboutProps) {
           className="font-display text-4xl sm:text-5xl md:text-6xl font-black uppercase text-white tracking-tight"
         >
           We Don't Just Plan Events — <br />
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-red-400 text-glow inline-block py-1">We Engineer Moments.</span>
+          <span>We </span>
+          <span className="accent-word text-red-500 text-[1.15em]">engineer</span>
+          <span> Moments.</span>
         </motion.h1>
         
         <div className="w-16 h-[2px] bg-red-650 mx-auto mt-6 rounded-full"></div>
       </section>
 
-      {/* SECTION 2: THE TRIPLE STORY BLOCK (Origin, What We Do, Promise) */}
+      {/* SECTION 2: THE TRIPLE STORY BLOCK (Origin, Vision, Promise) */}
       <section className="px-6 max-w-7xl mx-auto w-full mb-24">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           
@@ -86,7 +88,10 @@ export default function About({ setActivePage }: AboutProps) {
               <div className="w-12 h-12 rounded-xl bg-neutral-900 border border-white/5 flex items-center justify-center text-red-500 mb-6 font-mono font-bold">
                 01
               </div>
-              <h3 className="font-display text-xl font-bold text-white mb-4">Our Origin & Vision</h3>
+              <span className="text-[10px] font-mono uppercase tracking-widest text-red-500 font-bold block mb-1">
+                Driven By Excellence
+              </span>
+              <h3 className="font-display text-xl font-bold text-white mb-4">Our Origin</h3>
               <p className="text-neutral-400 text-sm leading-relaxed font-sans">
                 Born from a conviction that the events industry deserved better — more precision, more creativity, more soul — MICE MEDIA was built to raise the bar. We are a full-service event management and experiential production company operating out of Dubai, with a reach that extends across UAE and the wider GCC region.
               </p>
@@ -96,7 +101,7 @@ export default function About({ setActivePage }: AboutProps) {
             </div>
           </motion.div>
 
-          {/* Card 2: What We Do */}
+          {/* Card 2: Vision */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -109,9 +114,12 @@ export default function About({ setActivePage }: AboutProps) {
               <div className="w-12 h-12 rounded-xl bg-neutral-900 border border-white/5 flex items-center justify-center text-red-500 mb-6 font-mono font-bold">
                 02
               </div>
-              <h3 className="font-display text-xl font-bold text-white mb-4">What We Orchestrate</h3>
+              <span className="text-[10px] font-mono uppercase tracking-widest text-red-500 font-bold block mb-1">
+                Built On Purpose
+              </span>
+              <h3 className="font-display text-xl font-bold text-white mb-4">Our Vision</h3>
               <p className="text-neutral-400 text-sm leading-relaxed font-sans">
-                Our work spans the full spectrum of corporate experience: international conferences, gala award ceremonies, immersive brand activations, bespoke exhibition builds, AV production, and everything in between. What sets us apart isn't just what we do — it's the standard we refuse to drop.
+                To be the event management company that GCC's most ambitious organisations turn to first — not because we're the biggest, but because we're the most exacting. We envision a future where every corporate gathering becomes a marker moment in someone's professional journey.
               </p>
             </div>
             <div className="mt-8 pt-4 border-t border-white/5 text-[10px] font-mono text-neutral-500 uppercase tracking-widest">
@@ -132,6 +140,9 @@ export default function About({ setActivePage }: AboutProps) {
               <div className="w-12 h-12 rounded-xl bg-neutral-900 border border-white/5 flex items-center justify-center text-red-500 mb-6 font-mono font-bold">
                 03
               </div>
+              <span className="text-[10px] font-mono uppercase tracking-widest text-red-500 font-bold block mb-1">
+                The Non-Negotiable
+              </span>
               <h3 className="font-display text-xl font-bold text-white mb-4">The Promise</h3>
               <p className="text-neutral-300 text-sm leading-relaxed font-sans font-medium">
                 Every project that leaves our team carries one non-negotiable: it has to be extraordinary. No exceptions. No compromises. Not for any budget, deadline, or brief.
@@ -139,74 +150,6 @@ export default function About({ setActivePage }: AboutProps) {
             </div>
             <div className="mt-8 pt-4 border-t border-red-500/10 text-[10px] font-mono text-red-500 uppercase tracking-widest font-semibold">
               Extraordinary or Nothing
-            </div>
-          </motion.div>
-
-        </div>
-      </section>
-
-      {/* SUBTLE LINE DIVIDER */}
-      <div className="max-w-7xl mx-auto px-6 w-full mb-24 opacity-20">
-        <div className="w-full h-[1px] bg-gradient-to-r from-transparent via-neutral-500 to-transparent"></div>
-      </div>
-
-      {/* SECTION 4: VISION & MISSION BENTO GRID */}
-      <section className="px-6 max-w-7xl mx-auto w-full mb-24">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
-          
-          {/* Mission Card */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            className="glass-panel-heavy rounded-3xl p-10 border border-white/5 flex flex-col justify-between"
-          >
-            <div>
-              <div className="w-12 h-12 rounded-xl bg-red-600 flex items-center justify-center text-white mb-8 shadow-lg shadow-red-600/20">
-                <Target className="w-5 h-5" />
-              </div>
-              <span className="text-xs font-mono tracking-widest text-red-500 uppercase font-bold">
-                Our Mission
-              </span>
-              <h2 className="font-display text-2xl sm:text-3xl font-black text-white uppercase mt-3 mb-6">
-                Driven by Excellence.
-              </h2>
-              <p className="text-neutral-300 text-sm leading-relaxed font-sans mb-8">
-                {VISION_MISSION.mission}
-              </p>
-            </div>
-            
-            <div className="flex items-center gap-3 border-t border-white/5 pt-6 text-xs text-white font-mono">
-              <span>✦ CREATING BENCHMARKS</span>
-              <span>✦ RETAINING CUSTOMER OBSESSION</span>
-            </div>
-          </motion.div>
-
-          {/* Vision Card */}
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            className="glass-panel-heavy rounded-3xl p-10 border border-white/5 flex flex-col justify-between"
-          >
-            <div>
-              <div className="w-12 h-12 rounded-xl bg-red-600 flex items-center justify-center text-white mb-8 shadow-lg shadow-red-600/20">
-                <Compass className="w-5 h-5" />
-              </div>
-              <span className="text-xs font-mono tracking-widest text-red-500 uppercase font-bold">
-                Our Vision
-              </span>
-              <h2 className="font-display text-2xl sm:text-3xl font-black text-white uppercase mt-3 mb-6">
-                Built on Purpose.
-              </h2>
-              <p className="text-neutral-300 text-sm leading-relaxed font-sans mb-8">
-                {VISION_MISSION.vision}
-              </p>
-            </div>
-
-            <div className="flex items-center gap-3 border-t border-white/5 pt-6 text-xs text-white font-mono">
-              <span>✦ OUTLASTING THE MOMENT</span>
-              <span>✦ LEADING REGIONAL experiential PRODUCTION</span>
             </div>
           </motion.div>
 
@@ -249,14 +192,14 @@ export default function About({ setActivePage }: AboutProps) {
         </div>
       </section>
 
-      {/* SECTION 6: STEPS PROCESS (From First Brief to Final Applause) */}
+      {/* SECTION 6: STEPS PROCESS (From Brief to Impact) */}
       <section className="py-24 max-w-7xl mx-auto px-6 w-full">
         <div className="text-center mb-16 flex flex-col items-center">
           <span className="text-xs font-mono tracking-widest text-red-500 uppercase font-bold">
             How We Work
           </span>
           <h2 className="font-display text-3xl sm:text-5xl font-black uppercase text-white mt-3">
-            From First Brief To Final Applause.
+            From Brief to Impact.
           </h2>
           <p className="text-neutral-400 text-xs mt-2 font-mono">
             A structured creative process that leaves nothing to chance.
@@ -301,10 +244,10 @@ export default function About({ setActivePage }: AboutProps) {
         <div className="glass-panel-heavy rounded-3xl p-8 sm:p-12 border border-red-500/10 relative overflow-hidden text-center flex flex-col items-center">
           <div className="absolute inset-0 bg-gradient-to-t from-transparent via-red-950/5 to-transparent"></div>
           <h2 className="font-display text-2xl sm:text-4xl font-black uppercase text-white tracking-tight relative z-10 max-w-2xl leading-tight">
-            Designing GCC's Most Highly Anticipated Assemblies
+            Designing GCC's Most Innovative & Immersive Events
           </h2>
           <p className="mt-4 text-neutral-400 font-sans text-xs sm:text-sm max-w-xl relative z-10">
-            Let our senior project directors handle the technical blueprints, dwg drafts, safety calculations, and visual models of your milestone session.
+            From Blueprint to Brand Impacts - Let MICE Media experts turn your vision into milestone experience.
           </p>
           <div className="mt-8 relative z-10">
             <PrimaryButton
@@ -312,7 +255,7 @@ export default function About({ setActivePage }: AboutProps) {
                 setActivePage('contact');
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
-              text="Reach Our Executive Board"
+              text="Reach Our MICE Media Team"
             />
           </div>
         </div>

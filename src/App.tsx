@@ -16,17 +16,38 @@ import Contact from './components/Contact';
 import { BRAND_INFO } from './data';
 
 const slugToIdMap: Record<string, string> = {
-  'conferences-and-seminars': 'conferences-seminars',
+  'conferences-and-seminars': 'conferences-conventions',
+  'conferences-and-conventions': 'conferences-conventions',
+  'conferences-conventions': 'conferences-conventions',
   'product-launch-brand-activation': 'product-launch-activation',
-  'audio-video-production': 'audio-visual-production',
-  'incentives-and-travel-rewards': 'incentives-travel'
+  'product-launch-activation': 'product-launch-activation',
+  'gala-dinner-awards': 'gala-dinner-awards',
+  'gala-dinner-awards-ceremony': 'gala-dinner-awards',
+  'audio-video-production': 'content-creation-av',
+  'audio-visual-production': 'content-creation-av',
+  'content-creation-av-production': 'content-creation-av',
+  'content-creation-av': 'content-creation-av',
+  'incentives-and-travel-rewards': 'team-building-incentives',
+  'team-building': 'team-building-incentives',
+  'team-building-incentives': 'team-building-incentives',
+  'community-festive-events': 'community-festive-events',
+  'talent-management': 'talent-management',
+  'entertainment': 'talent-management',
+  'permits': 'permits',
+  'exhibitions': 'exhibition',
+  'exhibition': 'exhibition'
 };
 
 const idToSlugMap: Record<string, string> = {
-  'conferences-seminars': 'conferences-and-seminars',
+  'conferences-conventions': 'conferences-and-conventions',
   'product-launch-activation': 'product-launch-brand-activation',
-  'audio-visual-production': 'audio-video-production',
-  'incentives-travel': 'incentives-and-travel-rewards'
+  'gala-dinner-awards': 'gala-dinner-awards-ceremony',
+  'content-creation-av': 'content-creation-av-production',
+  'team-building-incentives': 'team-building-incentive-events',
+  'community-festive-events': 'community-festive-events',
+  'talent-management': 'talent-management',
+  'permits': 'permits',
+  'exhibition': 'exhibition'
 };
 
 // Old portfolio.html links now land on the Events page

@@ -20,7 +20,8 @@ import {
   Compass,
   Users2,
   Music,
-  Layers
+  Layers,
+  FileCheck
 } from 'lucide-react';
 import { GetStartedButton } from '@/components/ui/get-started-button';
 import { PrimaryButton } from '@/components/ui/primary-button';
@@ -48,7 +49,8 @@ const serviceIconMap: Record<string, React.ComponentType<{ className?: string }>
   Compass,
   Users2: Users2 || Users,
   Music,
-  Layers
+  Layers,
+  FileCheck
 };
 
 // High-performance continuous animation decelerator hook using the Web Animations API (WAAPI)
@@ -400,8 +402,8 @@ export default function Home({
               transition={{ duration: 0.8, delay: 0.15 }}
               className="font-display text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tight text-white leading-[1.05] max-w-5xl [text-shadow:0_4px_24px_rgba(0,0,0,0.8)]"
             >
-              Where every event <br className="hidden sm:block" />
-              becomes a <span className="accent-word text-red-500 text-[1.15em]">legacy.</span>
+              Where every brands <br className="hidden sm:block" />
+              become a <span className="accent-word text-red-500 text-[1.15em]">legacy.</span>
             </motion.h1>
 
             <motion.div
@@ -445,15 +447,15 @@ export default function Home({
                 It starts as a <span className="accent-word text-red-500 text-[1.15em]">blueprint.</span>
               </h2>
               <p className="font-sans text-sm sm:text-base text-neutral-200 mt-5 max-w-md leading-relaxed [text-shadow:0_2px_10px_rgba(0,0,0,0.9)]">
-                Every stage, truss and table is mapped before a single cable is laid.
+                Designing immersive events, exhibitions and brand experiences that stay on all <span className="accent-word text-red-500 text-[1.15em]">minds.</span>
               </p>
             </div>
           </motion.div>
 
-          {/* Chapter 2: build */}
+          {/* Chapter 2: build - moved down to avoid overlapping with center/logo */}
           <motion.div
             style={{ opacity: chapter2Opacity, y: chapter2Y }}
-            className="absolute inset-0 flex items-center justify-end px-6 sm:px-12 md:px-20 pointer-events-none"
+            className="absolute inset-0 flex items-end justify-end px-6 sm:px-12 md:px-20 pb-28 sm:pb-32 md:pb-36 pointer-events-none"
           >
             <div className="max-w-xl text-right">
               <span className="font-mono text-[10px] sm:text-xs tracking-[0.3em] uppercase text-red-500 font-bold">Phase 02 — Production & Build</span>
@@ -472,8 +474,8 @@ export default function Home({
             className="absolute inset-0 flex flex-col items-center justify-end text-center px-6 pb-28 sm:pb-32"
           >
             <span className="font-mono text-[10px] sm:text-xs tracking-[0.3em] uppercase text-red-500 font-bold">Phase 03 — Showtime</span>
-            <h2 className="font-display text-4xl sm:text-5xl md:text-7xl font-bold text-white leading-[1.05] mt-4 [text-shadow:0_4px_24px_rgba(0,0,0,0.9)]">
-              And the world <span className="accent-word text-red-500 text-[1.15em]">remembers.</span>
+            <h2 className="font-display text-3xl sm:text-5xl md:text-6xl font-bold text-white leading-[1.15] mt-4 [text-shadow:0_4px_24px_rgba(0,0,0,0.9)] max-w-4xl">
+              Bringing <span className="accent-word text-red-500 text-[1.15em]">People</span> together since &ldquo;Let&apos;s Do Something <span className="accent-word text-red-500 text-[1.15em]">Amazing</span>&rdquo;
             </h2>
             <div className="mt-8 w-full max-w-xs sm:max-w-none flex justify-center">
               <PrimaryButton
@@ -517,36 +519,39 @@ export default function Home({
         >
           {/* Block 1 */}
           <div className="flex items-center gap-5 sm:gap-8.5 shrink-0 px-2">
-            <span>Corporate Conferences</span> <span className="text-white/40">✦</span>
-            <span>Gala Dinners</span> <span className="text-white/40">✦</span>
-            <span>Exhibition Builds</span> <span className="text-white/40">✦</span>
-            <span>Brand Activations</span> <span className="text-white/40">✦</span>
-            <span>AV Production</span> <span className="text-white/40">✦</span>
-            <span>Team Building</span> <span className="text-white/40">✦</span>
-            <span>Incentive Travel</span> <span className="text-white/40">✦</span>
-            <span>Entertainment</span> <span className="text-white/40">✦</span>
+            <span>Conferences & Conventions</span> <span className="text-white/40">✦</span>
+            <span>Product launch & Brand Activation</span> <span className="text-white/40">✦</span>
+            <span>Gala Dinner & Awards Ceremony</span> <span className="text-white/40">✦</span>
+            <span>Content Creation & AV production</span> <span className="text-white/40">✦</span>
+            <span>Team Building & Incentive Events</span> <span className="text-white/40">✦</span>
+            <span>Community & Festive Events</span> <span className="text-white/40">✦</span>
+            <span>Talent Management</span> <span className="text-white/40">✦</span>
+            <span>Permits</span> <span className="text-white/40">✦</span>
+            <span>Exhibition</span> <span className="text-white/40">✦</span>
           </div>
           {/* Block 2 */}
           <div className="flex items-center gap-5 sm:gap-8.5 shrink-0 px-2">
-            <span>Corporate Conferences</span> <span className="text-white/40">✦</span>
-            <span>Gala Dinners</span> <span className="text-white/40">✦</span>
-            <span>Exhibition Builds</span> <span className="text-white/40">✦</span>
-            <span>Brand Activations</span> <span className="text-white/40">✦</span>
-            <span>AV Production</span> <span className="text-white/40">✦</span>
-            <span>Team Building</span> <span className="text-white/40">✦</span>
-            <span>Incentive Travel</span> <span className="text-white/40">✦</span>
-            <span>Entertainment</span> <span className="text-white/40">✦</span>
+            <span>Conferences & Conventions</span> <span className="text-white/40">✦</span>
+            <span>Product launch & Brand Activation</span> <span className="text-white/40">✦</span>
+            <span>Gala Dinner & Awards Ceremony</span> <span className="text-white/40">✦</span>
+            <span>Content Creation & AV production</span> <span className="text-white/40">✦</span>
+            <span>Team Building & Incentive Events</span> <span className="text-white/40">✦</span>
+            <span>Community & Festive Events</span> <span className="text-white/40">✦</span>
+            <span>Talent Management</span> <span className="text-white/40">✦</span>
+            <span>Permits</span> <span className="text-white/40">✦</span>
+            <span>Exhibition</span> <span className="text-white/40">✦</span>
           </div>
           {/* Block 3 */}
           <div className="flex items-center gap-5 sm:gap-8.5 shrink-0 px-2">
-            <span>Corporate Conferences</span> <span className="text-white/40">✦</span>
-            <span>Gala Dinners</span> <span className="text-white/40">✦</span>
-            <span>Exhibition Builds</span> <span className="text-white/40">✦</span>
-            <span>Brand Activations</span> <span className="text-white/40">✦</span>
-            <span>AV Production</span> <span className="text-white/40">✦</span>
-            <span>Team Building</span> <span className="text-white/40">✦</span>
-            <span>Incentive Travel</span> <span className="text-white/40">✦</span>
-            <span>Entertainment</span> <span className="text-white/40">✦</span>
+            <span>Conferences & Conventions</span> <span className="text-white/40">✦</span>
+            <span>Product launch & Brand Activation</span> <span className="text-white/40">✦</span>
+            <span>Gala Dinner & Awards Ceremony</span> <span className="text-white/40">✦</span>
+            <span>Content Creation & AV production</span> <span className="text-white/40">✦</span>
+            <span>Team Building & Incentive Events</span> <span className="text-white/40">✦</span>
+            <span>Community & Festive Events</span> <span className="text-white/40">✦</span>
+            <span>Talent Management</span> <span className="text-white/40">✦</span>
+            <span>Permits</span> <span className="text-white/40">✦</span>
+            <span>Exhibition</span> <span className="text-white/40">✦</span>
           </div>
         </div>
       </div>

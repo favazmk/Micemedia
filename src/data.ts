@@ -27,10 +27,10 @@ export const BRAND_INFO = {
 
 export const SERVICES_DATA: Service[] = [
   {
-    id: "conferences-seminars",
+    id: "conferences-conventions",
     number: "01",
-    title: "Conferences & Seminars",
-    description: "International stages demand international standards. We design and deliver end-to-end conference experiences — from technical production and speaker management to full delegate journeys — that make your message impossible to ignore.",
+    title: "Conferences & Conventions",
+    description: "International stages demand international standards. We design and deliver end-to-end conference and convention experiences — from technical production and speaker management to full delegate journeys — that make your message impossible to ignore.",
     iconName: "Presentation",
     details: [
       "Rigorous Delegate Journey Planning",
@@ -42,24 +42,9 @@ export const SERVICES_DATA: Service[] = [
     image: "./images/services/service_conferences_1783333265054.webp"
   },
   {
-    id: "gala-dinner-awards",
-    number: "02",
-    title: "Gala Dinner & Awards",
-    description: "Milestones deserve more than applause. We craft award evenings and gala dinners with the precision and aesthetic authority that turn a single night into a permanent chapter of your organisation's story.",
-    iconName: "Award",
-    details: [
-      "Bespoke Scenic Set & Stage Architecture",
-      "Immersive Soundscapes & Custom Lighting Design",
-      "Rigorous VIP Seating & Registration Protocol",
-      "Cinematic Video Openers & Presentation Assets",
-      "Seamless Live Entertainment Scheduling"
-    ],
-    image: "./images/services/service_gala_1783333277608.webp"
-  },
-  {
     id: "product-launch-activation",
-    number: "03",
-    title: "Product Launch & Brand Activation",
+    number: "02",
+    title: "Product launch & Brand Activation",
     description: "A launch is only as powerful as the moment it creates. We build multi-sensory activation experiences that cut through noise, generate genuine excitement, and make your brand the story everyone tells the next morning.",
     iconName: "Sparkles",
     details: [
@@ -72,84 +57,99 @@ export const SERVICES_DATA: Service[] = [
     image: "./images/services/service_product_launch_1783333289525.webp"
   },
   {
-    id: "audio-visual-production",
+    id: "gala-dinner-awards",
+    number: "03",
+    title: "Gala Dinner & Awards Ceremony",
+    description: "Milestones deserve more than applause. We craft award evenings and gala dinners with the precision and aesthetic authority that turn a single night into a permanent chapter of your organisation's story.",
+    iconName: "Award",
+    details: [
+      "Bespoke Scenic Set & Stage Architecture",
+      "Immersive Soundscapes & Custom Lighting Design",
+      "Rigorous VIP Seating & Registration Protocol",
+      "Cinematic Video Openers & Presentation Assets",
+      "Seamless Live Entertainment & Ceremony Scheduling"
+    ],
+    image: "./images/services/service_gala_1783333277608.webp"
+  },
+  {
+    id: "content-creation-av",
     number: "04",
-    title: "Audio Visual Production",
-    description: "Sound moves emotion. Light shapes atmosphere. Our AV production team handles the full technical architecture of your event — LED walls, stage design, rigging, live sound, and broadcast-quality streaming — so the experience lands exactly as intended.",
+    title: "Content Creation & AV production",
+    description: "Sound moves emotion. Light shapes atmosphere. From high-impact motion graphics and cinematic stage visuals to concert-grade audio and broadcast streaming, our technical team builds audio-visual worlds that captivate completely.",
     iconName: "Volume2",
     details: [
       "Broad-Spectrum High-Res LED Media Walls",
-      "EAW & L-Acoustics Professional Live Sound PA",
+      "Concert-Grade Professional Live Sound PA Systems",
+      "Cinematic Stage Visuals & 3D Motion Graphics",
       "State-of-the-Art Robotic Stage Intelligent Lighting",
-      "Dynamic Multi-Camera Broadcast & HD Streaming",
-      "Full Rigging, Truss, and Ground Support Engineering"
+      "Dynamic Multi-Camera Broadcast & HD Live Streaming"
     ],
     image: "./images/services/service_av_1783333304135.webp"
   },
   {
-    id: "branding",
+    id: "team-building-incentives",
     number: "05",
-    title: "Branding",
-    description: "Consistency is credibility. From event identity and environmental graphics to branded assets and post-event collateral, we ensure your brand speaks at the same premium frequency across every single touchpoint.",
-    iconName: "Palette",
-    details: [
-      "Bespoke Event Brand Identity & Logo Systems",
-      "Sleek Spatial & Environmental Signage Design",
-      "High-End Eco-Conscious Branded Gift Suites",
-      "Premium Motion Typography & Logo Loops",
-      "Integrated Event Companion App Custom UI"
-    ],
-    image: "./images/services/service_branding_1783333316099.webp"
-  },
-  {
-    id: "incentives-travel",
-    number: "06",
-    title: "Incentives & Travel Rewards",
-    description: "Motivation is an experience, not a line item. We design corporate incentive programs and executive travel rewards that make your highest performers feel exactly as exceptional as they've earned to feel.",
-    iconName: "Compass",
-    details: [
-      "Elite Dubai & Desert Luxury Glamping Curations",
-      "Five-Star Yacht Assemblies & Gourmet Dinings",
-      "Frictionless Executive Airport Fast-Track Handling",
-      "Curative Masterclasses with Regional Headliners",
-      "VIP Access to Regional Landmarks & Events"
-    ],
-    image: "./images/services/service_incentives_1783333326101.webp"
-  },
-  {
-    id: "team-building",
-    number: "07",
-    title: "Team Building",
-    description: "Culture isn't built in boardrooms. Our team building programs are crafted to break silos, spark genuine connections, and send your people back with more energy, trust, and shared purpose than they arrived with.",
+    title: "Team Building & Incentive Events",
+    description: "Culture and motivation aren't built in boardrooms. We engineer exhilarating team building challenges and bespoke corporate incentive escapes across the UAE that build deep trust, alignment, and shared purpose.",
     iconName: "Users2",
     details: [
       "High-Stakes Beachfront Engineering Challenges",
-      "Interactive Culinary Masterclass Tournaments",
       "Regional Desert Survival Navigation Rallies",
-      "Corporate CSR-Aligned Philanthropic Builds",
-      "Psychology-Backed Deep-Trust Workspaces"
+      "Elite Dubai & Desert Luxury Glamping Retreats",
+      "Five-Star Yacht Assemblies & Executive Dinings",
+      "Corporate CSR-Aligned Philanthropic Builds"
     ],
     image: "./images/services/service_team_building_1783333338151.webp"
   },
   {
-    id: "entertainment",
-    number: "08",
-    title: "Entertainment",
-    description: "The right act at the right moment transforms an event entirely. We curate bespoke entertainment — performers, live acts, experiential installations — calibrated precisely to your audience and the atmosphere you want to create.",
+    id: "community-festive-events",
+    number: "06",
+    title: "Community & Festive Events",
+    description: "Bringing large-scale communities together for unforgettable celebrations. From national day festivities and cultural galas to seasonal pop-ups and festive evenings, we design joyful, safely orchestrated public gatherings.",
+    iconName: "Sparkles",
+    details: [
+      "Large-Scale Public Event & Festival Operations",
+      "National Day & Cultural Holiday Celebrations",
+      "Seasonal Pop-Up Markets & Festive Villages",
+      "Family Entertainment, Kids Zones & Workshops",
+      "Full Crowd Flow & Emergency Safety Architectures"
+    ],
+    image: "./images/services/service_community_festive.webp"
+  },
+  {
+    id: "talent-management",
+    number: "07",
+    title: "Talent Management",
+    description: "The right presence transforms an event entirely. We curate and manage bespoke talent — international headliners, bilingual emcees, symphony ensembles, kinetic aerialists, and keynote speakers — calibrated precisely to your audience.",
     iconName: "Music",
     details: [
       "International Headliner & Symphony Bookings",
+      "A-List Presenters, Bilingual MCs, and Keynotes",
       "Sleek Vertical Aerialists & Kinetic Light Acts",
-      "Immersive Interactive Performance Sculptures",
-      "A-List Presenters, MCs, and Regional Masters",
-      "Interactive Laser Harp & Tech-Arts Fusion"
+      "Immersive Interactive Performance Artists",
+      "Full Rider Management & VIP Backstage Protocol"
     ],
     image: "./images/services/service_entertainment_1783333349846.webp"
   },
   {
-    id: "exhibitions",
+    id: "permits",
+    number: "08",
+    title: "Permits",
+    description: "Flawless compliance and zero-delay government authorizations across Dubai and the UAE. We manage all DET (DTCM), civil defense, municipality, economic department, drone, and venue permits with complete regulatory precision.",
+    iconName: "FileCheck",
+    details: [
+      "Dubai Tourism (DET / DTCM) Event & Entertainment Permits",
+      "Civil Defense, Safety & Structural Approvals",
+      "Dubai Municipality & Venue Authority Clearances",
+      "Drone Filming, Pyrotechnics & Laser Approvals",
+      "VIP Security, Road Closure & Traffic Clearances"
+    ],
+    image: "./images/services/service_permits.webp"
+  },
+  {
+    id: "exhibition",
     number: "09",
-    title: "Exhibitions",
+    title: "Exhibition",
     description: "Your stand is your first impression on the floor. We design and build custom and modular exhibition environments — concept to completion, fabrication to teardown — that stop traffic and start conversations.",
     iconName: "Layers",
     details: [
@@ -348,26 +348,26 @@ export const WHY_US_DATA: WhyUsReason[] = [
   {
     id: "why-01",
     number: "①",
-    title: "Precision at Every Scale",
-    description: "Whether it's 20 executives or 2,000 delegates, we apply the same rigorous planning, the same quality of execution, and the same zero-compromise standard to every event we touch."
+    title: "Expertise You Can Trust",
+    description: "With years of proven success in delivering high-profile corporate events and exhibitions, we bring unmatched industry expertise, meticulous planning, and flawless execution to ensure your event's seamless delivery."
   },
   {
     id: "why-02",
     number: "②",
-    title: "Ideas That Actually Work",
-    description: "Creativity without execution is just decoration. We bridge bold concepts and flawless delivery — producing ideas that are as practical as they are impressive, every single time."
+    title: "Innovative Solutions",
+    description: "We infuse creativity and fresh concepts into every event, from bespoke stage designs to immersive attendee experiences, ensuring your brand stands out and leaves a lasting impact across every touchpoint."
   },
   {
     id: "why-03",
     number: "③",
-    title: "Your Vision, Our Obsession",
-    description: "We begin every project by deeply understanding your goals, your audience, and your brand — then we build everything backwards from there. The result is always an event that feels unmistakably yours."
+    title: "Client-Centric Approach",
+    description: "Your goals are our utmost priority. We work closely with you from concept to completion, offering tailored solutions, transparent communication, and dedicated support every step of the way."
   },
   {
     id: "why-04",
     number: "④",
-    title: "A Team You Can Actually Trust",
-    description: "Reliability is a luxury in this industry. We're known for calm under pressure, transparent communication, and showing up — fully — every time."
+    title: "Proven Success",
+    description: "Our track record speaks for itself. Trusted by top government entities and international brands across Dubai and the GCC, we consistently deliver events that exceed expectations and elevate brand prestige."
   }
 ];
 

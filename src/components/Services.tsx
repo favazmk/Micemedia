@@ -11,7 +11,8 @@ import {
   Music, 
   Layers, 
   Check, 
-  Lightbulb
+  Lightbulb,
+  FileCheck
 } from 'lucide-react';
 import Particles from './Particles';
 import { SERVICES_DATA } from '../data';
@@ -37,6 +38,7 @@ export default function Services({ selectedServiceId, setSelectedServiceId, setA
       case 'Users2': return <Users className="w-5 h-5 md:w-6 md:h-6" />;
       case 'Music': return <Music className="w-5 h-5 md:w-6 md:h-6" />;
       case 'Layers': return <Layers className="w-5 h-5 md:w-6 md:h-6" />;
+      case 'FileCheck': return <FileCheck className="w-5 h-5 md:w-6 md:h-6" />;
       default: return <Sparkles className="w-5 h-5 md:w-6 md:h-6" />;
     }
   };
@@ -235,7 +237,7 @@ export default function Services({ selectedServiceId, setSelectedServiceId, setA
                         }}
                         text="Enquire for this"
                       />
-                      {srv.id === 'exhibitions' && (
+                      {(srv.id === 'exhibition' || srv.id === 'exhibitions') && (
                         <button
                           onClick={() => {
                             setActivePage('exhibition');
@@ -332,7 +334,7 @@ export default function Services({ selectedServiceId, setSelectedServiceId, setA
                     text="Enquire for this"
                     className="w-full justify-center"
                   />
-                  {srv.id === 'exhibitions' && (
+                  {(srv.id === 'exhibition' || srv.id === 'exhibitions') && (
                     <button
                       onClick={() => {
                         setActivePage('exhibition');
