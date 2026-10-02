@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import { useState } from 'react';
 import { BRAND_INFO, SERVICES_DATA } from '../data';
 import { Facebook, Instagram, Linkedin, Youtube, Mail, Phone, MapPin, ArrowUp } from 'lucide-react';
 
@@ -12,6 +13,7 @@ interface FooterProps {
 }
 
 export default function Footer({ setActivePage, setSelectedServiceId }: FooterProps) {
+  const [isWorkOpen, setIsWorkOpen] = useState(false);
   const handleServiceClick = (serviceId: string) => {
     if (setSelectedServiceId) {
       setSelectedServiceId(serviceId);
@@ -101,7 +103,7 @@ export default function Footer({ setActivePage, setSelectedServiceId }: FooterPr
           {/* Column 2: Navigation Links */}
           <div className="flex flex-col gap-6">
             <span className="font-display text-sm font-semibold tracking-wider text-white uppercase border-l-2 border-red-650 pl-3">
-              Useful Links
+              Quick Links
             </span>
             <ul className="flex flex-col gap-3.5 text-sm text-neutral-400">
               <li>
@@ -111,36 +113,71 @@ export default function Footer({ setActivePage, setSelectedServiceId }: FooterPr
               </li>
               <li>
                 <button onClick={() => handlePageClick('about-us')} className="hover:text-red-500 transition-colors cursor-pointer text-left">
-                  Corporate Journey
+                  About
                 </button>
               </li>
               <li>
                 <button onClick={() => handlePageClick('services')} className="hover:text-red-500 transition-colors cursor-pointer text-left">
-                  Our Specialities
+                  Services
                 </button>
               </li>
-              <li>
-                <button onClick={() => handlePageClick('exhibition')} className="hover:text-red-500 transition-colors cursor-pointer text-left">
-                  Exhibition
+              <li className="relative group">
+                <button 
+                  type="button"
+                  onClick={() => setIsWorkOpen(!isWorkOpen)}
+                  className="hover:text-red-500 transition-colors cursor-pointer text-left flex items-center gap-1.5"
+                >
+                  <span>Work</span>
+                  <svg 
+                    className={`w-3 h-3 transition-transform duration-200 group-hover:rotate-180 ${isWorkOpen ? 'rotate-180 text-red-500' : ''}`} 
+                    fill="none" 
+                    viewBox="0 0 24 24" 
+                    stroke="currentColor"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
                 </button>
-              </li>
-              <li>
-                <button onClick={() => handlePageClick('events')} className="hover:text-red-500 transition-colors cursor-pointer text-left">
-                  Events
-                </button>
+                <div 
+                  className={`absolute top-full left-0 mt-1.5 w-36 bg-neutral-900 border border-white/10 rounded-md shadow-xl z-30 transition-all duration-300 transform origin-top-left ${
+                    isWorkOpen 
+                      ? 'opacity-100 visible translate-y-0' 
+                      : 'opacity-0 invisible -translate-y-2 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0'
+                  }`}
+                >
+                  <div className="py-2 flex flex-col">
+                    <button
+                      onClick={() => {
+                        handlePageClick('exhibition');
+                        setIsWorkOpen(false);
+                      }}
+                      className="text-left px-4 py-2 text-sm text-neutral-300 hover:bg-neutral-800 hover:text-red-500 transition-colors cursor-pointer"
+                    >
+                      Exhibition
+                    </button>
+                    <button
+                      onClick={() => {
+                        handlePageClick('events');
+                        setIsWorkOpen(false);
+                      }}
+                      className="text-left px-4 py-2 text-sm text-neutral-300 hover:bg-neutral-800 hover:text-red-500 transition-colors cursor-pointer"
+                    >
+                      Events
+                    </button>
+                  </div>
+                </div>
               </li>
               <li>
                 <button onClick={() => handlePageClick('contact')} className="hover:text-red-500 transition-colors cursor-pointer text-left">
-                  Connect & Estimate
+                  Contact
                 </button>
               </li>
             </ul>
           </div>
 
-          {/* Column 3: The 9 Disciplines */}
+          {/* Column 3: Services */}
           <div className="flex flex-col gap-6">
             <span className="font-display text-sm font-semibold tracking-wider text-white uppercase border-l-2 border-red-650 pl-3">
-              Our Disciplines
+              Our Services
             </span>
             <ul className="grid grid-cols-1 gap-2.5 text-xs text-neutral-400 font-sans" id="footer-disciplines">
               {SERVICES_DATA.map((srv) => (
@@ -160,7 +197,7 @@ export default function Footer({ setActivePage, setSelectedServiceId }: FooterPr
           {/* Column 4: Contact details */}
           <div className="flex flex-col gap-6" id="footer-contact">
             <span className="font-display text-sm font-semibold tracking-wider text-white uppercase border-l-2 border-red-650 pl-3">
-              Headquarters
+              Office Address
             </span>
             <div className="flex flex-col gap-4 text-sm text-neutral-400">
               <div className="flex items-start gap-3">
@@ -177,6 +214,17 @@ export default function Footer({ setActivePage, setSelectedServiceId }: FooterPr
                 <Mail className="w-4 h-4 text-red-600 shrink-0" />
                 <a href={`mailto:${BRAND_INFO.email}`} className="hover:text-red-500 transition-colors break-all">
                   {BRAND_INFO.email}
+                </a>
+              </div>
+              <div className="pt-2">
+                <a 
+                  href="https://maps.google.com/?q=The+Meydan+Hotel+Dubai" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-red-500 hover:text-red-400 border border-red-500/30 hover:border-red-500/60 bg-red-600/10 px-3 py-1.5 rounded-lg transition-all"
+                >
+                  <MapPin className="w-3.5 h-3.5" />
+                  Hub Location Map
                 </a>
               </div>
             </div>

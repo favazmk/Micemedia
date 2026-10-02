@@ -220,7 +220,7 @@ export default function Contact() {
     companyName: '',
     email: '',
     phone: '',
-    eventType: 'Conference',
+    eventType: 'Conferences & Conventions',
     estimatedGuests: '50-200',
     preferredDate: '',
     comments: ''
@@ -233,14 +233,15 @@ export default function Contact() {
 
   // Event Type list
   const eventTypes = [
-    'Conference', 
-    'Gala Dinner', 
-    'Exhibition', 
-    'Product Launch', 
-    'Team Building', 
-    'Entertainment', 
-    'Brand Activation', 
-    'Incentive Travel', 
+    'Conferences & Conventions',
+    'Product launch & Brand Activation',
+    'Gala Dinner & Awards Ceremony',
+    'Content Creation & AV production',
+    'Team Building & Incentive Events',
+    'Community & Festive Events',
+    'Talent Management',
+    'Permits',
+    'Exhibition',
     'Other'
   ];
 
@@ -370,39 +371,30 @@ export default function Contact() {
             <div className="flex flex-col gap-6">
               
               <div className="flex items-start gap-4">
-                <div className="w-10 h-10 rounded-xl bg-neutral-900 border border-white/5 flex items-center justify-center text-red-500 shrink-0">
+                <div className="w-10 h-10 rounded-xl bg-neutral-900 border border-white/5 flex items-center justify-center text-red-500 shrink-0 mt-0.5">
                   <MapPin className="w-5 h-5" />
                 </div>
-                <div className="flex flex-col">
-                  <span className="text-xs font-mono text-neutral-510 uppercase tracking-wider">Office Address</span>
-                  <span className="text-sm font-sans text-neutral-300 font-medium mt-1">
-                    {BRAND_INFO.address}
-                  </span>
-                </div>
+                <span className="text-sm font-sans text-neutral-300 font-medium leading-relaxed">
+                  {BRAND_INFO.address}
+                </span>
               </div>
 
-              <div className="flex items-start gap-4">
+              <div className="flex items-center gap-4">
                 <div className="w-10 h-10 rounded-xl bg-neutral-900 border border-white/5 flex items-center justify-center text-red-500 shrink-0">
                   <Phone className="w-5 h-5" />
                 </div>
-                <div className="flex flex-col">
-                  <span className="text-xs font-mono text-neutral-510 uppercase tracking-wider">Direct Hotlines</span>
-                  <a href={`tel:${BRAND_INFO.phone1}`} className="text-sm font-sans text-neutral-300 font-bold hover:text-red-500 transition-colors mt-1">
-                    {BRAND_INFO.phone1}
-                  </a>
-                </div>
+                <a href={`tel:${BRAND_INFO.phone1}`} className="text-sm font-sans text-neutral-300 font-bold hover:text-red-500 transition-colors">
+                  {BRAND_INFO.phone1}
+                </a>
               </div>
 
-              <div className="flex items-start gap-4">
+              <div className="flex items-center gap-4">
                 <div className="w-10 h-10 rounded-xl bg-neutral-900 border border-white/5 flex items-center justify-center text-red-500 shrink-0">
                   <Mail className="w-5 h-5" />
                 </div>
-                <div className="flex flex-col">
-                  <span className="text-xs font-mono text-neutral-510 uppercase tracking-wider">Electronic Mail</span>
-                  <a href={`mailto:${BRAND_INFO.email}`} className="text-sm font-sans text-neutral-300 font-bold hover:text-red-500 transition-colors mt-1 break-all">
-                    {BRAND_INFO.email}
-                  </a>
-                </div>
+                <a href={`mailto:${BRAND_INFO.email}`} className="text-sm font-sans text-neutral-300 font-bold hover:text-red-500 transition-colors break-all">
+                  {BRAND_INFO.email}
+                </a>
               </div>
 
             </div>
@@ -654,7 +646,7 @@ export default function Contact() {
                         companyName: '',
                         email: '',
                         phone: '',
-                        eventType: 'Conference',
+                        eventType: 'Conferences & Conventions',
                         estimatedGuests: '50-200',
                         preferredDate: '',
                         comments: ''

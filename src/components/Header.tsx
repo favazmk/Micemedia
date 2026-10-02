@@ -30,11 +30,16 @@ export default function Header({ activePage, setActivePage }: HeaderProps) {
   }, []);
 
   const navItems = [
-    { label: 'Home', value: 'home' },
     { label: 'About', value: 'about-us' },
     { label: 'Services', value: 'services' },
-    { label: 'Exhibition', value: 'exhibition' },
-    { label: 'Events', value: 'events' },
+    { 
+      label: 'Work', 
+      value: 'work',
+      children: [
+        { label: 'Exhibition', value: 'exhibition' },
+        { label: 'Events', value: 'events' }
+      ]
+    },
     { label: 'Contact', value: 'contact' },
   ];
 
@@ -81,18 +86,42 @@ export default function Header({ activePage, setActivePage }: HeaderProps) {
           {/* Desktop Navigation */}
           <nav id="desktop-nav" className="hidden md:flex items-center gap-8">
             {navItems.map((item) => (
-              <button
-                id={`nav-${item.value}`}
-                key={item.value}
-                onClick={() => handleNavClick(item.value)}
-                className={`font-sans text-sm font-medium tracking-wide transition-all cursor-pointer nav-link-effect py-1 ${
-                  activePage === item.value
-                    ? 'text-red-500 active'
-                    : 'text-neutral-400 hover:text-white'
-                }`}
-              >
-                {item.label}
-              </button>
+              item.children ? (
+                <div key={item.value} className="relative group">
+                  <button
+                    className={`font-sans text-sm font-medium tracking-wide transition-all cursor-pointer nav-link-effect py-1 text-neutral-400 hover:text-white flex items-center gap-1`}
+                  >
+                    {item.label}
+                    <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                  </button>
+                  <div className="absolute top-full left-0 mt-2 w-40 bg-neutral-900 border border-white/10 rounded-md shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform origin-top-left -translate-y-2 group-hover:translate-y-0">
+                    <div className="py-2 flex flex-col">
+                      {item.children.map(child => (
+                        <button
+                          key={child.value}
+                          onClick={() => handleNavClick(child.value)}
+                          className={`text-left px-4 py-2 text-sm transition-colors hover:bg-neutral-800 hover:text-red-500 ${activePage === child.value ? 'text-red-500 bg-neutral-800/50' : 'text-neutral-300'}`}
+                        >
+                          {child.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <button
+                  id={`nav-${item.value}`}
+                  key={item.value}
+                  onClick={() => handleNavClick(item.value)}
+                  className={`font-sans text-sm font-medium tracking-wide transition-all cursor-pointer nav-link-effect py-1 ${
+                    activePage === item.value
+                      ? 'text-red-500 active'
+                      : 'text-neutral-400 hover:text-white'
+                  }`}
+                >
+                  {item.label}
+                </button>
+              )
             ))}
           </nav>
 
@@ -153,19 +182,41 @@ export default function Header({ activePage, setActivePage }: HeaderProps) {
               </span>
               <nav className="flex flex-col gap-5">
                 {navItems.map((item, index) => (
-                  <motion.button
-                    initial={{ opacity: 0, x: -15 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.05 }}
-                    onClick={() => handleNavClick(item.value)}
-                    key={item.value}
-                    className={`font-display text-2xl font-bold tracking-tight text-left cursor-pointer transition-colors ${
-                      activePage === item.value ? 'text-red-500' : 'text-neutral-400 hover:text-white'
-                    }`}
-                  >
-                    <span className="text-red-600 mr-3 text-sm font-mono font-medium">0{index + 1}.</span>
-                    {item.label}
-                  </motion.button>
+                  item.children ? (
+                    <div key={item.value} className="flex flex-col gap-2">
+                      <span className="font-display text-2xl font-bold tracking-tight text-neutral-300">
+                        <span className="text-red-600 mr-3 text-sm font-mono font-medium">0{index + 1}.</span>
+                        {item.label}
+                      </span>
+                      <div className="flex flex-col pl-8 gap-2 border-l border-red-500/20 my-1">
+                        {item.children.map((child) => (
+                          <button
+                            key={child.value}
+                            onClick={() => handleNavClick(child.value)}
+                            className={`font-display text-lg font-semibold tracking-tight text-left cursor-pointer transition-colors ${
+                              activePage === child.value ? 'text-red-500' : 'text-neutral-400 hover:text-white'
+                            }`}
+                          >
+                            ↳ {child.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  ) : (
+                    <motion.button
+                      initial={{ opacity: 0, x: -15 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: index * 0.05 }}
+                      onClick={() => handleNavClick(item.value)}
+                      key={item.value}
+                      className={`font-display text-2xl font-bold tracking-tight text-left cursor-pointer transition-colors ${
+                        activePage === item.value ? 'text-red-500' : 'text-neutral-400 hover:text-white'
+                      }`}
+                    >
+                      <span className="text-red-600 mr-3 text-sm font-mono font-medium">0{index + 1}.</span>
+                      {item.label}
+                    </motion.button>
+                  )
                 ))}
               </nav>
             </div>
