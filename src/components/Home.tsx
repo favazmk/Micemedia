@@ -30,6 +30,7 @@ import { PortfolioItem } from '../types';
 import TestimonialsSlider from './TestimonialsSlider';
 import EventScroll from './EventScroll';
 import ZoomShowcase from './ZoomShowcase';
+import MorphScene from './MorphScene';
 
 // Mix of events and exhibition stands for the "What We Done" zoom reel
 const FEATURED_WORK: PortfolioItem[] = [
@@ -889,6 +890,9 @@ export default function Home({
           </div>
         </button>
       </motion.section>
+
+      {/* SECTION 3C: 3D PARTICLE SCULPTURE — idea -> stand -> stage as you scroll */}
+      <MorphScene onExplore={() => goToPage('services')} />
 
       {/* SECTION 4: WHAT WE DONE — zig-zag rows, each photo zooms in as you scroll */}
       <section id="home-portfolio" className="relative z-10 w-full mt-10 md:mt-20">
