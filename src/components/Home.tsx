@@ -4,7 +4,7 @@
  */
 
 import React, { useRef, useState, useEffect } from 'react';
-import { motion, useScroll, useTransform, useSpring, useMotionValueEvent } from 'motion/react';
+import { motion, useScroll, useTransform, useSpring, useMotionValueEvent, useInView } from 'motion/react';
 import { 
   ArrowRight, 
   Trophy, 
@@ -96,6 +96,14 @@ interface HomeProps {
 }
 
 
+// Scroll reveal shared by the home sections: rises and fades in once as it enters the viewport
+const reveal = (delay = 0, y = 48) => ({
+  initial: { opacity: 0, y },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true, amount: 0.25 },
+  transition: { duration: 0.8, delay, ease: [0.22, 1, 0.36, 1] as const },
+});
+
 export default function Home({
  setActivePage, setSelectedServiceId, setSelectedPortfolioId }: HomeProps) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -164,6 +172,8 @@ export default function Home({
 
   // States & Refs for slow-mo kinetic marquee braking on hover and touch/mouse grab & drag
   const tickerRef = useRef<HTMLDivElement>(null);
+  const cardsStageRef = useRef<HTMLDivElement>(null);
+  const cardsInView = useInView(cardsStageRef, { amount: 0.6 });
   const [isTickerHovered, setIsTickerHovered] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
 
@@ -442,7 +452,7 @@ export default function Home({
             className="absolute inset-0 flex items-center px-6 sm:px-12 md:px-20 pointer-events-none"
           >
             <div className="max-w-xl">
-              <span className="font-mono text-[10px] sm:text-xs tracking-[0.3em] uppercase text-red-500 font-bold">Phase 01 — Concept & Design</span>
+              <span className="inline-block font-mono text-[10px] sm:text-xs tracking-[0.3em] uppercase text-white font-bold bg-black/60 backdrop-blur-sm border border-red-500/60 rounded-full px-3 py-1.5">Phase 01 — Concept & Design</span>
               <h2 className="font-display text-4xl sm:text-5xl md:text-6xl font-bold text-white leading-[1.05] mt-4 [text-shadow:0_4px_24px_rgba(0,0,0,0.9)]">
                 It starts as a <span className="accent-word text-red-500 text-[1.15em]">blueprint.</span>
               </h2>
@@ -455,10 +465,10 @@ export default function Home({
           {/* Chapter 2: build - moved down to avoid overlapping with center/logo */}
           <motion.div
             style={{ opacity: chapter2Opacity, y: chapter2Y }}
-            className="absolute inset-0 flex items-end justify-end px-6 sm:px-12 md:px-20 pb-28 sm:pb-32 md:pb-36 pointer-events-none"
+            className="absolute inset-0 flex items-end justify-end px-6 sm:px-12 md:px-20 pb-16 sm:pb-20 md:pb-24 pointer-events-none"
           >
             <div className="max-w-xl text-right">
-              <span className="font-mono text-[10px] sm:text-xs tracking-[0.3em] uppercase text-red-500 font-bold">Phase 02 — Production & Build</span>
+              <span className="inline-block font-mono text-[10px] sm:text-xs tracking-[0.3em] uppercase text-white font-bold bg-black/60 backdrop-blur-sm border border-red-500/60 rounded-full px-3 py-1.5">Phase 02 — Production & Build</span>
               <h2 className="font-display text-4xl sm:text-5xl md:text-6xl font-bold text-white leading-[1.05] mt-4 [text-shadow:0_4px_24px_rgba(0,0,0,0.9)]">
                 Then we build every <span className="accent-word text-red-500 text-[1.15em]">detail.</span>
               </h2>
@@ -471,9 +481,9 @@ export default function Home({
           {/* Chapter 3: showtime */}
           <motion.div
             style={{ opacity: chapter3Opacity, y: chapter3Y, pointerEvents: chapter3Pointer }}
-            className="absolute inset-0 flex flex-col items-center justify-end text-center px-6 pb-28 sm:pb-32"
+            className="absolute inset-0 flex flex-col items-center justify-end text-center px-6 pb-24 sm:pb-28"
           >
-            <span className="font-mono text-[10px] sm:text-xs tracking-[0.3em] uppercase text-red-500 font-bold">Phase 03 — Showtime</span>
+            <span className="inline-block font-mono text-[10px] sm:text-xs tracking-[0.3em] uppercase text-white font-bold bg-black/60 backdrop-blur-sm border border-red-500/60 rounded-full px-3 py-1.5">Phase 03 — Showtime</span>
             <h2 className="font-display text-3xl sm:text-5xl md:text-6xl font-bold text-white leading-[1.15] mt-4 [text-shadow:0_4px_24px_rgba(0,0,0,0.9)] max-w-4xl">
               Bringing <span className="accent-word text-red-500 text-[1.15em]">People</span> together since &ldquo;Let&apos;s Do Something <span className="accent-word text-red-500 text-[1.15em]">Amazing</span>&rdquo;
             </h2>
@@ -505,7 +515,7 @@ export default function Home({
 
       {/* TICKER STRIP */}
 
-      <div className="bg-[#dc4d49] border-y border-white/5 py-4.5 overflow-hidden w-full relative z-40">
+      <motion.div {...reveal(0, 24)} className="bg-[#dc4d49] border-y border-white/5 py-4.5 overflow-hidden w-full relative z-40">
         <div 
           ref={tickerRef}
           onMouseEnter={() => setIsTickerHovered(true)}
@@ -522,48 +532,53 @@ export default function Home({
             <span>Conferences & Conventions</span> <span className="text-white/40">✦</span>
             <span>Product launch & Brand Activation</span> <span className="text-white/40">✦</span>
             <span>Gala Dinner & Awards Ceremony</span> <span className="text-white/40">✦</span>
-            <span>Content Creation & AV production</span> <span className="text-white/40">✦</span>
+            <span>Staging & AV production</span> <span className="text-white/40">✦</span>
             <span>Team Building & Incentive Events</span> <span className="text-white/40">✦</span>
             <span>Community & Festive Events</span> <span className="text-white/40">✦</span>
             <span>Talent Management</span> <span className="text-white/40">✦</span>
             <span>Permits</span> <span className="text-white/40">✦</span>
             <span>Exhibition</span> <span className="text-white/40">✦</span>
+            <span>Trade Shows</span> <span className="text-white/40">✦</span>
           </div>
           {/* Block 2 */}
           <div className="flex items-center gap-5 sm:gap-8.5 shrink-0 px-2">
             <span>Conferences & Conventions</span> <span className="text-white/40">✦</span>
             <span>Product launch & Brand Activation</span> <span className="text-white/40">✦</span>
             <span>Gala Dinner & Awards Ceremony</span> <span className="text-white/40">✦</span>
-            <span>Content Creation & AV production</span> <span className="text-white/40">✦</span>
+            <span>Staging & AV production</span> <span className="text-white/40">✦</span>
             <span>Team Building & Incentive Events</span> <span className="text-white/40">✦</span>
             <span>Community & Festive Events</span> <span className="text-white/40">✦</span>
             <span>Talent Management</span> <span className="text-white/40">✦</span>
             <span>Permits</span> <span className="text-white/40">✦</span>
             <span>Exhibition</span> <span className="text-white/40">✦</span>
+            <span>Trade Shows</span> <span className="text-white/40">✦</span>
           </div>
           {/* Block 3 */}
           <div className="flex items-center gap-5 sm:gap-8.5 shrink-0 px-2">
             <span>Conferences & Conventions</span> <span className="text-white/40">✦</span>
             <span>Product launch & Brand Activation</span> <span className="text-white/40">✦</span>
             <span>Gala Dinner & Awards Ceremony</span> <span className="text-white/40">✦</span>
-            <span>Content Creation & AV production</span> <span className="text-white/40">✦</span>
+            <span>Staging & AV production</span> <span className="text-white/40">✦</span>
             <span>Team Building & Incentive Events</span> <span className="text-white/40">✦</span>
             <span>Community & Festive Events</span> <span className="text-white/40">✦</span>
             <span>Talent Management</span> <span className="text-white/40">✦</span>
             <span>Permits</span> <span className="text-white/40">✦</span>
             <span>Exhibition</span> <span className="text-white/40">✦</span>
+            <span>Trade Shows</span> <span className="text-white/40">✦</span>
           </div>
         </div>
-      </div>
+      </motion.div>
 
       {/* SECTION 1B: WHAT MAKES US DIFFERENT — 3D card deck (previously inside the hero) */}
       <section id="home-pillars" className="relative w-full max-w-7xl mx-auto px-6 pt-20 md:pt-28 pb-6 z-10 flex flex-col items-center">
-        <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-white text-center tracking-tight leading-tight">
+        <motion.h2 {...reveal()} className="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-white text-center tracking-tight leading-tight">
           Why brands <span className="accent-word text-red-500 text-[1.15em]">choose</span> us.
-        </h2>
+        </motion.h2>
 
       {/* Advanced 3D Stage Deck projection */}
       <motion.div
+        ref={cardsStageRef}
+        {...reveal(0.15, 70)}
         className="relative w-full max-w-4xl h-[280px] sm:h-[350px] mt-6 sm:mt-10 flex items-center justify-center [perspective:1200px]"
         id="hologram-stage-canvas"
       >
@@ -575,9 +590,9 @@ export default function Home({
           {/* Card 1: Left */}
           <motion.div
             animate={{
-              rotateY: isMobile ? (activeTouchHeroCardId === 'events' ? 0 : -10) : -20,
-              rotateX: isMobile ? (activeTouchHeroCardId === 'events' ? 12 : 6) : 6,
-              z: isMobile ? (activeTouchHeroCardId === 'events' ? 60 : 10) : 10,
+              rotateY: cardsInView ? 0 : isMobile ? (activeTouchHeroCardId === 'events' ? 0 : -10) : -20,
+              rotateX: cardsInView ? 12 : isMobile ? (activeTouchHeroCardId === 'events' ? 12 : 6) : 6,
+              z: cardsInView ? 60 : isMobile ? (activeTouchHeroCardId === 'events' ? 60 : 10) : 10,
               scale: 1
             }}
             whileHover={{ 
@@ -632,7 +647,7 @@ export default function Home({
                 Two things most agencies can't balance. We refuse to choose between them — on every project, at every scale, without exception.
               </p>
               <span className="text-[8px] sm:text-[11px] font-mono uppercase tracking-widest text-red-400 font-bold hover:text-red-300 transition-colors inline-flex items-center gap-1 group/link">
-                OUR SERVICES <span className="transform group-hover/link:translate-x-1 transition-transform">â†’</span>
+                OUR SERVICES <span className="transform group-hover/link:translate-x-1 transition-transform">→</span>
               </span>
             </div>
           </motion.div>
@@ -640,9 +655,9 @@ export default function Home({
           {/* Card 3: Right */}
           <motion.div
             animate={{
-              rotateY: isMobile ? (activeTouchHeroCardId === 'about-us' ? 0 : 10) : 20,
-              rotateX: isMobile ? (activeTouchHeroCardId === 'about-us' ? 12 : 6) : 6,
-              z: isMobile ? (activeTouchHeroCardId === 'about-us' ? 60 : 10) : 10,
+              rotateY: cardsInView ? 0 : isMobile ? (activeTouchHeroCardId === 'about-us' ? 0 : 10) : 20,
+              rotateX: cardsInView ? 12 : isMobile ? (activeTouchHeroCardId === 'about-us' ? 12 : 6) : 6,
+              z: cardsInView ? 60 : isMobile ? (activeTouchHeroCardId === 'about-us' ? 60 : 10) : 10,
               scale: 1
             }}
             whileHover={{ 
@@ -835,7 +850,7 @@ export default function Home({
           Sources are tried in order: a self-hosted public/videos/party.mp4 if one is added, then the
           hotlinked Mixkit clip ("Front of a concert with the crowd dancing in slow motion", free under
           the Mixkit License), then the existing event reel if the remote file can't be reached. */}
-      <section id="home-video" className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 my-16 md:my-24">
+      <motion.section id="home-video" initial={{ opacity: 0, y: 80, scale: 0.94 }} whileInView={{ opacity: 1, y: 0, scale: 1 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }} className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 my-16 md:my-24">
         <button
           type="button"
           onClick={() => goToPage('exhibition')}
@@ -865,7 +880,7 @@ export default function Home({
               </span>
               <h2 className="font-display text-3xl sm:text-5xl md:text-6xl font-bold text-white leading-[1.05] mt-4">
                 We build the stand. <br className="hidden sm:block" />
-                Then we throw the <span className="accent-word text-red-500 text-[1.15em]">party.</span>
+                Then we set it in <span className="accent-word text-red-500 text-[1.15em]">motion.</span>
               </h2>
             </div>
             <span className="inline-flex items-center gap-2 font-mono text-[10px] sm:text-xs tracking-widest uppercase font-bold text-black bg-white rounded-full px-6 py-4 shrink-0 self-start md:self-auto group-hover:bg-red-500 group-hover:text-white transition-colors">
@@ -873,11 +888,11 @@ export default function Home({
             </span>
           </div>
         </button>
-      </section>
+      </motion.section>
 
       {/* SECTION 4: WHAT WE DONE — zig-zag rows, each photo zooms in as you scroll */}
       <section id="home-portfolio" className="relative z-10 w-full mt-10 md:mt-20">
-        <div className="max-w-7xl mx-auto px-6 sm:px-12 md:px-16 flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-4 md:mb-0">
+        <motion.div {...reveal()} className="max-w-7xl mx-auto px-6 sm:px-12 md:px-16 flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-4 md:mb-0">
           <div className="flex flex-col gap-4">
             <span className="text-xs font-mono tracking-widest text-red-500 uppercase font-bold">
               Our Work
@@ -890,27 +905,24 @@ export default function Home({
             <PrimaryButton onClick={() => goToPage('events')} text="All Events" />
             <PrimaryButton onClick={() => goToPage('exhibition')} text="All Exhibitions" />
           </div>
-        </div>
+        </motion.div>
 
         <ZoomShowcase items={FEATURED_WORK} onOpen={openProject} />
       </section>
 
       {/* SECTION 5: CLIENT LOGOS INFINITE SCROLLER */}
       <section id="home-partners" className="py-10 md:py-20 relative z-20 w-full overflow-hidden max-w-7xl mx-auto my-10 md:my-20 border border-white/40 rounded-[2rem] lg:rounded-[3rem] shadow-[0_0_30px_rgba(255,255,255,0.08)]">
-        <div className="max-w-7xl mx-auto px-6 mb-10 text-center flex flex-col items-center drop-shadow-[0_4px_8px_rgba(0,0,0,0.8)]">
+        <motion.div {...reveal()} className="max-w-7xl mx-auto px-6 mb-10 text-center flex flex-col items-center drop-shadow-[0_4px_8px_rgba(0,0,0,0.8)]">
           <span className="text-xs font-mono tracking-[0.2em] text-red-500 uppercase font-bold mb-2 [text-shadow:0_2px_4px_rgba(0,0,0,0.8)]">
             Trusted By
           </span>
           <h2 className="font-display text-2xl md:text-3xl font-extrabold text-white [text-shadow:0_4px_16px_rgba(0,0,0,1)]">
             The Brands That <span className="accent-word text-red-500 text-[1.15em]">Chose Us</span>
           </h2>
-          <p className="text-neutral-300 text-xs font-mono mt-1 font-medium [text-shadow:0_2px_8px_rgba(0,0,0,1)]">
-            Leading organisations across UAE and the GCC region.
-          </p>
-        </div>
+        </motion.div>
 
         {/* Continuous marquee layout */}
-        <div className="w-full relative py-7 flex items-center" id="logo-slider-viewport">
+        <motion.div {...reveal(0.2, 32)} className="w-full relative py-7 flex items-center" id="logo-slider-viewport">
 
           <div 
             ref={logosRef}
@@ -923,13 +935,13 @@ export default function Home({
               <div
                 key={`slide1-${client.id}`}
                 data-text={client.name}
-                className="logo-item w-28 sm:w-48 mx-3 sm:mx-4.5 shrink-0 h-14 sm:h-18 bg-[#dc4d49] hover:bg-[#c5413d] border border-red-400/20 hover:border-red-300/40 rounded-xl px-2 sm:px-4 flex items-center justify-center transition-all duration-300"
+                className="logo-item w-28 sm:w-48 mx-3 sm:mx-4.5 shrink-0 h-14 sm:h-18 bg-white hover:bg-neutral-100 border border-white/20 rounded-xl px-2 sm:px-4 flex items-center justify-center transition-all duration-300"
               >
                 <img
                   src={client.logoUrl}
                   alt={client.name}
                   referrerPolicy="no-referrer"
-                  className="max-w-full max-h-8 sm:max-h-12 object-contain filter drop-shadow-[0_2px_8px_rgba(0,0,0,0.15)] select-none pointer-events-none mix-blend-multiply grayscale contrast-[20]"
+                  className="max-w-full max-h-8 sm:max-h-12 object-contain select-none pointer-events-none"
                 />
               </div>
             ))}
@@ -938,18 +950,18 @@ export default function Home({
               <div
                 key={`slide2-${client.id}`}
                 data-text={client.name}
-                className="logo-item w-28 sm:w-48 mx-3 sm:mx-4.5 shrink-0 h-14 sm:h-18 bg-[#dc4d49] hover:bg-[#c5413d] border border-red-400/20 hover:border-red-300/40 rounded-xl px-2 sm:px-4 flex items-center justify-center transition-all duration-300"
+                className="logo-item w-28 sm:w-48 mx-3 sm:mx-4.5 shrink-0 h-14 sm:h-18 bg-white hover:bg-neutral-100 border border-white/20 rounded-xl px-2 sm:px-4 flex items-center justify-center transition-all duration-300"
               >
                 <img
                   src={client.logoUrl}
                   alt={client.name}
                   referrerPolicy="no-referrer"
-                  className="max-w-full max-h-8 sm:max-h-12 object-contain filter drop-shadow-[0_2px_8px_rgba(0,0,0,0.15)] select-none pointer-events-none mix-blend-multiply grayscale contrast-[20]"
+                  className="max-w-full max-h-8 sm:max-h-12 object-contain select-none pointer-events-none"
                 />
               </div>
             ))}
           </div>
-        </div>
+        </motion.div>
       </section>
 
       {/* SECTION 6: CLIENT TESTIMONIALS */}
@@ -995,20 +1007,20 @@ export default function Home({
         </div>
 
         <div className="max-w-4xl mx-auto px-6 text-center relative z-10 flex flex-col items-center drop-shadow-[0_4px_8px_rgba(0,0,0,0.8)]">
-          <Sparkles className="w-8 h-8 text-red-600 mb-6 animate-pulse" />
-          <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-black uppercase text-white tracking-tight leading-tight [text-shadow:0_4px_16px_rgba(0,0,0,1)]">
+          <motion.div {...reveal(0, 24)}><Sparkles className="w-8 h-8 text-red-600 mb-6 animate-pulse" /></motion.div>
+          <motion.h2 {...reveal(0.1)} className="font-display text-3xl sm:text-4xl md:text-5xl font-black uppercase text-white tracking-tight leading-tight [text-shadow:0_4px_16px_rgba(0,0,0,1)]">
             Ready to Design <br className="sm:hidden" />
             Your Event <span className="accent-word text-red-500 text-[1.15em]">Legacy?</span>
-          </h2>
-          <p className="mt-6 text-neutral-300 font-sans text-sm md:text-base leading-relaxed max-w-xl font-medium [text-shadow:0_2px_8px_rgba(0,0,0,1)]">
-            Join Dubai's leading organizations. Complete our direct briefing questionnaire, estimate attendance, and receive a customized concept draft from our executive management board.
-          </p>
-          <div className="mt-10">
+          </motion.h2>
+          <motion.p {...reveal(0.2)} className="mt-6 text-neutral-300 font-sans text-sm md:text-base leading-relaxed max-w-xl font-medium [text-shadow:0_2px_8px_rgba(0,0,0,1)]">
+            Join Dubai's leading organizations. Complete our direct briefing questionnaire, estimate attendance, and receive a customized concept draft from our Mice Media team.
+          </motion.p>
+          <motion.div {...reveal(0.3, 32)} className="mt-10">
             <PrimaryButton
               onClick={() => setActivePage('contact')}
-              text="Contact Us Today"
+              text="Reach Us Today"
             />
-          </div>
+          </motion.div>
         </div>
       </section>
 

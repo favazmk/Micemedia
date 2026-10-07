@@ -350,7 +350,7 @@ export default function Contact() {
         </motion.h1>
         
         <p className="text-neutral-400 font-sans text-sm md:text-base leading-relaxed mt-4 max-w-xl mx-auto">
-          Tell us about your event vision — then watch our senior executive board turn it into an unforgettable regional legacy.
+          Tell us what you have in mind — the Mice Media team will take it from there.
         </p>
 
         <div className="w-12 h-[2px] bg-red-650 mx-auto mt-6 rounded-full"></div>
@@ -483,7 +483,7 @@ export default function Contact() {
                       <label className="text-xs font-mono text-neutral-400 uppercase tracking-wider">Company / Organisation</label>
                       <input
                         type="text"
-                        placeholder="e.g. AirlinePros Dubai"
+                        placeholder="e.g. Emirates"
                         value={formInputs.companyName}
                         onChange={(e) => handleInputChange('companyName', e.target.value)}
                         className="bg-neutral-900 border border-white/5 focus:border-red-500/60 text-white rounded-xl py-3 px-4 font-sans text-sm focus:outline-hidden transition-colors"
@@ -498,14 +498,14 @@ export default function Contact() {
                       <input
                         type="email"
                         required
-                        placeholder="e.g. sharafuddin@airlinepros.com"
+                        placeholder="e.g. sharafuddin@emirates.com"
                         value={formInputs.email}
                         onChange={(e) => handleInputChange('email', e.target.value)}
                         className="bg-neutral-900 border border-white/5 focus:border-red-500/60 text-white rounded-xl py-3 px-4 font-sans text-sm focus:outline-hidden transition-colors"
                       />
                     </div>
                     <div className="flex flex-col gap-2">
-                      <label className="text-xs font-mono text-neutral-400 uppercase tracking-wider">Phone Phone Number *</label>
+                      <label className="text-xs font-mono text-neutral-400 uppercase tracking-wider">Phone Number *</label>
                       <input
                         type="tel"
                         required

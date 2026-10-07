@@ -13,7 +13,7 @@ export const BRAND_INFO = {
   legalName: "MICE Media",
   tagline: "Crafting Events That the World Remembers",
   location: "Dubai, UAE",
-  address: "MICE Media, The Meydan Hotel, Grandstand – 6th Floor, Nad Al Shiba 1, Dubai – UAE",
+  address: "Mice Media LLC, The Meydan Hotel, Grandstand – 6th Floor, Nad Al Shiba 1, Dubai – UAE",
   phone1: "+971 50 840 8655",
   whatsapp: "https://wa.me/971508408655",
   email: "info@micemediaevents.com",
@@ -174,14 +174,6 @@ export const EVENTS_DATA: PortfolioItem[] = [
     tag: "Aviation Summit"
   },
   {
-    id: "portfolio-02",
-    title: "Calo: Corporate Iftar",
-    category: "Private",
-    caption: "Cultural precision meets elevated hospitality — planned and executed to the last detail.",
-    image: "https://www.micemediaevents.com/wp-content/uploads/2024/04/calo11.jpg",
-    tag: "Cultural Gala"
-  },
-  {
     id: "portfolio-03",
     title: "Trans Skills: Iftar Evening",
     category: "Corporate",
@@ -204,6 +196,14 @@ export const EVENTS_DATA: PortfolioItem[] = [
     caption: "Purpose-built team experience that reignited culture and reconnected a high-performing organisation.",
     image: "https://www.micemediaevents.com/wp-content/uploads/2024/05/Swizz-teambuilding-3.jpg",
     tag: "Corporate Culture"
+  },
+  {
+    id: "portfolio-02",
+    title: "Calo: Corporate Iftar",
+    category: "Private",
+    caption: "Cultural precision meets elevated hospitality — planned and executed to the last detail.",
+    image: "https://www.micemediaevents.com/wp-content/uploads/2024/04/calo11.jpg",
+    tag: "Cultural Gala"
   }
 ];
 

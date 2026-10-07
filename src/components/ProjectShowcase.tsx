@@ -3,20 +3,20 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { X, MapPin, Calendar, Sparkles, ChevronLeft, ChevronRight, Play } from 'lucide-react';
+import { X, MapPin, Calendar, Sparkles, ChevronLeft, ChevronRight, Images, Play } from 'lucide-react';
 import { EVENTS_DATA, EXHIBITIONS_DATA } from '../data';
 import { EVENT_ALBUMS, EXHIBITION_ALBUMS, pickPhotos, isVideo, posterFor } from '../gallery';
 import { PortfolioItem } from '../types';
 import { PrimaryButton } from '@/components/ui/primary-button';
 import StackSpread from '@/components/ui/stack-spread';
-import ChromaGrid, { ChromaItem } from './ChromaGrid';
 import Particles from './Particles';
 
 // Copy and data for each showcase page; both pages share the same layout
 const VARIANTS = {
   events: {
+    cardLabel: 'Event',
     eyebrow: 'Our Events',
     title: 'Events That Speak',
     accent: 'for themselves.',
@@ -24,7 +24,7 @@ const VARIANTS = {
     intro: 'Conferences, galas, launches and celebrations, staged end-to-end across Dubai and the wider GCC.',
     items: EVENTS_DATA,
     albums: EVENT_ALBUMS,
-    // Scroll-to-scatter showcase of the latest client photos (stack order: back -> front)
+    // Auto-playing scatter showcase of the latest client photos (stack order: back -> front)
     spread: {
       photos: pickPhotos([
         'dsc09020.webp', 'haz02651.webp', 'dsc09268.webp', 'dsc09160.webp',
@@ -35,6 +35,7 @@ const VARIANTS = {
     },
   },
   exhibition: {
+    cardLabel: 'Exhibition',
     eyebrow: 'Exhibitions',
     title: 'Stands That Pull',
     accent: 'a crowd.',
@@ -64,6 +65,47 @@ export default function ProjectShowcase({ variant, selectedPortfolioId, setSelec
   const config = VARIANTS[variant];
   const items: readonly PortfolioItem[] = config.items;
   const [selectedItem, setSelectedItem] = useState<PortfolioItem | null>(null);
+
+  // One card per project: conferences first, then photo albums with no matching case study, then the case studies
+  // (each linked to its album when the folder name starts with the project name).
+  const cards = useMemo(() => {
+    const norm = (t: string) => t.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+    const albumFor = (item: PortfolioItem) => {
+      const key = norm(item.title.split(':')[0]).trim();
+      return config.albums.findIndex((a) => norm(a.title).startsWith(key));
+    };
+    const counts = (images: readonly string[]) => {
+      const videos = images.filter(isVideo).length;
+      return [
+        images.length - videos && `${images.length - videos} photo${images.length - videos === 1 ? '' : 's'}`,
+        videos && `${videos} video${videos === 1 ? '' : 's'}`,
+      ].filter(Boolean).join(' · ');
+    };
+    const linked = new Set(items.map(albumFor).filter((i) => i >= 0));
+    // Hand-picked cover photos (album title -> file name) where the first photo isn't the best one
+    const coverFile: Record<string, string> = { 'Tractebel – Team Building': 'dsc09268.webp' };
+    const albumCards = config.albums.flatMap((album, albumIndex) => {
+      if (linked.has(albumIndex)) return [];
+      const first = album.images.find((src) => src.endsWith(`/${coverFile[album.title]}`))
+        ?? album.images.find((src) => !isVideo(src));
+      const cover = first ?? posterFor(album.images[0]);
+      return cover ? [{
+        key: `album-${albumIndex}`, title: album.title, overview: 'Photo gallery', category: config.cardLabel,
+        cover, meta: counts(album.images), albumIndex, item: null as PortfolioItem | null,
+      }] : [];
+    });
+    const itemCards = items.map((item) => {
+      const albumIndex = albumFor(item);
+      return {
+        key: item.id, title: item.title, overview: item.tag, category: item.category,
+        cover: item.image, meta: albumIndex >= 0 ? counts(config.albums[albumIndex].images) : '',
+        albumIndex: albumIndex >= 0 ? albumIndex : null, item,
+      };
+    });
+    // Conference projects lead the grid; otherwise albums first, then case studies
+    const all = [...albumCards, ...itemCards];
+    return [...all.filter((c) => c.category === 'Conference'), ...all.filter((c) => c.category !== 'Conference')];
+  }, [config, items]);
   // Photo lightbox: which album and which image within it
   const [photo, setPhoto] = useState<{ album: number; index: number } | null>(null);
 
@@ -146,39 +188,49 @@ export default function ProjectShowcase({ variant, selectedPortfolioId, setSelec
         <div className="w-12 h-[2px] bg-red-650 mx-auto mt-6 rounded-full"></div>
       </section>
 
-      {/* SECTION 1B: STACK SPREAD — latest client photos scatter out as you scroll */}
+      {/* SECTION 1B: STACK SPREAD — latest client photos scatter out on their own when you reach it */}
       {config.spread.photos.length > 0 && (
         <StackSpread
           images={config.spread.photos}
           title={config.spread.title}
           subtitle={config.spread.subtitle}
-          scrollLength={300}
         />
       )}
 
-      {/* SECTION 2: CHROMAGRID */}
-      <section className="px-6 max-w-7xl mx-auto w-full mb-16" id={`${variant}-chroma-grid`}>
-        <ChromaGrid
-          items={items.map((item): ChromaItem => ({
-            image: item.image,
-            title: item.title,
-            subtitle: item.caption,
-            handle: item.tag,
-            tag: item.category,
-            borderColor: '#dc4d49',
-            gradient: 'linear-gradient(145deg, #1a0a0a, #0a0a0a)',
-          }))}
-          radius={340}
-          damping={0.5}
-          fadeOut={0.8}
-          ease="power3.out"
-          onCardClick={(chromaItem) => {
-            const match = items.find(p => p.title === chromaItem.title);
-            if (match) setSelectedItem(match);
-          }}
-        />
+      {/* SECTION 2: PROJECT CARDS — one per project; opens its photo gallery (or case study) */}
+      <section className="px-6 max-w-7xl mx-auto w-full mb-20" id={`${variant}-projects`}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-12">
+          {cards.map((card, n) => (
+            <button
+              key={card.key}
+              type="button"
+              onClick={() => (card.albumIndex !== null ? setPhoto({ album: card.albumIndex, index: 0 }) : card.item && setSelectedItem(card.item))}
+              className="group text-left flex flex-col cursor-pointer"
+            >
+              <div className="relative aspect-[4/5] overflow-hidden rounded-2xl border border-white/10 group-hover:border-red-500/50 transition-colors bg-neutral-900">
+                <img
+                  src={card.cover}
+                  alt={card.title}
+                  loading="lazy"
+                  referrerPolicy="no-referrer"
+                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+              </div>
+              <div className="mt-4 flex items-center justify-between font-mono text-[10px] tracking-widest uppercase">
+                <span className="text-red-500 font-bold">{String(n + 1).padStart(2, '0')}</span>
+                <span className="text-neutral-400 border border-white/10 rounded-full px-2.5 py-1">{card.category}</span>
+              </div>
+              <h3 className="font-display text-lg md:text-xl font-bold text-white mt-2 leading-snug group-hover:text-red-400 transition-colors">{card.title}</h3>
+              <p className="font-mono text-[11px] tracking-widest uppercase text-neutral-400 mt-1">{card.overview}</p>
+              {card.meta && (
+                <span className="mt-2 inline-flex items-center gap-2 text-xs text-neutral-500">
+                  <Images className="w-3.5 h-3.5" /> {card.meta}
+                </span>
+              )}
+            </button>
+          ))}
+        </div>
       </section>
-
 
       {/* SECTION 3: PHOTO ALBUMS (auto-loaded from src/assets/gallery/<variant>) */}
       {config.albums.map((album, albumIndex) => (

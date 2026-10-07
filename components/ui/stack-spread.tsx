@@ -6,7 +6,8 @@
 
 import {
   motion,
-  useScroll,
+  animate,
+  useInView,
   useTransform,
   useReducedMotion,
   useMotionValue,
@@ -102,9 +103,10 @@ const SLOTS: Omit<StackSpreadCard, "item">[] = [
 // Mechanism
 // ---------------------------------------------------------------------------
 
-// Scroll progress where the cluster starts scattering and where it finishes.
-const SCATTER_START = 0.12;
-const SCATTER_END = 0.9;
+// The scatter plays on its own (like a video) once the section scrolls into view.
+const SCATTER_DURATION = 2.4;
+const SCATTER_DELAY = 0.25;
+const SCATTER_EASE = [0.22, 1, 0.36, 1] as const;
 
 const PARALLAX_X = 2.6;
 const PARALLAX_Y = 2.2;
@@ -311,8 +313,6 @@ interface StackSpreadStageProps {
   cards: StackSpreadCard[];
   title: ReactNode;
   subtitle?: ReactNode;
-  /** scatter scroll distance, in vh */
-  scrollLength?: number;
   bgColor?: string;
   /** fan the clustered stack (default) or start flat */
   clusterRotation?: boolean;
@@ -322,41 +322,45 @@ interface StackSpreadStageProps {
   cardRadius?: number;
   /** color of the centre headline and subtitle */
   textColor?: string;
-  /** scroll progress (0-1) where the centre text starts fading in */
+  /** animation progress (0-1) where the centre text starts fading in */
   textFadeStart?: number;
-  /** show the "scroll to spread" hint at the bottom until the scatter begins */
-  showScrollHint?: boolean;
 }
 
 function StackSpreadStage({
   cards,
   title,
   subtitle,
-  scrollLength = 350,
   bgColor = "transparent",
   clusterRotation = true,
   stackScale = 0.82,
   cardRadius = 16,
   textColor = "#f3f4f6",
   textFadeStart = 0.3,
-  showScrollHint = true,
 }: StackSpreadStageProps) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const reduce = useReducedMotion();
   const { scale: scaleMul, small: isSmall, colX, card: fixedCard } =
     useResponsive();
 
-  const { scrollYProgress } = useScroll({
-    target: wrapRef,
-    offset: ["start start", "end end"],
-  });
-
-  // hold, scatter, then settle
-  const progress = useTransform(
-    scrollYProgress,
-    [0, SCATTER_START, SCATTER_END, 1],
-    [0, 0, 1, 1],
-  );
+  // 0 = clustered, 1 = fully scattered; played on entry, rewound on exit so it replays
+  const progress = useMotionValue(0);
+  const inView = useInView(wrapRef, { amount: 0.55 });
+  useEffect(() => {
+    if (reduce === true) {
+      progress.set(inView ? 1 : 0);
+      return;
+    }
+    if (!inView) {
+      progress.set(0);
+      return;
+    }
+    const controls = animate(progress, 1, {
+      duration: SCATTER_DURATION,
+      delay: SCATTER_DELAY,
+      ease: SCATTER_EASE,
+    });
+    return () => controls.stop();
+  }, [inView, reduce, progress]);
 
   // centre text always fades in on scroll; the scale-in is dropped only when
   // reduced motion is confirmed (`true`), not on the null SSR value.
@@ -371,16 +375,13 @@ function StackSpreadStage({
   const copyOpacity = useTransform(progress, [textFadeStart, textFadeStart + 0.35], [0, 1]);
   const copyScale = useTransform(progress, [textFadeStart, 0.9], [0.85, 1]);
 
-  // scroll hint: visible while clustered, gone by the time the scatter starts
-  const hintOpacity = useTransform(progress, [0, SCATTER_START], [1, 0]);
-
   return (
     <section
       ref={wrapRef}
       className="relative w-full"
-      style={{ height: `${scrollLength}vh`, backgroundColor: bgColor }}
+      style={{ height: "100vh", backgroundColor: bgColor }}
     >
-      <div className="sticky top-0 h-screen w-full overflow-hidden">
+      <div className="relative h-screen w-full overflow-hidden">
         {/* centre text */}
         <motion.div
           className="pointer-events-none absolute inset-0 z-[5] flex flex-col items-center justify-center px-6 text-center max-md:px-8"
@@ -425,30 +426,6 @@ function StackSpreadStage({
             />
           ))}
         </div>
-
-        {/* scroll hint */}
-        {showScrollHint && (
-          <motion.div
-            className="pointer-events-none absolute inset-x-0 bottom-[3vh] z-20 flex flex-col items-center gap-[0.6vh] font-mono text-[0.8vw] font-medium uppercase tracking-[0.2em] max-md:bottom-6 max-md:gap-1 max-md:text-[2.8vw]"
-            style={{ color: textColor, opacity: hintOpacity }}
-          >
-            <span>Scroll</span>
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={2}
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="animate-bounce max-md:h-[4vw] max-md:w-[4vw]"
-              aria-hidden="true"
-            >
-              <path d="m6 9 6 6 6-6" />
-            </svg>
-          </motion.div>
-        )}
       </div>
     </section>
   );
@@ -461,8 +438,6 @@ export interface StackSpreadProps {
   title: ReactNode;
   /** smaller line under the headline */
   subtitle?: ReactNode;
-  /** scatter scroll distance, in vh */
-  scrollLength?: number;
   bgColor?: string;
   /** fan the clustered stack (default) or start flat */
   clusterRotation?: boolean;
@@ -472,10 +447,8 @@ export interface StackSpreadProps {
   cardRadius?: number;
   /** color of the centre headline and subtitle */
   textColor?: string;
-  /** scroll progress (0-1) where the centre text starts fading in */
+  /** animation progress (0-1) where the centre text starts fading in */
   textFadeStart?: number;
-  /** show the "scroll to spread" hint at the bottom until the scatter begins */
-  showScrollHint?: boolean;
 }
 
 export default function StackSpread({ images, ...stageProps }: StackSpreadProps) {

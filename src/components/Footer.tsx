@@ -202,7 +202,7 @@ export default function Footer({ setActivePage, setSelectedServiceId }: FooterPr
             <div className="flex flex-col gap-4 text-sm text-neutral-400">
               <div className="flex items-start gap-3">
                 <MapPin className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
-                <span>The Meydan Hotel, Grandstand – 6th Floor, Nad Al Shiba 1, Dubai – UAE</span>
+                <span>Mice Media LLC, The Meydan Hotel, Grandstand – 6th Floor, Nad Al Shiba 1, Dubai – UAE</span>
               </div>
               <div className="flex items-center gap-3">
                 <Phone className="w-4 h-4 text-red-600 shrink-0" />
@@ -236,8 +236,8 @@ export default function Footer({ setActivePage, setSelectedServiceId }: FooterPr
           <div className="text-center md:text-left">
             <span>© 2026 MICE Media. All Rights Reserved.</span>
             <span className="mx-2 hidden md:inline">|</span>
-            <span className="text-neutral-600 block md:inline mt-1 md:mt-0">
-              Built by <a href="https://thewebbranding.com" target="_blank" rel="noopener noreferrer" className="text-purple-600 hover:text-purple-500 font-bold transition-colors">Web Branding</a>
+            <span className="block md:inline mt-1 md:mt-0">
+              Built by <a href="https://thewebbranding.com" target="_blank" rel="noopener noreferrer" className="text-neutral-500 underline underline-offset-4 decoration-neutral-600 hover:text-purple-500 hover:decoration-purple-500 transition-colors">Web Branding</a>
             </span>
           </div>
 

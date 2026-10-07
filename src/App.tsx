@@ -14,6 +14,7 @@ import Services from './components/Services';
 import ProjectShowcase from './components/ProjectShowcase';
 import Contact from './components/Contact';
 import { BRAND_INFO } from './data';
+import { applySeo } from './seo';
 
 const slugToIdMap: Record<string, string> = {
   'conferences-and-seminars': 'conferences-conventions',
@@ -112,6 +113,9 @@ export default function App() {
       }
     }
   }, [activePage, selectedServiceId]);
+
+  // Keep title, description and canonical in step with the page being shown
+  useEffect(() => applySeo(activePage), [activePage]);
 
   // Sync browser back/forward buttons TO the state
   useEffect(() => {
