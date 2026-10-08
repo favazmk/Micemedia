@@ -71,8 +71,15 @@ function sampleParts(parts: Part[], count: number, rand: () => number, scale = 1
   const cumulative = weights.map((w) => (acc += w / total));
   for (let i = 0; i < count; i++) {
     const r = rand();
-    const k = cumulative.findIndex((c) => r <= c);
-    const part = parts[k === -1 ? parts.length - 1 : k];
+    // binary search: the stage has ~460 parts, a linear scan per particle is the hot spot
+    let lo = 0;
+    let hi = parts.length - 1;
+    while (lo < hi) {
+      const mid = (lo + hi) >> 1;
+      if (cumulative[mid] < r) lo = mid + 1;
+      else hi = mid;
+    }
+    const part = parts[lo];
     pos.set(samplePart(part, rand).map((v) => v * scale), i * 3);
     glow[i] = part.g ?? 0;
   }
@@ -321,7 +328,7 @@ function Caption({ progress, index, onExplore }: { progress: MotionValue<number>
   const stage = STAGES[index];
   return (
     <motion.div style={{ opacity, y, pointerEvents }} className="absolute inset-x-0 bottom-0 md:bottom-auto md:top-1/2 md:-translate-y-1/2">
-      <span className="inline-block font-mono text-[10px] sm:text-xs tracking-[0.3em] uppercase text-white font-bold bg-black/60 backdrop-blur-sm border border-red-500/60 rounded-full px-3 py-1.5">
+      <span className="inline-block font-mono text-[10px] sm:text-xs tracking-[0.3em] uppercase text-white font-bold bg-black/60 border border-red-500/60 rounded-full px-3 py-1.5">
         {stage.eyebrow}
       </span>
       <h2 className="font-display text-4xl sm:text-5xl md:text-6xl font-bold text-white leading-[1.05] mt-4 [text-shadow:0_4px_24px_rgba(0,0,0,0.9)]">
@@ -355,144 +362,167 @@ export default function MorphScene({ onExplore }: { onExplore: () => void }) {
     const section = sectionRef.current;
     if (!host || !section) return;
 
-    let renderer: Renderer;
-    try {
-      renderer = new Renderer({ dpr: Math.min(window.devicePixelRatio, 2), alpha: true, antialias: false });
-    } catch {
-      return; // no WebGL: the captions still tell the story
-    }
-    const gl = renderer.gl;
-    gl.clearColor(0, 0, 0, 0);
-    gl.canvas.style.width = '100%';
-    gl.canvas.style.height = '100%';
-    gl.canvas.setAttribute('aria-hidden', 'true');
-    host.appendChild(gl.canvas);
-
-    const coarse = window.matchMedia('(pointer: coarse)').matches;
-    const count = coarse ? 7000 : 14000;
-    const rand = mulberry32(2026);
-    const dir = new Float32Array(count * 3);
-    const rnd = new Float32Array(count);
-    for (let i = 0; i < count; i++) {
-      const u = rand() * 2 - 1;
-      const t = rand() * Math.PI * 2;
-      const s = Math.sqrt(1 - u * u);
-      dir.set([Math.cos(t) * s, u, Math.sin(t) * s], i * 3);
-      rnd[i] = rand();
-    }
-
-    const shapes = [sphere(count, rand), sampleParts(standParts(), count, rand, 0.9), sampleParts(stageParts(), count, rand, 0.72)];
-    const glow = new Float32Array(count * 3);
-    for (let i = 0; i < count; i++) glow.set([shapes[0].glow[i], shapes[1].glow[i], shapes[2].glow[i]], i * 3);
-    const geometry = new Geometry(gl, {
-      position: { size: 3, data: shapes[0].pos },
-      aStand: { size: 3, data: shapes[1].pos },
-      aStage: { size: 3, data: shapes[2].pos },
-      aDir: { size: 3, data: dir },
-      aRand: { size: 1, data: rnd },
-      aGlow: { size: 3, data: glow },
-    });
-    const program = new Program(gl, {
-      vertex,
-      fragment,
-      uniforms: {
-        uMorph: { value: 0 },
-        uTime: { value: 0 },
-        uSize: { value: 0 },
-        uRed: { value: [0.86, 0.3, 0.29] },
-        uWarm: { value: [1.0, 0.86, 0.8] },
-      },
-      transparent: true,
-      depthTest: false,
-    });
-    program.setBlendFunc(gl.SRC_ALPHA, gl.ONE); // additive glow
-
-    const scene = new Transform();
-    const mesh = new Mesh(gl, { mode: gl.POINTS, geometry, program });
-    mesh.setParent(scene);
-    const camera = new Camera(gl, { fov: 35 });
-
-    const resize = () => {
-      const { width, height } = host.getBoundingClientRect();
-      renderer.setSize(width, height);
-      camera.perspective({ aspect: width / height });
-      const narrow = width < 768;
-      // sit the sculpture right of the captions on desktop, above them on phones
-      if (narrow) {
-        camera.position.set(0, -2.1, 23);
-      } else {
-        // pull back until the ~3.6-unit-wide sculpture fits in the right ~58% of the frame,
-        // then shift the camera left so the sculpture sits there
-        const tanHalf = Math.tan((35 / 2) * (Math.PI / 180));
-        const z = Math.max(13, 6.2 / (tanHalf * camera.aspect));
-        camera.position.set(-0.42 * z * tanHalf * camera.aspect, 0, z);
+    // Build the WebGL scene only once the section is about a screen away: creating the context,
+    // compiling shaders and sampling ~40k particle positions is too much work for page load.
+    const start = () => {
+      // a full-viewport canvas redrawn every frame: soft points look the same at 1.5x as at 2x,
+      // at ~44% fewer pixels to fill and composite on retina screens
+      const dpr = Math.min(window.devicePixelRatio, 1.5);
+      let renderer: Renderer;
+      try {
+        renderer = new Renderer({ dpr, alpha: true, antialias: false });
+      } catch {
+        return () => {}; // no WebGL: the captions still tell the story
       }
-      program.uniforms.uSize.value = (narrow ? 62 : 50) * Math.min(window.devicePixelRatio, 2);
-    };
-    const ro = new ResizeObserver(resize);
-    ro.observe(host);
-    resize();
+      const gl = renderer.gl;
+      gl.clearColor(0, 0, 0, 0);
+      gl.canvas.style.width = '100%';
+      gl.canvas.style.height = '100%';
+      gl.canvas.setAttribute('aria-hidden', 'true');
+      host.appendChild(gl.canvas);
 
-    const pointer = { x: 0, y: 0, tx: 0, ty: 0 };
-    const onMove = (e: PointerEvent) => {
-      pointer.tx = (e.clientX / window.innerWidth) * 2 - 1;
-      pointer.ty = (e.clientY / window.innerHeight) * 2 - 1;
-    };
-    if (!coarse) window.addEventListener('pointermove', onMove, { passive: true });
+      const coarse = window.matchMedia('(pointer: coarse)').matches;
+      const count = coarse ? 7000 : 14000;
+      const rand = mulberry32(2026);
+      const dir = new Float32Array(count * 3);
+      const rnd = new Float32Array(count);
+      for (let i = 0; i < count; i++) {
+        const u = rand() * 2 - 1;
+        const t = rand() * Math.PI * 2;
+        const s = Math.sqrt(1 - u * u);
+        dir.set([Math.cos(t) * s, u, Math.sin(t) * s], i * 3);
+        rnd[i] = rand();
+      }
 
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    let raf = 0;
-    let running = false;
-    let shown = 0; // eased copy of the scroll morph, so fast scrolls still glide
-    const start = performance.now();
-    let last = start;
+      const shapes = [sphere(count, rand), sampleParts(standParts(), count, rand, 0.9), sampleParts(stageParts(), count, rand, 0.72)];
+      const glow = new Float32Array(count * 3);
+      for (let i = 0; i < count; i++) glow.set([shapes[0].glow[i], shapes[1].glow[i], shapes[2].glow[i]], i * 3);
+      const geometry = new Geometry(gl, {
+        position: { size: 3, data: shapes[0].pos },
+        aStand: { size: 3, data: shapes[1].pos },
+        aStage: { size: 3, data: shapes[2].pos },
+        aDir: { size: 3, data: dir },
+        aRand: { size: 1, data: rnd },
+        aGlow: { size: 3, data: glow },
+      });
+      const program = new Program(gl, {
+        vertex,
+        fragment,
+        uniforms: {
+          uMorph: { value: 0 },
+          uTime: { value: 0 },
+          uSize: { value: 0 },
+          uRed: { value: [0.86, 0.3, 0.29] },
+          uWarm: { value: [1.0, 0.86, 0.8] },
+        },
+        transparent: true,
+        depthTest: false,
+      });
+      program.setBlendFunc(gl.SRC_ALPHA, gl.ONE); // additive glow
 
-    const frame = () => {
-      raf = requestAnimationFrame(frame);
-      const now = performance.now();
-      const t = (now - start) / 1000;
-      // time-based easing so the glide feels the same at any frame rate
-      const dt = Math.min((now - last) / 1000, 0.5);
-      last = now;
-      shown += (morph.get() - shown) * (reduce ? 1 : 1 - Math.exp(-dt * 4));
-      const ease = 1 - Math.exp(-dt * 3);
-      pointer.x += (pointer.tx - pointer.x) * ease;
-      pointer.y += (pointer.ty - pointer.y) * ease;
-      program.uniforms.uMorph.value = shown;
-      program.uniforms.uTime.value = reduce ? 0 : t;
-      // each shape has its own best viewing angle: the stand from a three-quarter corner view,
-      // the stage almost head-on from the audience; a gentle sway keeps the depth visible
-      const k = Math.min(Math.max(shown - 1, 0), 1);
-      const baseY = shown < 1 ? -0.3 - shown * 0.35 : -0.65 + k * 0.45;
-      const sway = reduce ? 0 : Math.sin(t * 0.35) * 0.12;
-      mesh.rotation.y = baseY + sway + pointer.x * 0.2;
-      mesh.rotation.x = 0.32 + k * 0.08 + pointer.y * 0.08;
-      camera.lookAt([camera.position.x, camera.position.y, 0]);
-      renderer.render({ scene, camera });
-    };
+      const scene = new Transform();
+      const mesh = new Mesh(gl, { mode: gl.POINTS, geometry, program });
+      mesh.setParent(scene);
+      const camera = new Camera(gl, { fov: 35 });
 
-    // only animate while the section is on screen
-    const io = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting && !running) {
-        running = true;
-        last = performance.now();
+      const resize = () => {
+        const { width, height } = host.getBoundingClientRect();
+        renderer.setSize(width, height);
+        camera.perspective({ aspect: width / height });
+        const narrow = width < 768;
+        // sit the sculpture right of the captions on desktop, above them on phones
+        if (narrow) {
+          camera.position.set(0, -2.1, 23);
+        } else {
+          // pull back until the ~3.6-unit-wide sculpture fits in the right ~58% of the frame,
+          // then shift the camera left so the sculpture sits there
+          const tanHalf = Math.tan((35 / 2) * (Math.PI / 180));
+          const z = Math.max(13, 6.2 / (tanHalf * camera.aspect));
+          camera.position.set(-0.42 * z * tanHalf * camera.aspect, 0, z);
+        }
+        program.uniforms.uSize.value = (narrow ? 62 : 50) * dpr;
+      };
+      const ro = new ResizeObserver(resize);
+      ro.observe(host);
+      resize();
+
+      const pointer = { x: 0, y: 0, tx: 0, ty: 0 };
+      const onMove = (e: PointerEvent) => {
+        pointer.tx = (e.clientX / window.innerWidth) * 2 - 1;
+        pointer.ty = (e.clientY / window.innerHeight) * 2 - 1;
+      };
+      if (!coarse) window.addEventListener('pointermove', onMove, { passive: true });
+
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      let raf = 0;
+      let running = false;
+      let shown = 0; // eased copy of the scroll morph, so fast scrolls still glide
+      const start = performance.now();
+      let last = start;
+
+      const frame = () => {
         raf = requestAnimationFrame(frame);
-      } else if (!entry.isIntersecting && running) {
-        running = false;
+        const now = performance.now();
+        const t = (now - start) / 1000;
+        // time-based easing so the glide feels the same at any frame rate
+        const dt = Math.min((now - last) / 1000, 0.5);
+        last = now;
+        shown += (morph.get() - shown) * (reduce ? 1 : 1 - Math.exp(-dt * 4));
+        const ease = 1 - Math.exp(-dt * 3);
+        pointer.x += (pointer.tx - pointer.x) * ease;
+        pointer.y += (pointer.ty - pointer.y) * ease;
+        program.uniforms.uMorph.value = shown;
+        program.uniforms.uTime.value = reduce ? 0 : t;
+        // each shape has its own best viewing angle: the stand from a three-quarter corner view,
+        // the stage almost head-on from the audience; a gentle sway keeps the depth visible
+        const k = Math.min(Math.max(shown - 1, 0), 1);
+        const baseY = shown < 1 ? -0.3 - shown * 0.35 : -0.65 + k * 0.45;
+        const sway = reduce ? 0 : Math.sin(t * 0.35) * 0.12;
+        mesh.rotation.y = baseY + sway + pointer.x * 0.2;
+        mesh.rotation.x = 0.32 + k * 0.08 + pointer.y * 0.08;
+        camera.lookAt([camera.position.x, camera.position.y, 0]);
+        renderer.render({ scene, camera });
+      };
+
+      // only animate while the section is on screen
+      const io = new IntersectionObserver(([entry]) => {
+        if (entry.isIntersecting && !running) {
+          running = true;
+          last = performance.now();
+          raf = requestAnimationFrame(frame);
+        } else if (!entry.isIntersecting && running) {
+          running = false;
+          cancelAnimationFrame(raf);
+        }
+      });
+      io.observe(section);
+
+      return () => {
+        io.disconnect();
+        ro.disconnect();
         cancelAnimationFrame(raf);
-      }
-    });
-    io.observe(section);
+        window.removeEventListener('pointermove', onMove);
+        geometry.remove();
+        program.remove();
+        gl.canvas.remove();
+        gl.getExtension('WEBGL_lose_context')?.loseContext();
+      };
+    };
+
+    let dispose = () => {};
+    const near = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        near.disconnect();
+        dispose = start();
+      },
+      { rootMargin: '100% 0px' },
+    );
+    near.observe(section);
 
     return () => {
-      io.disconnect();
-      ro.disconnect();
-      cancelAnimationFrame(raf);
-      window.removeEventListener('pointermove', onMove);
-      geometry.remove();
-      program.remove();
-      gl.canvas.remove();
-      gl.getExtension('WEBGL_lose_context')?.loseContext();
+      near.disconnect();
+      dispose();
     };
   }, [morph]);
 
