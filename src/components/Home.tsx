@@ -174,7 +174,12 @@ export default function Home({
   // States & Refs for slow-mo kinetic marquee braking on hover and touch/mouse grab & drag
   const tickerRef = useRef<HTMLDivElement>(null);
   const cardsStageRef = useRef<HTMLDivElement>(null);
-  const cardsInView = useInView(cardsStageRef, { amount: 0.6 });
+  // true while the card deck sits in the middle band of the screen: cards straighten and grow
+  const cardsInView = useInView(cardsStageRef, { margin: '-30% 0px -30% 0px' });
+  // desktop only: in focus the cards straighten and grow; phones keep the original tilted deck
+  const cardsFlat = cardsInView && !isMobile;
+  const cardsFocusScale = 1.1;
+  const cardsFocusShift = 10; // % of card width = scale growth
   const [isTickerHovered, setIsTickerHovered] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
 
@@ -580,39 +585,40 @@ export default function Home({
       <motion.div
         ref={cardsStageRef}
         {...reveal(0.15, 70)}
-        className="relative w-full max-w-4xl h-[280px] sm:h-[350px] mt-6 sm:mt-10 flex items-center justify-center [perspective:1200px]"
+        className="relative w-full max-w-5xl mt-6 sm:mt-10 py-8 sm:py-12 flex items-center justify-center [perspective:1200px]"
         id="hologram-stage-canvas"
       >
         {/* Background elements removed as per user request */}
 
         {/* Floating, Tilted 3D holographic Cards (similar to Cinedaily's layout) */}
-        <div className="absolute inset-0 flex items-center justify-center gap-3 sm:gap-8 pointer-events-auto [transform-style:preserve-3d] z-10">
+        <div className="relative w-full flex flex-col sm:flex-row items-center justify-center gap-5 sm:gap-[3%] pointer-events-auto [transform-style:preserve-3d] z-10">
           
           {/* Card 1: Left */}
           <motion.div
             animate={{
               rotateY: cardsInView ? 0 : isMobile ? (activeTouchHeroCardId === 'events' ? 0 : -10) : -20,
-              rotateX: cardsInView ? 12 : isMobile ? (activeTouchHeroCardId === 'events' ? 12 : 6) : 6,
+              rotateX: cardsFlat ? 0 : cardsInView ? 12 : isMobile ? (activeTouchHeroCardId === 'events' ? 12 : 6) : 6,
               z: cardsInView ? 60 : isMobile ? (activeTouchHeroCardId === 'events' ? 60 : 10) : 10,
-              scale: 1
+              x: cardsFlat ? `-${cardsFocusShift}%` : '0%', // keep the gap as the cards grow
+              scale: cardsFlat ? cardsFocusScale : 1
             }}
             whileHover={{ 
-              scale: 1.08, 
+              scale: cardsFlat ? cardsFocusScale + 0.05 : 1.08, 
               rotateY: 0, 
-              rotateX: 12, 
+              rotateX: cardsFlat ? 0 : 12, 
               z: 100
             }}
             onClick={() => handleHeroCardClick('events')}
             transition={{ type: "spring", stiffness: 350, damping: 25 }}
-            className={`w-[105px] sm:w-[220px] h-[180px] sm:h-[280px] bg-neutral-900/90 rounded-2xl border p-3 sm:p-5 flex flex-col justify-between shadow-2xl shadow-black text-left cursor-pointer transition-colors duration-150 ${
+            className={`w-full max-w-[290px] sm:max-w-none sm:w-[28%] min-h-[170px] sm:min-h-0 sm:aspect-[4/5] p-5 lg:p-6 bg-neutral-900/90 rounded-2xl border flex flex-col justify-between shadow-2xl shadow-black text-left cursor-pointer transition-colors duration-150 ${
               activeTouchHeroCardId === 'events' ? 'bg-[#171717]/95 border-red-500/60 z-50' : 'hover:bg-[#171717]/95 border-white/20 hover:border-red-500/60'
             }`}
           >
             <div>
-              <span className="font-mono text-[8px] sm:text-[10px] text-red-500 uppercase tracking-widest font-bold">01 / EXPERIENCE</span>
-              <h4 className="font-display text-[10px] sm:text-base font-black text-white uppercase mt-1 sm:mt-2 leading-tight">EVENTS THAT LEAVE A MARK</h4>
+              <span className="font-mono text-[10px] lg:text-xs text-red-500 uppercase tracking-widest font-bold">01 / EXPERIENCE</span>
+              <h4 className="font-display text-base lg:text-lg font-black text-white uppercase mt-1 sm:mt-2 leading-tight">EVENTS THAT LEAVE A MARK</h4>
             </div>
-            <p className="font-sans text-[8px] sm:text-[11px] text-neutral-400 leading-relaxed mt-2 line-clamp-4 sm:line-clamp-none">
+            <p className="font-sans text-sm sm:text-[11px] lg:text-[13px] text-neutral-400 leading-relaxed mt-2">
               We don't produce occasions — we engineer experiences people talk about long after the night ends.
             </p>
           </motion.div>
@@ -620,34 +626,34 @@ export default function Home({
           {/* Card 2: Center (Featured Card popping forward) */}
           <motion.div
             animate={{
-              rotateX: isMobile ? (activeTouchHeroCardId === 'services' ? 12 : 12) : 12,
+              rotateX: cardsFlat ? 0 : 12,
               z: isMobile ? (activeTouchHeroCardId === 'services' ? 140 : 60) : 60,
-              scale: 1
+              scale: cardsFlat ? cardsFocusScale : 1
             }}
             whileHover={{ 
-              scale: 1.08, 
-              rotateX: 12, 
+              scale: cardsFlat ? cardsFocusScale + 0.05 : 1.08, 
+              rotateX: cardsFlat ? 0 : 12, 
               z: 140
             }}
             onClick={() => handleHeroCardClick('services')}
             transition={{ type: "spring", stiffness: 350, damping: 25 }}
-            className={`w-[125px] sm:w-[240px] h-[210px] sm:h-[310px] bg-neutral-900/95 rounded-2xl border p-3 sm:p-5 flex flex-col justify-between shadow-2xl shadow-red-950/30 relative overflow-hidden text-left cursor-pointer transition-colors duration-150 ${
+            className={`w-full max-w-[310px] sm:max-w-none sm:w-[31%] min-h-[190px] sm:min-h-0 sm:aspect-[4/5] p-5 lg:p-6 bg-neutral-900/95 rounded-2xl border flex flex-col justify-between shadow-2xl shadow-red-950/30 relative overflow-hidden text-left cursor-pointer transition-colors duration-150 ${
               activeTouchHeroCardId === 'services' ? 'bg-[#171717]/95 border-red-500/60 z-50' : 'hover:bg-[#171717]/95 border-red-500/25 hover:border-red-500/60'
             }`}
           >
             <div className="absolute -top-12 -right-12 w-24 h-24 bg-red-650/10 rounded-full blur-xl pointer-events-none"></div>
             <div>
               <div className="flex justify-between items-center">
-                <span className="font-mono text-[8px] sm:text-[10px] text-red-500 uppercase tracking-widest font-bold">02 / STANDARD</span>
+                <span className="font-mono text-[10px] lg:text-xs text-red-500 uppercase tracking-widest font-bold">02 / STANDARD</span>
                 <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span>
               </div>
-              <h4 className="font-display text-[11px] sm:text-lg font-black text-white uppercase mt-1 sm:mt-2 leading-tight">PRECISION MEETS CREATIVITY</h4>
+              <h4 className="font-display text-base lg:text-lg font-black text-white uppercase mt-1 sm:mt-2 leading-tight">PRECISION MEETS CREATIVITY</h4>
             </div>
             <div>
-              <p className="font-sans text-[8px] sm:text-[11px] text-neutral-300 leading-relaxed mb-2 sm:mb-4 line-clamp-5 sm:line-clamp-none">
+              <p className="font-sans text-sm sm:text-[11px] lg:text-[13px] text-neutral-300 leading-relaxed mb-2 sm:mb-4">
                 Two things most agencies can't balance. We refuse to choose between them — on every project, at every scale, without exception.
               </p>
-              <span className="text-[8px] sm:text-[11px] font-mono uppercase tracking-widest text-red-400 font-bold hover:text-red-300 transition-colors inline-flex items-center gap-1 group/link">
+              <span className="text-[11px] lg:text-xs font-mono uppercase tracking-widest text-red-400 font-bold hover:text-red-300 transition-colors inline-flex items-center gap-1 group/link">
                 OUR SERVICES <span className="transform group-hover/link:translate-x-1 transition-transform">→</span>
               </span>
             </div>
@@ -657,27 +663,28 @@ export default function Home({
           <motion.div
             animate={{
               rotateY: cardsInView ? 0 : isMobile ? (activeTouchHeroCardId === 'about-us' ? 0 : 10) : 20,
-              rotateX: cardsInView ? 12 : isMobile ? (activeTouchHeroCardId === 'about-us' ? 12 : 6) : 6,
+              rotateX: cardsFlat ? 0 : cardsInView ? 12 : isMobile ? (activeTouchHeroCardId === 'about-us' ? 12 : 6) : 6,
               z: cardsInView ? 60 : isMobile ? (activeTouchHeroCardId === 'about-us' ? 60 : 10) : 10,
-              scale: 1
+              x: cardsFlat ? `${cardsFocusShift}%` : '0%', // keep the gap as the cards grow
+              scale: cardsFlat ? cardsFocusScale : 1
             }}
             whileHover={{ 
-              scale: 1.08, 
+              scale: cardsFlat ? cardsFocusScale + 0.05 : 1.08, 
               rotateY: 0, 
-              rotateX: 12, 
+              rotateX: cardsFlat ? 0 : 12, 
               z: 100
             }}
             onClick={() => handleHeroCardClick('about-us')}
             transition={{ type: "spring", stiffness: 350, damping: 25 }}
-            className={`w-[105px] sm:w-[220px] h-[180px] sm:h-[280px] bg-neutral-900/90 rounded-2xl border p-3 sm:p-5 flex flex-col justify-between shadow-2xl shadow-black text-left cursor-pointer transition-colors duration-150 ${
+            className={`w-full max-w-[290px] sm:max-w-none sm:w-[28%] min-h-[170px] sm:min-h-0 sm:aspect-[4/5] p-5 lg:p-6 bg-neutral-900/90 rounded-2xl border flex flex-col justify-between shadow-2xl shadow-black text-left cursor-pointer transition-colors duration-150 ${
               activeTouchHeroCardId === 'about-us' ? 'bg-[#171717]/95 border-red-500/60 z-50' : 'hover:bg-[#171717]/95 border-white/20 hover:border-red-500/60'
             }`}
           >
             <div>
-              <span className="font-mono text-[8px] sm:text-[10px] text-red-500 uppercase tracking-widest font-bold">03 / PROMISE</span>
-              <h4 className="font-display text-[10px] sm:text-base font-black text-white uppercase mt-1 sm:mt-2 leading-tight">YOUR VISION, AMPLIFIED</h4>
+              <span className="font-mono text-[10px] lg:text-xs text-red-500 uppercase tracking-widest font-bold">03 / PROMISE</span>
+              <h4 className="font-display text-base lg:text-lg font-black text-white uppercase mt-1 sm:mt-2 leading-tight">YOUR VISION, AMPLIFIED</h4>
             </div>
-            <p className="font-sans text-[8px] sm:text-[11px] text-neutral-400 leading-relaxed mt-2 line-clamp-4 sm:line-clamp-none">
+            <p className="font-sans text-sm sm:text-[11px] lg:text-[13px] text-neutral-400 leading-relaxed mt-2">
               We take what you imagine and build something that exceeds it — every single time.
             </p>
           </motion.div>
