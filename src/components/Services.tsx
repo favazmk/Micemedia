@@ -10,8 +10,7 @@ import {
   Users, 
   Music, 
   Layers, 
-  Check, 
-  Lightbulb,
+  Check,
   FileCheck
 } from 'lucide-react';
 import Particles from './Particles';
@@ -60,6 +59,22 @@ export default function Services({ selectedServiceId, setSelectedServiceId, setA
     }
     // Only run once on mount
     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Keep each sticky image slot exactly as tall as its text block, so long copy never drifts out of sync
+  useEffect(() => {
+    const ro = new ResizeObserver((entries) => {
+      entries.forEach((entry) => {
+        const id = (entry.target as HTMLElement).id.replace('service-text-', '');
+        const img = document.getElementById(`service-img-${id}`);
+        if (img) img.style.height = `${(entry.target as HTMLElement).offsetHeight}px`;
+      });
+    });
+    SERVICES_DATA.forEach(srv => {
+      const el = document.getElementById(`service-text-${srv.id}`);
+      if (el) ro.observe(el);
+    });
+    return () => ro.disconnect();
   }, []);
 
   // Track the active state in a ref to avoid observer recreation loop
@@ -179,7 +194,7 @@ export default function Services({ selectedServiceId, setSelectedServiceId, setA
                   key={`text-${srv.id}`} 
                   id={`service-text-${srv.id}`}
                   className="flex flex-col justify-center py-12 border-b border-white/5 last:border-0"
-                  style={{ height: '120vh' }}
+                  style={{ minHeight: '120vh' }}
                 >
                   <div className="flex items-center gap-4 mb-4">
                     <div className="w-12 h-12 rounded-2xl bg-black/50 backdrop-blur-md border border-white/10 flex items-center justify-center text-red-500 shadow-xl shrink-0">
@@ -195,41 +210,36 @@ export default function Services({ selectedServiceId, setSelectedServiceId, setA
                     </div>
                   </div>
 
-                  <p className="text-neutral-300 text-sm sm:text-base leading-relaxed mb-6 max-w-xl">
-                    {srv.description}
-                  </p>
+                  {srv.tagline && (
+                    <p className="font-display text-base font-bold text-white mb-3 max-w-xl">{srv.tagline}</p>
+                  )}
+                  <div className="flex flex-col gap-3 text-neutral-300 text-sm leading-relaxed mb-5 max-w-xl">
+                    {(srv.intro ?? [srv.description]).map((para, i) => <p key={i}>{para}</p>)}
+                  </div>
 
                   {/* Speciality deliverables */}
-                  <div className="mb-6">
+                  <div className="mb-5">
                     <span className="text-[10px] font-mono tracking-widest text-neutral-500 uppercase block mb-3">
-                      Core Execution Services Include:
+                      {srv.listHeading ?? 'Core Execution Services Include:'}
                     </span>
-                    <div className="flex flex-col gap-2">
-                      {srv.details?.slice(0, 4).map((del: string, i: number) => (
-                        <div key={i} className="flex items-start gap-3 bg-black/40 backdrop-blur-sm border border-white/5 p-3 rounded-xl hover:border-red-500/20 transition-colors">
-                          <div className="w-4 h-4 rounded bg-red-600/10 border border-red-600/20 flex items-center justify-center text-red-500 shrink-0 mt-0.5">
-                            <Check className="w-3 h-3" />
-                          </div>
-                          <span className="text-xs sm:text-sm text-neutral-200 font-sans font-medium">
+                    <div className="grid grid-cols-2 gap-1.5">
+                      {srv.details?.map((del: string, i: number) => (
+                        <div key={i} className="flex items-start gap-2 bg-black/40 backdrop-blur-sm border border-white/5 px-2.5 py-2 rounded-lg hover:border-red-500/20 transition-colors">
+                          <Check className="w-3 h-3 text-red-500 shrink-0 mt-0.5" />
+                          <span className="text-[11px] leading-snug text-neutral-200 font-sans font-medium">
                             {del}
                           </span>
                         </div>
                       ))}
                     </div>
+                    {srv.closing && (
+                      <p className="font-display text-sm font-bold text-white mt-4">{srv.closing}</p>
+                    )}
                   </div>
 
                   {/* General Service Pitch Panel */}
                   <div className="border-t border-white/10 pt-4 mt-2">
-                    <div className="bg-black/40 backdrop-blur-md p-5 rounded-2xl border border-white/5 flex flex-col gap-4">
-                      <div>
-                        <h4 className="font-display text-sm font-bold text-white mb-1 flex items-center gap-2">
-                          <Lightbulb className="w-4 h-4 text-red-500" />
-                          Premium Dubai Delivery Included
-                        </h4>
-                        <p className="text-neutral-400 text-xs leading-relaxed">
-                          Every single detail of our {srv.title} operations is handled in-house with standard dwg schematics, direct regional permits, and redundant executive back-ups.
-                        </p>
-                      </div>
+                    <div className="flex flex-col gap-4">
                       <PrimaryButton
                         onClick={() => {
                           setActivePage('contact');
@@ -258,9 +268,10 @@ export default function Services({ selectedServiceId, setSelectedServiceId, setA
             <div className="w-7/12 relative h-full flex flex-col">
               {SERVICES_DATA.map((srv) => (
                 <div 
-                  key={`img-${srv.id}`} 
+                  key={`img-${srv.id}`}
+                  id={`service-img-${srv.id}`}
                   className="sticky top-0 w-full flex items-center justify-center"
-                  style={{ height: '120vh' }}
+                  style={{ minHeight: '120vh' }}
                 >
                   {/* Massive Image Card (Centered, full height at 85vh) */}
                   <div className="group relative w-full h-[85vh] rounded-[3rem] overflow-hidden border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.8)] bg-[#0a0a0a] transition-all duration-700 ease-out hover:[transform:perspective(1500px)_rotateX(2.5deg)_rotateY(-2.5deg)_scale(1.015)] hover:shadow-[0_30px_60px_rgba(239,68,68,0.15)] hover:border-red-500/20">
@@ -304,13 +315,16 @@ export default function Services({ selectedServiceId, setSelectedServiceId, setA
                     </div>
                   </div>
 
-                  <p className="text-neutral-300 text-sm leading-relaxed mb-6">
-                    {srv.description}
-                  </p>
+                  {srv.tagline && (
+                    <p className="font-display text-base font-bold text-white mb-3">{srv.tagline}</p>
+                  )}
+                  <div className="flex flex-col gap-3 text-neutral-300 text-sm leading-relaxed mb-6">
+                    {(srv.intro ?? [srv.description]).map((para, i) => <p key={i}>{para}</p>)}
+                  </div>
 
                   <div className="mb-8">
                     <span className="text-[10px] font-mono tracking-widest text-neutral-500 uppercase block mb-3">
-                      Core Services:
+                      {srv.listHeading ?? 'Core Services:'}
                     </span>
                     <div className="flex flex-col gap-2">
                       {srv.details?.map((del: string, i: number) => (
@@ -324,6 +338,9 @@ export default function Services({ selectedServiceId, setSelectedServiceId, setA
                         </div>
                       ))}
                     </div>
+                    {srv.closing && (
+                      <p className="font-display text-sm font-bold text-white mt-4">{srv.closing}</p>
+                    )}
                   </div>
 
                   <PrimaryButton

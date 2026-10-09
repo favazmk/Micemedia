@@ -220,7 +220,7 @@ export default function Contact() {
     companyName: '',
     email: '',
     phone: '',
-    eventType: 'Conferences & Conventions',
+    eventType: 'Conferences & Seminars',
     estimatedGuests: '50-200',
     preferredDate: '',
     comments: ''
@@ -233,15 +233,15 @@ export default function Contact() {
 
   // Event Type list
   const eventTypes = [
-    'Conferences & Conventions',
-    'Product launch & Brand Activation',
+    'Conferences & Seminars',
+    'Product Launch & Brand Activation',
     'Gala Dinner & Awards Ceremony',
     'Content Creation & AV production',
     'Team Building & Incentive Events',
     'Community & Festive Events',
     'Talent Management',
     'Permits',
-    'Exhibition',
+    'Exhibitions',
     'Other'
   ];
 
@@ -646,7 +646,7 @@ export default function Contact() {
                         companyName: '',
                         email: '',
                         phone: '',
-                        eventType: 'Conferences & Conventions',
+                        eventType: 'Conferences & Seminars',
                         estimatedGuests: '50-200',
                         preferredDate: '',
                         comments: ''

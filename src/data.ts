@@ -29,30 +29,64 @@ export const SERVICES_DATA: Service[] = [
   {
     id: "conferences-conventions",
     number: "01",
-    title: "Conferences & Conventions",
-    description: "International stages demand international standards. We design and deliver end-to-end conference and convention experiences — from technical production and speaker management to full delegate journeys — that make your message impossible to ignore.",
+    title: "Conferences & Seminars",
+    description: "Let us bring your vision to life. From concept to completion, MICE Media Events manages conferences, meetings, seminars, and summit organisations across Dubai and the UAE.",
+    tagline: "Let us bring your vision to life.",
+    intro: [
+      "From concept to completion, MICE Media Events manages conferences, meetings, seminars, and summit organisations across Dubai and the UAE. We manage every stage of the event, ensuring each phase is executed professionally and seamlessly.",
+      "We handle the event production for AV, Light Technical, Stage Design and Branding Production, Logistics management, Delegate coordination, Registration online & Onsite Management with on-ground event coordination and execution. This allows our clients to focus on their conference content and audience engagement while we manage the operational excellence.",
+      "With extensive expertise in organizing business conferences and corporate events, we ensure your event reflects the Client's objective and brand identity while providing a seamless and memorable experience for all attendees."
+    ],
+    listHeading: "What We Bring to Life",
     iconName: "Presentation",
     details: [
-      "Rigorous Delegate Journey Planning",
-      "Dynamic Keynote Stage Scenic Design",
-      "Multi-Stream Presentation Management",
-      "Automated Live Registration & RFID Badging",
-      "Bespoke Simultaneous Translation Systems"
+      "Venue Management",
+      "Event Concept Creation & Design",
+      "Agenda Creation",
+      "Event Compliances & Permits",
+      "Guest Management (Visa, Tickets, Accommodation & Logistics)",
+      "Registration Management",
+      "Branding",
+      "Audio Visual Light Production",
+      "Stage Fabrication",
+      "Customised Multimedia Content",
+      "Conference Host Arrangement",
+      "Videography & Photography",
+      "Session & Speaker Management",
+      "Onsite Management",
+      "Post Event evaluation"
     ],
     image: "./images/services/service_conferences_1783333265054.webp"
   },
   {
     id: "product-launch-activation",
     number: "02",
-    title: "Product launch & Brand Activation",
-    description: "A launch is only as powerful as the moment it creates. We build multi-sensory activation experiences that cut through noise, generate genuine excitement, and make your brand the story everyone tells the next morning.",
+    title: "Product Launch & Brand Activation",
+    description: "We work closely with you to understand your product, audience and goals, then turn that insight into an engaging event experience. You bring the product. We'll create the moment everyone remembers.",
+    tagline: "Ready to Turn Heads? Let's Launch Something Amazing.",
+    intro: [
+      "We work closely with you to understand your product, audience and goals, then turn that insight into an engaging event experience. From creative concepts and venue selection to immersive production, guest engagement with experiential activities or entertainment we handle everything so you can focus on the big reveal.",
+      "Whether it's a product launch, dealer gathering or large-scale brand activation, we'll help you create buzz, spark conversations and make your product impossible to ignore."
+    ],
+    closing: "You bring the product. We'll create the moment everyone remembers.",
+    listHeading: "What We Bring to Life",
     iconName: "Sparkles",
     details: [
-      "High-Impact Reveal Mechanics / Kabuki Drops",
+      "Concept Creation and Design",
+      "Event Production & Fabrication",
+      "Event Compliances & Permits",
+      "PR Media Communications",
+      "Guest Management (Visa, Tickets, Accommodation & Logistics)",
+      "RSVP",
+      "Event Branding & Décor arrangement",
       "Immersive Tech Integrations (AR/VR/Holograms)",
-      "Environmental Narrative & Scenic Styling",
+      "Audio Visual Light Technical Production",
+      "Customised Multimedia Content",
       "Influencer Event Activations & PR Stunts",
-      "Bespoke Spatial Fragrance & Audio Ambience"
+      "Talent Management",
+      "Videography & Photography",
+      "Onsite Coordination & Management",
+      "Post Event evaluation"
     ],
     image: "./images/services/service_product_launch_1783333289525.webp"
   },
@@ -60,14 +94,27 @@ export const SERVICES_DATA: Service[] = [
     id: "gala-dinner-awards",
     number: "03",
     title: "Gala Dinner & Awards Ceremony",
-    description: "Milestones deserve more than applause. We craft award evenings and gala dinners with the precision and aesthetic authority that turn a single night into a permanent chapter of your organisation's story.",
+    description: "Every great Gala begins with a Story. We transform that story into a beautifully planned and memorable experience, from the perfect venue to elegant themes and stage setups.",
+    tagline: "Every great Gala begins with a Story.",
+    intro: [
+      "We transform that story into a beautifully planned and memorable experience. From selecting the perfect venue to designing elegant themes, stage setups with right AV and Light concepts, our team guarantees a smooth and sophisticated event from start to finish. As a leading event production company in Dubai, we specialize in creating experiences that leave a lasting impression on every guest."
+    ],
+    listHeading: "What We Bring to Life",
     iconName: "Award",
     details: [
-      "Bespoke Scenic Set & Stage Architecture",
-      "Immersive Soundscapes & Custom Lighting Design",
-      "Rigorous VIP Seating & Registration Protocol",
-      "Cinematic Video Openers & Presentation Assets",
-      "Seamless Live Entertainment & Ceremony Scheduling"
+      "Venue Management",
+      "Concept Creation & Design",
+      "Agenda Creation",
+      "Event Compliances & Permits",
+      "Guest Management (Visa, Tickets, Accommodation & Logistics)",
+      "Registration Management",
+      "Event Branding and Décor arrangement",
+      "Audio Visual Light Production",
+      "Customised Multimedia Content",
+      "Videography & Photography",
+      "Talent Management",
+      "Onsite Coordination & Management",
+      "Post Event Evaluation"
     ],
     image: "./images/services/service_gala_1783333277608.webp"
   },
@@ -90,14 +137,20 @@ export const SERVICES_DATA: Service[] = [
     id: "team-building-incentives",
     number: "05",
     title: "Team Building & Incentive Events",
-    description: "Culture and motivation aren't built in boardrooms. We engineer exhilarating team building challenges and bespoke corporate incentive escapes across the UAE that build deep trust, alignment, and shared purpose.",
+    description: "Culture and motivation aren't built in boardrooms. We engineer exhilarating team building challenges and bespoke corporate incentive escapes inside UAE or internationally that build deep trust, alignment and shared purpose.",
+    intro: [
+      "Culture and motivation aren't built in boardrooms. We engineer exhilarating team building challenges and bespoke corporate incentive escapes inside UAE or internationally that build deep trust, alignment and shared purpose."
+    ],
+    listHeading: "How Strategy meets Creativity",
     iconName: "Users2",
     details: [
-      "High-Stakes Beachfront Engineering Challenges",
-      "Regional Desert Survival Navigation Rallies",
-      "Elite Dubai & Desert Luxury Glamping Retreats",
-      "Five-Star Yacht Assemblies & Executive Dinings",
-      "Corporate CSR-Aligned Philanthropic Builds"
+      "Understand the Client Brief",
+      "Design the Journey",
+      "Venue / Travel Arrangements",
+      "Customized Itineraries",
+      "Employee Engagement Activities",
+      "Professional Hosts & Facilitators",
+      "Venue Branding & Rewards"
     ],
     image: "./images/services/service_team_building_1783333338151.webp"
   },
@@ -106,13 +159,16 @@ export const SERVICES_DATA: Service[] = [
     number: "06",
     title: "Community & Festive Events",
     description: "Bringing large-scale communities together for unforgettable celebrations. From national day festivities and cultural galas to seasonal pop-ups and festive evenings, we design joyful, safely orchestrated public gatherings.",
+    intro: [
+      "Bringing large-scale communities together for unforgettable celebrations. From national day festivities and cultural galas to seasonal pop-ups and festive evenings, we design joyful, safely orchestrated public gatherings."
+    ],
+    listHeading: "What We Bring to Life",
     iconName: "Sparkles",
     details: [
-      "Large-Scale Public Event & Festival Operations",
+      "Large-Scale Public Event & Festival Events",
       "National Day & Cultural Holiday Celebrations",
       "Seasonal Pop-Up Markets & Festive Villages",
-      "Family Entertainment, Kids Zones & Workshops",
-      "Full Crowd Flow & Emergency Safety Architectures"
+      "Family Entertainment, Kids Zones & Workshops"
     ],
     image: "./images/services/service_community_festive.webp"
   },
@@ -149,15 +205,23 @@ export const SERVICES_DATA: Service[] = [
   {
     id: "exhibition",
     number: "09",
-    title: "Exhibition",
-    description: "Your stand is your first impression on the floor. We design and build custom and modular exhibition environments — concept to completion, fabrication to teardown — that stop traffic and start conversations.",
+    title: "Exhibitions",
+    description: "Your stand is your first impression on the floor. We design and build custom and modular exhibition environments from concept to completion, fabrication to teardown that stop traffic and start conversations.",
+    tagline: "Your stand is your first impression on the floor.",
+    intro: [
+      "We design and build custom and modular exhibition environments from concept to completion, fabrication to teardown that stop traffic and start conversations.",
+      "Our innovative design approach and immersive engagement strategies are crafted to attract high footfall, enhance brand recall and create meaningful visitor interactions. Whether you require a custom-built stand, a modular setup or a complete trade show display solution in Dubai, MICE Media delivers creativity, precision and impactful results at every stage."
+    ],
+    listHeading: "What We Build to Show",
     iconName: "Layers",
     details: [
-      "Custom Double-Decker Exhibition Pavilions",
-      "Advanced Joinery, Paint Finish, and Fabrication",
-      "Integrated Audio-Visual & Touch-Screen Displays",
-      "Zero-Waste Fully Modular Sustainable Booths",
-      "Full Regulatory DWTC Submission & Permit Handlings"
+      "Stand Concept & Design",
+      "Design & Structural approvals from Compliance Team",
+      "Marketing and Branding collaterals",
+      "Stand Production & Fabrication",
+      "Signages & Graphics",
+      "Integrated Audio-Visual, Touch-Screen & Holographic LED Displays",
+      "Furniture rentals"
     ],
     image: "./images/services/service_exhibitions_1783333361785.webp"
   }

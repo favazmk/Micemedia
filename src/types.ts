@@ -7,7 +7,16 @@ export interface Service {
   id: string;
   number: string;
   title: string;
+  /** Short summary, used on cards (home page, etc.) */
   description: string;
+  /** Optional strapline shown above the intro on the Services page */
+  tagline?: string;
+  /** Optional full intro paragraphs for the Services page (falls back to description) */
+  intro?: string[];
+  /** Optional closing line shown after the list */
+  closing?: string;
+  /** Heading above the details list */
+  listHeading?: string;
   details?: string[];
   iconName: string;
   image?: string;

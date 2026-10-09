@@ -535,41 +535,41 @@ export default function Home({
         >
           {/* Block 1 */}
           <div className="flex items-center gap-5 sm:gap-8.5 shrink-0 px-2">
-            <span>Conferences & Conventions</span> <span className="text-white/40">✦</span>
-            <span>Product launch & Brand Activation</span> <span className="text-white/40">✦</span>
+            <span>Conferences & Seminars</span> <span className="text-white/40">✦</span>
+            <span>Product Launch & Brand Activation</span> <span className="text-white/40">✦</span>
             <span>Gala Dinner & Awards Ceremony</span> <span className="text-white/40">✦</span>
             <span>Staging & AV production</span> <span className="text-white/40">✦</span>
             <span>Team Building & Incentive Events</span> <span className="text-white/40">✦</span>
             <span>Community & Festive Events</span> <span className="text-white/40">✦</span>
             <span>Talent Management</span> <span className="text-white/40">✦</span>
             <span>Permits</span> <span className="text-white/40">✦</span>
-            <span>Exhibition</span> <span className="text-white/40">✦</span>
+            <span>Exhibitions</span> <span className="text-white/40">✦</span>
             <span>Trade Shows</span> <span className="text-white/40">✦</span>
           </div>
           {/* Block 2 */}
           <div className="flex items-center gap-5 sm:gap-8.5 shrink-0 px-2">
-            <span>Conferences & Conventions</span> <span className="text-white/40">✦</span>
-            <span>Product launch & Brand Activation</span> <span className="text-white/40">✦</span>
+            <span>Conferences & Seminars</span> <span className="text-white/40">✦</span>
+            <span>Product Launch & Brand Activation</span> <span className="text-white/40">✦</span>
             <span>Gala Dinner & Awards Ceremony</span> <span className="text-white/40">✦</span>
             <span>Staging & AV production</span> <span className="text-white/40">✦</span>
             <span>Team Building & Incentive Events</span> <span className="text-white/40">✦</span>
             <span>Community & Festive Events</span> <span className="text-white/40">✦</span>
             <span>Talent Management</span> <span className="text-white/40">✦</span>
             <span>Permits</span> <span className="text-white/40">✦</span>
-            <span>Exhibition</span> <span className="text-white/40">✦</span>
+            <span>Exhibitions</span> <span className="text-white/40">✦</span>
             <span>Trade Shows</span> <span className="text-white/40">✦</span>
           </div>
           {/* Block 3 */}
           <div className="flex items-center gap-5 sm:gap-8.5 shrink-0 px-2">
-            <span>Conferences & Conventions</span> <span className="text-white/40">✦</span>
-            <span>Product launch & Brand Activation</span> <span className="text-white/40">✦</span>
+            <span>Conferences & Seminars</span> <span className="text-white/40">✦</span>
+            <span>Product Launch & Brand Activation</span> <span className="text-white/40">✦</span>
             <span>Gala Dinner & Awards Ceremony</span> <span className="text-white/40">✦</span>
             <span>Staging & AV production</span> <span className="text-white/40">✦</span>
             <span>Team Building & Incentive Events</span> <span className="text-white/40">✦</span>
             <span>Community & Festive Events</span> <span className="text-white/40">✦</span>
             <span>Talent Management</span> <span className="text-white/40">✦</span>
             <span>Permits</span> <span className="text-white/40">✦</span>
-            <span>Exhibition</span> <span className="text-white/40">✦</span>
+            <span>Exhibitions</span> <span className="text-white/40">✦</span>
             <span>Trade Shows</span> <span className="text-white/40">✦</span>
           </div>
         </div>
