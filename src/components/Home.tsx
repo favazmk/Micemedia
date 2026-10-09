@@ -31,6 +31,7 @@ import TestimonialsSlider from './TestimonialsSlider';
 import EventScroll from './EventScroll';
 import ZoomShowcase from './ZoomShowcase';
 import MorphScene from './MorphScene';
+import PillarVisual from './PillarVisual';
 
 // Mix of events and exhibition stands for the "What We Done" zoom reel
 const FEATURED_WORK: PortfolioItem[] = [
@@ -618,6 +619,7 @@ export default function Home({
               <span className="font-mono text-[10px] lg:text-xs text-red-500 uppercase tracking-widest font-bold">01 / EXPERIENCE</span>
               <h4 className="font-display text-base lg:text-lg font-black text-white uppercase mt-1 sm:mt-2 leading-tight">EVENTS THAT LEAVE A MARK</h4>
             </div>
+            <PillarVisual kind="experience" />
             <p className="font-sans text-sm sm:text-[11px] lg:text-[13px] text-neutral-400 leading-relaxed mt-2">
               We don't produce occasions — we engineer experiences people talk about long after the night ends.
             </p>
@@ -649,6 +651,7 @@ export default function Home({
               </div>
               <h4 className="font-display text-base lg:text-lg font-black text-white uppercase mt-1 sm:mt-2 leading-tight">PRECISION MEETS CREATIVITY</h4>
             </div>
+            <PillarVisual kind="standard" />
             <div>
               <p className="font-sans text-sm sm:text-[11px] lg:text-[13px] text-neutral-300 leading-relaxed mb-2 sm:mb-4">
                 Two things most agencies can't balance. We refuse to choose between them — on every project, at every scale, without exception.
@@ -684,6 +687,7 @@ export default function Home({
               <span className="font-mono text-[10px] lg:text-xs text-red-500 uppercase tracking-widest font-bold">03 / PROMISE</span>
               <h4 className="font-display text-base lg:text-lg font-black text-white uppercase mt-1 sm:mt-2 leading-tight">YOUR VISION, AMPLIFIED</h4>
             </div>
+            <PillarVisual kind="promise" />
             <p className="font-sans text-sm sm:text-[11px] lg:text-[13px] text-neutral-400 leading-relaxed mt-2">
               We take what you imagine and build something that exceeds it — every single time.
             </p>

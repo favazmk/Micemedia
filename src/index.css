@@ -370,3 +370,18 @@ input[type="range"]::-webkit-slider-thumb:hover {
 @media (prefers-reduced-motion: reduce) {
   .home-aurora-glow, .home-aurora-beam { animation: none; }
 }
+
+/* "Why brands choose us" card graphics */
+.pv-pulse { transform-box: fill-box; transform-origin: center; opacity: 0; animation: pvPulse 3.6s ease-out infinite; animation-delay: var(--d, 0s); }
+.pv-spin { transform-box: view-box; transform-origin: 50px 50px; animation: pvSpin 12s linear infinite; }
+.pv-spin--slow { animation-duration: 40s; animation-direction: reverse; }
+.pv-draw { stroke-dasharray: 130; animation: pvDraw 4s ease-in-out infinite; }
+.pv-bar { transform-box: fill-box; transform-origin: bottom; animation: pvBar 1.6s ease-in-out infinite alternate; animation-delay: var(--d, 0s); }
+@keyframes pvPulse { 0% { transform: scale(0.55); opacity: 0.9; } 100% { transform: scale(1.15); opacity: 0; } }
+@keyframes pvSpin { to { transform: rotate(360deg); } }
+@keyframes pvDraw { 0% { stroke-dashoffset: 130; } 55%, 100% { stroke-dashoffset: 0; } }
+@keyframes pvBar { from { transform: scaleY(0.35); } to { transform: scaleY(1); } }
+@media (prefers-reduced-motion: reduce) {
+  .pv-pulse { animation: none; opacity: 0.5; }
+  .pv-spin, .pv-draw, .pv-bar { animation: none; }
+}
