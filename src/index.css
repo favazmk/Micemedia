@@ -323,3 +323,50 @@ input[type="range"]::-webkit-slider-thumb:hover {
   mask-size:100% 100%;
   -webkit-mask-size:100% 100%;
 }
+
+/* Home-only animated backdrop: drifting glows, stage-light beams, faded dot grid */
+.home-aurora-glow {
+  position: absolute;
+  border-radius: 9999px;
+  will-change: transform;
+}
+.home-aurora-glow--a {
+  top: -15%; left: -12%; width: 70vw; height: 70vw;
+  background: radial-gradient(circle, rgba(220, 77, 73, 0.34) 0%, transparent 65%);
+  animation: homeDriftA 26s ease-in-out infinite alternate;
+}
+.home-aurora-glow--b {
+  top: 30%; right: -18%; width: 65vw; height: 65vw;
+  background: radial-gradient(circle, rgba(150, 28, 74, 0.32) 0%, transparent 65%);
+  animation: homeDriftB 32s ease-in-out infinite alternate;
+}
+.home-aurora-glow--c {
+  bottom: -20%; left: 15%; width: 60vw; height: 60vw;
+  background: radial-gradient(circle, rgba(255, 138, 92, 0.18) 0%, transparent 65%);
+  animation: homeDriftC 38s ease-in-out infinite alternate;
+}
+.home-aurora-beam {
+  position: absolute;
+  top: -20%; width: 28vw; height: 140%;
+  background: linear-gradient(to bottom, rgba(255, 190, 170, 0.10), transparent 70%);
+  filter: none;
+  transform-origin: top center;
+  will-change: transform;
+}
+.home-aurora-beam--l { left: 8%;  transform: rotate(18deg);  animation: homeSwayL 18s ease-in-out infinite alternate; }
+.home-aurora-beam--r { right: 8%; transform: rotate(-18deg); animation: homeSwayR 22s ease-in-out infinite alternate; }
+.home-aurora-dots {
+  position: absolute; inset: 0;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.10) 1px, transparent 1px);
+  background-size: 28px 28px;
+  -webkit-mask-image: radial-gradient(ellipse at 50% 35%, #000 0%, transparent 75%);
+  mask-image: radial-gradient(ellipse at 50% 35%, #000 0%, transparent 75%);
+}
+@keyframes homeDriftA { to { transform: translate3d(14vw, 10vh, 0) scale(1.15); } }
+@keyframes homeDriftB { to { transform: translate3d(-16vw, -8vh, 0) scale(1.1); } }
+@keyframes homeDriftC { to { transform: translate3d(12vw, -12vh, 0) scale(1.2); } }
+@keyframes homeSwayL { to { transform: rotate(8deg); } }
+@keyframes homeSwayR { to { transform: rotate(-8deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .home-aurora-glow, .home-aurora-beam { animation: none; }
+}

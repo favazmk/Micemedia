@@ -40,7 +40,7 @@ const slugToIdMap: Record<string, string> = {
 };
 
 const idToSlugMap: Record<string, string> = {
-  'conferences-conventions': 'conferences-and-conventions',
+  'conferences-conventions': 'conferences-and-seminars',
   'product-launch-activation': 'product-launch-brand-activation',
   'gala-dinner-awards': 'gala-dinner-awards-ceremony',
   'content-creation-av': 'content-creation-av-production',
@@ -190,6 +190,18 @@ export default function App() {
         <div className="absolute top-[35%] right-[10%] w-[45vw] h-[45vw] bg-[radial-gradient(circle,rgba(130,24,26,0.13)_0%,transparent_70%)]"></div>
         <div className="absolute bottom-[-10%] left-[10%] w-[55vw] h-[55vw] bg-[radial-gradient(circle,rgba(59,20,20,0.18)_0%,transparent_70%)]"></div>
         
+        {/* Home page only: richer animated backdrop */}
+        {activePage === 'home' && (
+          <div className="absolute inset-0" aria-hidden="true">
+            <div className="home-aurora-glow home-aurora-glow--a"></div>
+            <div className="home-aurora-glow home-aurora-glow--b"></div>
+            <div className="home-aurora-glow home-aurora-glow--c"></div>
+            <div className="home-aurora-beam home-aurora-beam--l"></div>
+            <div className="home-aurora-beam home-aurora-beam--r"></div>
+            <div className="home-aurora-dots"></div>
+          </div>
+        )}
+
         {/* Top dramatic red laser backlight */}
         <div className="absolute top-0 inset-x-0 h-[500px] bg-gradient-to-b from-red-650/14 via-red-950/3 to-transparent opacity-90"></div>
         {/* Horizontal dividing visual scanlines */}
