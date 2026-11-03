@@ -43,14 +43,6 @@ const VARIANTS = {
     intro: 'Custom and modular exhibition stands, designed, built and run on the show floor from concept to handover.',
     items: EXHIBITIONS_DATA,
     albums: EXHIBITION_ALBUMS,
-    spread: {
-      photos: pickPhotos([
-        'img_4154.webp', 'pic-5.webp', 'img_4038.webp', 'img_4143.webp',
-        'img_4152.webp', 'img_4027.webp', 'img_4179.webp', 'pic-6.webp',
-      ]),
-      title: <>Built to <span className="accent-word text-red-500">stand out.</span></>,
-      subtitle: 'Brand stands, photo moments and activation zones, designed and built on site.',
-    },
   },
 } as const;
 
@@ -189,7 +181,7 @@ export default function ProjectShowcase({ variant, selectedPortfolioId, setSelec
       </section>
 
       {/* SECTION 1B: STACK SPREAD — latest client photos scatter out on their own when you reach it */}
-      {config.spread.photos.length > 0 && (
+      {'spread' in config && (
         <StackSpread
           images={config.spread.photos}
           title={config.spread.title}

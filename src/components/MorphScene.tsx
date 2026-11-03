@@ -294,17 +294,17 @@ const fragment = /* glsl */ `
 
 const STAGES = [
   {
-    eyebrow: '01 / Brand Experiences',
+    eyebrow: '01 / Activations',
     title: <>It starts with <span className="accent-word text-red-500 text-[1.15em]">one idea.</span></>,
-    body: 'Launches and activations built around a single, clear idea: yours.',
+    body: 'Launches and activations built around a single, clear idea: YOURS.',
   },
   {
-    eyebrow: '02 / Exhibition Stands',
+    eyebrow: '02 / Modular Stand',
     title: <>Shaped into a <span className="accent-word text-red-500 text-[1.15em]">stand.</span></>,
     body: 'Custom and modular stands, designed and built for the trade show floor.',
   },
   {
-    eyebrow: '03 / Staging & AV Production',
+    eyebrow: '03 / Staging, Screen, Light and Sound',
     title: <>Lit up on <span className="accent-word text-red-500 text-[1.15em]">stage.</span></>,
     body: 'Staging, lighting, screens and sound, run end-to-end by our own crew.',
   },

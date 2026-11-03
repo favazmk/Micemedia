@@ -7,13 +7,39 @@ import { Service, PortfolioItem, ClientLogo, Testimonial, ProcessStep, WhyUsReas
 import oberoiStand from './assets/gallery/exhibitions/Oberoi Hotels & Resorts – Exhibition Stand/oberoi-01.webp';
 import alhindStand from './assets/gallery/exhibitions/Alhind Group – Exhibition Stand/alhind-01.webp';
 import guntnerStand from './assets/gallery/posters/guntner-02.webp';
+import tractebelAwards from './assets/gallery/events/Tractebel – End of Year Awards/dsc09020.webp';
+import tractebelTeam from './assets/gallery/events/Tractebel – Team Building/dsc09268.webp';
+import urbInauguration from './assets/gallery/events/Universal Rubber Belt – Factory Inauguration/haz02651.webp';
+// Client logos: the original files from the old WordPress site, self-hosted
+import airlineprosLogo from './assets/logos/airlinepros.webp';
+import flyingCarpetLogo from './assets/logos/flying-carpet.webp';
+import caloLogo from './assets/logos/calo.webp';
+import amhTourismLogo from './assets/logos/amh-tourism.webp';
+import transSkillsLogo from './assets/logos/trans-skills.webp';
+import loboListoneLogo from './assets/logos/lobo-listone.webp';
+import fairmontPalmLogo from './assets/logos/fairmont-the-palm.webp';
+import swissArabianLogo from './assets/logos/swiss-arabian.webp';
+import nexaTravelLogo from './assets/logos/nexa-travel.webp';
+import speedGroupLogo from './assets/logos/speed-group.webp';
+import ahlanDxbLogo from './assets/logos/ahlan-dxb.webp';
+import dubaiIntlHotelLogo from './assets/logos/dubai-international-hotel.webp';
+import futuraLeathersLogo from './assets/logos/futura-leathers.webp';
+import travelDoorLogo from './assets/logos/travel-door.webp';
+import woodfloorsLogo from './assets/logos/woodfloors.webp';
+import kosmosKonnectLogo from './assets/logos/kosmos-konnect.webp';
+import aiaPhoto from './assets/portfolio/aia-airlinepros-assembly.webp';
+import transSkillsPhoto from './assets/portfolio/trans-skills-iftar.webp';
+import swissTeamPhoto from './assets/portfolio/swiss-arabian-team-building.webp';
 
 export const BRAND_INFO = {
   name: "MICE MEDIA",
   legalName: "MICE Media",
   tagline: "Crafting Events That the World Remembers",
   location: "Dubai, UAE",
-  address: "Mice Media LLC, The Meydan Hotel, Grandstand – 6th Floor, Nad Al Shiba 1, Dubai – UAE",
+  address: "Mice Media LLC, Grandstand – 6th Floor, Nad Al Shiba 1, Dubai – UAE",
+  // Google Business Profile listing
+  mapUrl: "https://www.google.com/maps/search/?api=1&query=MICE+MEDIA+Events&query_place_id=ChIJJSvKFjdpXz4R2vYAq9hIGHQ",
+  mapEmbedUrl: "https://maps.google.com/maps?q=MICE%20MEDIA%20Events,%20Nad%20Al%20Sheba%201,%20Dubai&ll=25.1581867,55.3007519&z=15&output=embed",
   phone1: "+971 50 840 8655",
   whatsapp: "https://wa.me/971508408655",
   email: "info@micemediaevents.com",
@@ -227,14 +253,15 @@ export const SERVICES_DATA: Service[] = [
   }
 ];
 
-// Event case studies (everything except exhibition stands)
+// Event case studies (everything except exhibition stands). Titles match the gallery
+// folder names so each card opens its photo album.
 export const EVENTS_DATA: PortfolioItem[] = [
   {
     id: "portfolio-01",
     title: "AIA: AirlinePros International Assembly",
     category: "Conference",
     caption: "Global aviation assembly. Full end-to-end conference production for a leading international aviation brand.",
-    image: "https://www.micemediaevents.com/wp-content/uploads/2024/01/AIA1.jpg",
+    image: aiaPhoto,
     tag: "Aviation Summit"
   },
   {
@@ -242,32 +269,40 @@ export const EVENTS_DATA: PortfolioItem[] = [
     title: "Trans Skills: Iftar Evening",
     category: "Corporate",
     caption: "Tradition and appreciation, crafted for one of the region's leading staffing companies.",
-    image: "https://www.micemediaevents.com/wp-content/uploads/2024/04/ts11.jpg",
+    image: transSkillsPhoto,
     tag: "Hospitality"
-  },
-  {
-    id: "portfolio-04",
-    title: "Swiss Arabian Perfumes: Chairman's Birthday",
-    category: "Private",
-    caption: "Milestone celebration for Mr. Hussein Adam Ali, Chairman of Swiss Arabian Perfumes Group. Intimate. Luxurious. Unforgettable.",
-    image: "https://www.micemediaevents.com/wp-content/uploads/2024/05/MAN05888.jpg",
-    tag: "VIP Celebration"
   },
   {
     id: "portfolio-05",
     title: "Swiss Arabian Perfumes: Team Building",
     category: "Team Building",
     caption: "Purpose-built team experience that reignited culture and reconnected a high-performing organisation.",
-    image: "https://www.micemediaevents.com/wp-content/uploads/2024/05/Swizz-teambuilding-3.jpg",
+    image: swissTeamPhoto,
     tag: "Corporate Culture"
   },
   {
-    id: "portfolio-02",
-    title: "Calo: Corporate Iftar",
-    category: "Private",
-    caption: "Cultural precision meets elevated hospitality — planned and executed to the last detail.",
-    image: "https://www.micemediaevents.com/wp-content/uploads/2024/04/calo11.jpg",
-    tag: "Cultural Gala"
+    id: "portfolio-tractebel-awards",
+    title: "Tractebel – End of Year Awards",
+    category: "Awards",
+    caption: "End-of-year awards night for Tractebel, with staging, lighting, AV and the full show run end-to-end by MICE Media.",
+    image: tractebelAwards,
+    tag: "Awards Night"
+  },
+  {
+    id: "portfolio-tractebel-team",
+    title: "Tractebel – Team Building",
+    category: "Team Building",
+    caption: "A full team-building day for Tractebel, planned, set up and hosted by the MICE Media crew.",
+    image: tractebelTeam,
+    tag: "Corporate Culture"
+  },
+  {
+    id: "portfolio-urb-inauguration",
+    title: "Universal Rubber Belt – Factory Inauguration",
+    category: "Corporate",
+    caption: "Grand opening of Universal Rubber Belt's new factory, from ribbon-cutting moment to guest hospitality.",
+    image: urbInauguration,
+    tag: "Grand Opening"
   }
 ];
 
@@ -296,44 +331,28 @@ export const EXHIBITIONS_DATA: PortfolioItem[] = [
     caption: "Clean, product-led stand for Güntner's Greener Food Cooling range, with LED fascia, live product display, green wall and meeting bar.",
     image: guntnerStand,
     tag: "Custom Stand"
-  },
-  {
-    id: "portfolio-06",
-    title: "AMH Tourism: Exhibition Stand, ATM 2024",
-    category: "Exhibition",
-    caption: "Custom exhibition stand at Arabian Travel Market 2024, DWTC. Maximum presence. Zero compromise.",
-    image: "https://www.micemediaevents.com/wp-content/uploads/2024/06/AMH-ATM-3.jpeg",
-    tag: "DWTC Exhibition"
-  },
-  {
-    id: "portfolio-07",
-    title: "Speed Group: Exhibition Stand, DWTC 2023",
-    category: "Exhibition",
-    caption: "Modular exhibition environment at the Material Handling Exhibition, DWTC 2023. Bold, functional, on-brand.",
-    image: "https://www.micemediaevents.com/wp-content/uploads/2024/07/SPeed-group-potfolio-2023-1.jpeg",
-    tag: "Bespoke Booth"
   }
 ];
 
 export const PORTFOLIO_DATA: PortfolioItem[] = [...EVENTS_DATA, ...EXHIBITIONS_DATA];
 
 export const CLIENT_LOGOS: ClientLogo[] = [
-  { id: "1", name: "AirlinePros", logoUrl: "https://www.micemediaevents.com/wp-content/uploads/2024/04/AirlinePros-logo_Final-1024x247.png" },
-  { id: "2", name: "Lobo listone", logoUrl: "https://www.micemediaevents.com/wp-content/uploads/2024/07/logo718.png" },
-  { id: "3", name: "Calo", logoUrl: "https://www.micemediaevents.com/wp-content/uploads/2024/05/calo-logo-012.jpg" },
-  { id: "4", name: "AMH", logoUrl: "https://www.micemediaevents.com/wp-content/uploads/2024/07/AMH-dark-blue-logo.png" },
-  { id: "5", name: "Trans Skills", logoUrl: "https://www.micemediaevents.com/wp-content/uploads/2024/05/TRansskill-logo.jpg" },
-  { id: "6", name: "Listone-n", logoUrl: "https://www.micemediaevents.com/wp-content/uploads/2024/07/Lobo-listone-logo-n@2x.png" },
-  { id: "7", name: "Fairmont Palm", logoUrl: "https://www.micemediaevents.com/wp-content/uploads/2024/07/Fairmont-palm.png" },
-  { id: "8", name: "Swiss Arabian", logoUrl: "https://www.micemediaevents.com/wp-content/uploads/2024/07/swissarabian-2.png" },
-  { id: "9", name: "NEXA", logoUrl: "https://www.micemediaevents.com/wp-content/uploads/2024/07/NEXA-LOGO-1.jpg" },
-  { id: "10", name: "Speed Group", logoUrl: "https://www.micemediaevents.com/wp-content/uploads/2024/05/speed-group-logo-012.jpg" },
-  { id: "11", name: "Alhan", logoUrl: "https://www.micemediaevents.com/wp-content/uploads/2024/07/alhan-logo.jpg" },
-  { id: "12", name: "DIH Main", logoUrl: "https://www.micemediaevents.com/wp-content/uploads/2024/07/DIH-MAIN-1.jpg" },
-  { id: "13", name: "Futura Leathers", logoUrl: "https://www.micemediaevents.com/wp-content/uploads/2024/07/futura-leathers-logo.jpg" },
-  { id: "14", name: "Traveldoor", logoUrl: "https://www.micemediaevents.com/wp-content/uploads/2024/07/traveldoor-Logo2.png" },
-  { id: "15", name: "Woodfloors", logoUrl: "https://www.micemediaevents.com/wp-content/uploads/2024/07/woodfloors-logo.jpg" },
-  { id: "16", name: "Kosmo Konnect", logoUrl: "https://www.micemediaevents.com/wp-content/uploads/2024/07/KOSMO-KONNECT-LOGO-H.jpg" }
+  { id: "1", name: "AirlinePros", logoUrl: airlineprosLogo },
+  { id: "2", name: "Flying Carpet", logoUrl: flyingCarpetLogo },
+  { id: "3", name: "Calo", logoUrl: caloLogo },
+  { id: "4", name: "AMH Tourism", logoUrl: amhTourismLogo },
+  { id: "5", name: "Trans Skills", logoUrl: transSkillsLogo },
+  { id: "6", name: "Lobo Listone", logoUrl: loboListoneLogo },
+  { id: "7", name: "Fairmont The Palm", logoUrl: fairmontPalmLogo },
+  { id: "8", name: "Swiss Arabian", logoUrl: swissArabianLogo },
+  { id: "9", name: "Nexa Travel", logoUrl: nexaTravelLogo },
+  { id: "10", name: "Speed Group", logoUrl: speedGroupLogo },
+  { id: "11", name: "ahlan DXB", logoUrl: ahlanDxbLogo },
+  { id: "12", name: "Dubai International Hotel", logoUrl: dubaiIntlHotelLogo },
+  { id: "13", name: "Futura Leathers", logoUrl: futuraLeathersLogo },
+  { id: "14", name: "Travel Door", logoUrl: travelDoorLogo },
+  { id: "15", name: "Woodfloors", logoUrl: woodfloorsLogo },
+  { id: "16", name: "Kosmos Konnect", logoUrl: kosmosKonnectLogo }
 ];
 
 export const TESTIMONIALS_DATA: Testimonial[] = [

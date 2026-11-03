@@ -52,7 +52,7 @@ export const PAGE_SEO: Record<string, PageSeo> = {
     path: '/contact.html',
     title: 'Contact MICE Media | Request an Event Proposal in Dubai',
     description: 'Request a proposal from MICE Media. Tell us about your event or exhibition and our Dubai team will get back to you. Call +971 50 840 8655 or email info@micemediaevents.com.',
-    summary: 'Contact MICE Media, The Meydan Hotel, Grandstand 6th Floor, Nad Al Shiba 1, Dubai. Phone +971 50 840 8655, email info@micemediaevents.com.',
+    summary: 'Contact MICE Media, Grandstand 6th Floor, Nad Al Shiba 1, Dubai. Phone +971 50 840 8655, email info@micemediaevents.com.',
   },
 };
 
@@ -83,10 +83,12 @@ export const LOCAL_BUSINESS_JSON_LD = {
   email: 'info@micemediaevents.com',
   address: {
     '@type': 'PostalAddress',
-    streetAddress: 'The Meydan Hotel, Grandstand, 6th Floor, Nad Al Shiba 1',
+    streetAddress: 'Grandstand, 6th Floor, Nad Al Shiba 1',
     addressLocality: 'Dubai',
     addressCountry: 'AE',
   },
+  geo: { '@type': 'GeoCoordinates', latitude: 25.1581867, longitude: 55.3007519 },
+  hasMap: 'https://www.google.com/maps/search/?api=1&query=MICE+MEDIA+Events&query_place_id=ChIJJSvKFjdpXz4R2vYAq9hIGHQ',
   areaServed: ['Dubai', 'United Arab Emirates', 'GCC'],
   sameAs: [
     'https://www.facebook.com/profile.php?id=61554902427941',

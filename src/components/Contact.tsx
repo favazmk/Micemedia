@@ -407,7 +407,7 @@ export default function Contact() {
                   Hub Location Map
                 </span>
                 <a 
-                  href="https://maps.google.com/?q=The+Meydan+Hotel+Dubai" 
+                  href={BRAND_INFO.mapUrl} 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="text-[11px] font-mono text-red-400 hover:text-red-300 transition-colors inline-flex items-center gap-1 uppercase tracking-wider"
@@ -420,7 +420,7 @@ export default function Contact() {
               <div className="w-full h-52 sm:h-60 rounded-2xl overflow-hidden border border-white/10 relative bg-neutral-900 shadow-inner group">
                 <iframe
                   title="MICE Media Office Location Map"
-                  src="https://maps.google.com/maps?q=The%20Meydan%20Hotel,%20Grandstand,%20Nad%20Al%20Sheba%201,%20Dubai,%20UAE&t=&z=14&ie=UTF8&iwloc=&output=embed"
+                  src={BRAND_INFO.mapEmbedUrl}
                   className="w-full h-full border-0 grayscale contrast-[1.15] opacity-80 group-hover:opacity-100 group-hover:grayscale-0 transition-all duration-500"
                   loading="lazy"
                   allowFullScreen

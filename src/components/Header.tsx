@@ -223,7 +223,7 @@ export default function Header({ activePage, setActivePage }: HeaderProps) {
 
             <div className="z-10 flex flex-col gap-6 border-t border-white/5 pt-6">
               <div className="flex flex-col gap-1.5 text-neutral-400 text-xs font-mono">
-                <span>The Meydan Hotel, 6th Floor, Dubai</span>
+                <span>Grandstand, 6th Floor, Dubai</span>
                 <a href={`mailto:${BRAND_INFO.email}`} className="text-red-400 hover:underline">
                   {BRAND_INFO.email}
                 </a>

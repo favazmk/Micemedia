@@ -186,7 +186,6 @@ export default function Footer({ setActivePage, setSelectedServiceId }: FooterPr
                     onClick={() => handleServiceClick(srv.id)} 
                     className="hover:text-red-500 transition-all duration-200 cursor-pointer flex items-center gap-1.5 text-left group"
                   >
-                    <span className="text-neutral-600 group-hover:text-red-500 font-mono text-[9px]">{srv.number}</span>
                     {srv.title}
                   </button>
                 </li>
@@ -202,7 +201,7 @@ export default function Footer({ setActivePage, setSelectedServiceId }: FooterPr
             <div className="flex flex-col gap-4 text-sm text-neutral-400">
               <div className="flex items-start gap-3">
                 <MapPin className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
-                <span>Mice Media LLC, The Meydan Hotel, Grandstand – 6th Floor, Nad Al Shiba 1, Dubai – UAE</span>
+                <span>Mice Media LLC, Grandstand – 6th Floor, Nad Al Shiba 1, Dubai – UAE</span>
               </div>
               <div className="flex items-center gap-3">
                 <Phone className="w-4 h-4 text-red-600 shrink-0" />
@@ -218,7 +217,7 @@ export default function Footer({ setActivePage, setSelectedServiceId }: FooterPr
               </div>
               <div className="pt-2">
                 <a 
-                  href="https://maps.google.com/?q=The+Meydan+Hotel+Dubai" 
+                  href={BRAND_INFO.mapUrl} 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-red-500 hover:text-red-400 border border-red-500/30 hover:border-red-500/60 bg-red-600/10 px-3 py-1.5 rounded-lg transition-all"

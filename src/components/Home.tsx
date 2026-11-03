@@ -480,7 +480,7 @@ export default function Home({
                 Then we build every <span className="accent-word text-red-500 text-[1.15em]">detail.</span>
               </h2>
               <p className="font-sans text-sm sm:text-base text-neutral-200 mt-5 max-w-md ml-auto leading-relaxed [text-shadow:0_2px_10px_rgba(0,0,0,0.9)]">
-                Lighting, AV, staging and styling, run end-to-end under our direct supervision.
+                Staging Fabrications & Productions, end to end by our MICE team.
               </p>
             </div>
           </motion.div>
