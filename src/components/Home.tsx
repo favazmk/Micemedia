@@ -115,7 +115,6 @@ export default function Home({
   const servicesRef = useRef<HTMLDivElement>(null);
   const testimonialsRef = useRef<HTMLElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
-  const [maxScroll, setMaxScroll] = useState(0);
 
   // Mobile specific states
   const [isMobile, setIsMobile] = useState(false);
@@ -131,46 +130,6 @@ export default function Home({
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  useEffect(() => {
-    const handleResize = () => {
-      if (trackRef.current && trackRef.current.parentElement) {
-        const trackWidth = trackRef.current.scrollWidth;
-        const parent = trackRef.current.parentElement;
-        const viewWidth = parent.clientWidth;
-        const style = window.getComputedStyle(parent);
-        const paddingLeft = parseFloat(style.paddingLeft) || 0;
-        const paddingRight = parseFloat(style.paddingRight) || 0;
-        const contentWidth = viewWidth - paddingLeft - paddingRight;
-        const newMax = Math.max(0, trackWidth - contentWidth);
-        setMaxScroll(newMax);
-      }
-    };
-
-    handleResize();
-
-    let resizeObserver: ResizeObserver | null = null;
-    if (typeof ResizeObserver !== 'undefined') {
-      resizeObserver = new ResizeObserver(() => {
-        handleResize();
-      });
-      if (trackRef.current) resizeObserver.observe(trackRef.current);
-      if (trackRef.current?.parentElement) resizeObserver.observe(trackRef.current.parentElement);
-    }
-
-    window.addEventListener('resize', handleResize);
-    
-    const timer1 = setTimeout(handleResize, 100);
-    const timer2 = setTimeout(handleResize, 400);
-    const timer3 = setTimeout(handleResize, 1000);
-
-    return () => {
-      if (resizeObserver) resizeObserver.disconnect();
-      window.removeEventListener('resize', handleResize);
-      clearTimeout(timer1);
-      clearTimeout(timer2);
-      clearTimeout(timer3);
-    };
-  }, []);
 
   // States & Refs for slow-mo kinetic marquee braking on hover and touch/mouse grab & drag
   const tickerRef = useRef<HTMLDivElement>(null);
@@ -274,6 +233,10 @@ export default function Home({
   const [isLogosHovered, setIsLogosHovered] = useState(false);
   useSlowMoMarquee(logosRef, isLogosHovered);
 
+  // Services cards glide on their own (no scroll needed); hover or a tapped card brings them to a soft stop
+  const [isServicesHovered, setIsServicesHovered] = useState(false);
+  useSlowMoMarquee(trackRef, isServicesHovered || activeTouchServiceId !== null);
+
   // Pinned hero: progress 0..1 across the tall hero wrapper drives both the frame
   // sequence and the chapter captions layered on top of it
   const { scrollYProgress: heroScroll } = useScroll({
@@ -281,7 +244,7 @@ export default function Home({
     offset: ["start start", "end end"]
   });
   // Light smoothing only: a loose spring made the sequence visibly trail behind the scroll
-  const heroProgress = useSpring(heroScroll, { stiffness: 180, damping: 34, restDelta: 0.001 });
+  const heroProgress = useSpring(heroScroll, { stiffness: 320, damping: 42, restDelta: 0.001 });
 
   const introOpacity = useTransform(heroProgress, [0, 0.12, 0.2], [1, 1, 0]);
   const introY = useTransform(heroProgress, [0, 0.2], [0, -80]);
@@ -320,12 +283,6 @@ export default function Home({
   const mobileServicesRotateX = useTransform(smoothServicesViewportScroll, [0, 0.45, 0.9], [15, 0, -15]);
   const mobileServicesY = useTransform(smoothServicesViewportScroll, [0, 0.45, 0.9], [120, 0, -120]);
   
-  const { scrollYProgress: servicesScroll } = useScroll({
-    target: servicesRef,
-    offset: ["start start", "end end"]
-  });
-  const smoothServicesScroll = useSpring(servicesScroll, { stiffness: 75, damping: 25, restDelta: 0.001 });
-  const servicesX = useTransform(smoothServicesScroll, (v) => -v * maxScroll);
 
   // Section 6 (Testimonials) — Horizontal stage-slide + perspective flatten
   const { scrollYProgress: testimonialsScroll } = useScroll({
@@ -386,7 +343,7 @@ export default function Home({
       {/* SECTION 1: PINNED SCROLL-SEQUENCE HERO
           The frame sequence (blueprint → live event) only plays while this tall
           wrapper scrolls past; the sticky child keeps it filling the viewport. */}
-      <section ref={heroRef} id="hero-section" className="relative w-full h-[320vh]">
+      <section ref={heroRef} id="hero-section" className="relative w-full h-[200vh]">
         <div className="sticky top-0 h-screen w-full overflow-hidden bg-[#050505]">
           <EventScroll progress={heroProgress} />
 
@@ -757,9 +714,9 @@ export default function Home({
       {/* SECTION 3: FEATURED SERVICES */}
       <div
         ref={servicesRef}
-        className="relative w-full h-[350vh]"
+        className="relative w-full py-12 md:py-20"
       >
-        <div className="w-full flex items-center justify-center overflow-hidden sticky top-0 h-screen">
+        <div className="w-full flex items-center justify-center overflow-hidden">
           <motion.section
             style={isMobile ? {
               opacity: 1,
@@ -800,16 +757,19 @@ export default function Home({
             <div className="w-full relative z-10 overflow-hidden">
               <motion.div
                 ref={trackRef}
-                style={{ x: servicesX }}
-                className="flex gap-4 sm:gap-6 w-max"
+                onMouseEnter={() => setIsServicesHovered(true)}
+                onMouseLeave={() => setIsServicesHovered(false)}
+                className="animate-services-marquee flex w-max"
               >
-                {SERVICES_DATA.map((srv) => {
+                {/* Two copies back to back so the -50% loop is seamless */}
+                {[...SERVICES_DATA, ...SERVICES_DATA].map((srv, i) => {
                   const IconComponent = serviceIconMap[srv.iconName] || Sparkles;
                   return (
                     <div
-                      key={srv.id}
+                      key={`${srv.id}-${i}`}
+                      aria-hidden={i >= SERVICES_DATA.length || undefined}
                       onClick={() => handleServiceClick(srv.id)}
-                      className={`group relative bg-black/20 sm:bg-neutral-950/30 sm:backdrop-blur-md sm:[-webkit-backdrop-filter:blur(12px)] border border-white/20 sm:border-white/10 p-8 sm:p-10 overflow-hidden rounded-3xl cursor-pointer transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] flex flex-col justify-between min-h-[350px] w-[310px] sm:w-[350px] shrink-0 shadow-2xl ${
+                      className={`group relative bg-black/20 sm:bg-neutral-950/30 sm:backdrop-blur-md sm:[-webkit-backdrop-filter:blur(12px)] border border-white/20 sm:border-white/10 p-8 sm:p-10 overflow-hidden rounded-3xl cursor-pointer transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] flex flex-col justify-between min-h-[350px] w-[310px] sm:w-[350px] shrink-0 mr-4 sm:mr-6 shadow-2xl ${
                         activeTouchServiceId === srv.id
                           ? 'border-[#E55B5B]/60 bg-black/40 sm:bg-neutral-950/50 -translate-y-2 z-20 shadow-[0_10px_30px_rgba(229,91,91,0.15)]'
                           : 'hover:-translate-y-2 hover:border-[#E55B5B]/40 hover:bg-black/35 sm:hover:bg-neutral-950/50'

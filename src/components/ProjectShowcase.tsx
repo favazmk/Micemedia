@@ -94,9 +94,13 @@ export default function ProjectShowcase({ variant, selectedPortfolioId, setSelec
         albumIndex: albumIndex >= 0 ? albumIndex : null, item,
       };
     });
-    // Conference projects lead the grid; otherwise albums first, then case studies
-    const all = [...albumCards, ...itemCards];
-    return [...all.filter((c) => c.category === 'Conference'), ...all.filter((c) => c.category !== 'Conference')];
+    // Client-requested lead order (AIA, then Tractebel); then conferences, albums, case studies
+    const LEAD = ['aia', 'tractebel – end of year', 'tractebel – team'];
+    const rank = (c: { title: string; category: string }) => {
+      const i = LEAD.findIndex((k) => norm(c.title).startsWith(k));
+      return i >= 0 ? i : c.category === 'Conference' ? LEAD.length : LEAD.length + 1;
+    };
+    return [...albumCards, ...itemCards].sort((a, b) => rank(a) - rank(b));
   }, [config, items]);
   // Photo lightbox: which album and which image within it
   const [photo, setPhoto] = useState<{ album: number; index: number } | null>(null);

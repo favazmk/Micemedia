@@ -76,7 +76,7 @@ export const LOCAL_BUSINESS_JSON_LD = {
   name: 'Mice Media LLC',
   alternateName: SITE_NAME,
   url: SITE_URL,
-  logo: `${SITE_URL}/images/mice-media-logo.png`,
+  logo: `${SITE_URL}/images/logo-square.png`,
   image: OG_IMAGE,
   description: 'Dubai events management company producing corporate events, conferences, product launches, gala dinners, exhibition stands and AV production across the UAE and GCC.',
   telephone: '+971508408655',

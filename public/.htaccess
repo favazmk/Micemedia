@@ -1,0 +1,4 @@
+# One canonical host: send micemediaevents.com to www.micemediaevents.com (matches canonical URLs and sitemap)
+RewriteEngine On
+RewriteCond %{HTTP_HOST} ^micemediaevents\.com$ [NC]
+RewriteRule ^(.*)$ https://www.micemediaevents.com/$1 [R=301,L]

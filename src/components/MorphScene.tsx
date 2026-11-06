@@ -467,7 +467,7 @@ export default function MorphScene({ onExplore }: { onExplore: () => void }) {
         // time-based easing so the glide feels the same at any frame rate
         const dt = Math.min((now - last) / 1000, 0.5);
         last = now;
-        shown += (morph.get() - shown) * (reduce ? 1 : 1 - Math.exp(-dt * 4));
+        shown += (morph.get() - shown) * (reduce ? 1 : 1 - Math.exp(-dt * 9));
         const ease = 1 - Math.exp(-dt * 3);
         pointer.x += (pointer.tx - pointer.x) * ease;
         pointer.y += (pointer.ty - pointer.y) * ease;
@@ -527,7 +527,7 @@ export default function MorphScene({ onExplore }: { onExplore: () => void }) {
   }, [morph]);
 
   return (
-    <section ref={sectionRef} id="home-3d" className="relative w-full h-[400vh]" aria-label="What we build">
+    <section ref={sectionRef} id="home-3d" className="relative w-full h-[220vh]" aria-label="What we build">
       <div className="sticky top-0 h-screen w-full overflow-hidden">
         {/* soft red floor glow behind the particles */}
         <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_65%_55%,rgba(220,77,73,0.14)_0%,transparent_60%)]" />

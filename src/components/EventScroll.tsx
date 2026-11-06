@@ -194,7 +194,8 @@ export default function EventScroll({ progress }: EventScrollProps) {
 
   useEffect(() => () => cancelAnimationFrame(rafRef.current), []);
 
-  const INITIAL_THRESHOLD = 10;
+  // Show the page as soon as the first frame can be drawn; later frames stream in behind it
+  const INITIAL_THRESHOLD = 1;
   const isReady = loadedCount >= INITIAL_THRESHOLD || globalCache[cacheKey].isComplete;
 
   // Block scrolling only until the initial burst of frames is loaded (< 0.3s)

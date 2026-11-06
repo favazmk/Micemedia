@@ -173,6 +173,11 @@
   100% { transform: translateX(-50%); }
 }
 
+/* Home services cards: endless auto-scroll (reuses the logo keyframes) */
+.animate-services-marquee {
+  animation: clientScroll 60s linear infinite;
+}
+
 .animate-client-logos {
   display: flex;
   width: max-content;
