@@ -851,8 +851,8 @@ export default function Home({
                 Exhibitions & Experiences
               </span>
               <h2 className="font-display text-3xl sm:text-5xl md:text-6xl font-bold text-white leading-[1.05] mt-4">
-                We build the stand. <br className="hidden sm:block" />
-                Then we set it in <span className="accent-word text-red-500 text-[1.15em]">motion.</span>
+                We build the great moments. <br className="hidden sm:block" />
+                That we set to <span className="accent-word text-red-500 text-[1.15em]">stand out.</span>
               </h2>
             </div>
             <span className="inline-flex items-center gap-2 font-mono text-[10px] sm:text-xs tracking-widest uppercase font-bold text-black bg-white rounded-full px-6 py-4 shrink-0 self-start md:self-auto group-hover:bg-red-500 group-hover:text-white transition-colors">
