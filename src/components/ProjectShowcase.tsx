@@ -94,8 +94,9 @@ export default function ProjectShowcase({ variant, selectedPortfolioId, setSelec
         albumIndex: albumIndex >= 0 ? albumIndex : null, item,
       };
     });
-    // Client-requested lead order (AIA, then Tractebel); then conferences, albums, case studies
-    const LEAD = ['aia', 'tractebel – end of year', 'tractebel – team'];
+    // Client-requested lead order (23 Nov 2026): Airline Pros, Swiss Arabia, Tractebel, HMS, Novelty, URBM, Wegovy;
+    // then conferences, albums, case studies
+    const LEAD = ['aia', 'swiss arabia', 'tractebel – end of year', 'tractebel – team', 'hms', 'novelty', 'universal rubber belt', 'wegovy'];
     const rank = (c: { title: string; category: string }) => {
       const i = LEAD.findIndex((k) => norm(c.title).startsWith(k));
       return i >= 0 ? i : c.category === 'Conference' ? LEAD.length : LEAD.length + 1;
