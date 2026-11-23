@@ -7,7 +7,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { X, MapPin, Calendar, Sparkles, ChevronLeft, ChevronRight, Images, Play } from 'lucide-react';
 import { EVENTS_DATA, EXHIBITIONS_DATA } from '../data';
-import { EVENT_ALBUMS, EXHIBITION_ALBUMS, pickPhotos, isVideo, posterFor } from '../gallery';
+import { EVENT_ALBUMS, EXHIBITION_ALBUMS, EVENT_SHOWCASE, pickPhotos, isVideo, posterFor } from '../gallery';
 import { PortfolioItem } from '../types';
 import { PrimaryButton } from '@/components/ui/primary-button';
 import StackSpread from '@/components/ui/stack-spread';
@@ -26,10 +26,7 @@ const VARIANTS = {
     albums: EVENT_ALBUMS,
     // Auto-playing scatter showcase of the latest client photos (stack order: back -> front)
     spread: {
-      photos: pickPhotos([
-        'dsc09020.webp', 'haz02651.webp', 'dsc09268.webp', 'dsc09160.webp',
-        'haz04027.webp', 'dsc09219.webp', 'dsc09609.webp', 'haz03529.webp',
-      ]),
+      photos: EVENT_SHOWCASE,
       title: <>Moments we <span className="accent-word text-red-500">made.</span></>,
       subtitle: 'Awards nights, team days and grand openings, produced end-to-end by MICE Media.',
     },
@@ -43,6 +40,14 @@ const VARIANTS = {
     intro: 'Custom and modular exhibition stands, designed, built and run on the show floor from concept to handover.',
     items: EXHIBITIONS_DATA,
     albums: EXHIBITION_ALBUMS,
+    spread: {
+      photos: pickPhotos([
+        'alhind-02.webp', 'oberoi-05.webp', 'oberoi-02.webp', 'alhind-01.webp',
+        'oberoi-04.webp', 'oberoi-03.webp', 'oberoi-01.webp',
+      ]),
+      title: <>Stands we <span className="accent-word text-red-500">built.</span></>,
+      subtitle: 'Custom stands designed, built and run on the show floor by MICE Media.',
+    },
   },
 } as const;
 
@@ -153,6 +158,13 @@ export default function ProjectShowcase({ variant, selectedPortfolioId, setSelec
       </div>
 
       <div className="relative z-10 flex flex-col w-full">
+      {/* SECTION 0: STACK SPREAD — opens the page; photos scatter out and keep zooming on their own */}
+      <StackSpread
+        images={config.spread.photos}
+        title={config.spread.title}
+        subtitle={config.spread.subtitle}
+      />
+
       {/* SECTION 1: PORTFOLIO HERO HEADER */}
       <section className="relative px-6 max-w-7xl mx-auto w-full mb-16 text-center">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-64 bg-red-650/10 rounded-full blur-3xl pointer-events-none"></div>
@@ -184,15 +196,6 @@ export default function ProjectShowcase({ variant, selectedPortfolioId, setSelec
 
         <div className="w-12 h-[2px] bg-red-650 mx-auto mt-6 rounded-full"></div>
       </section>
-
-      {/* SECTION 1B: STACK SPREAD — latest client photos scatter out on their own when you reach it */}
-      {'spread' in config && (
-        <StackSpread
-          images={config.spread.photos}
-          title={config.spread.title}
-          subtitle={config.spread.subtitle}
-        />
-      )}
 
       {/* SECTION 2: PROJECT CARDS — one per project; opens its photo gallery (or case study) */}
       <section className="px-6 max-w-7xl mx-auto w-full mb-20" id={`${variant}-projects`}>

@@ -55,6 +55,13 @@ function toAlbums(files: Record<string, string>, root: string): GalleryAlbum[] {
 export const EVENT_ALBUMS = toAlbums(eventFiles, '/src/assets/gallery/events');
 export const EXHIBITION_ALBUMS = toAlbums(exhibitionFiles, '/src/assets/gallery/exhibitions');
 
+// Events page top showcase: client-picked photos (AV screens) in src/assets/showcase/events/,
+// named showcase-01..08 in stack order (back -> front).
+const showcaseFiles = import.meta.glob('/src/assets/showcase/events/*.webp', {
+  eager: true, query: '?url', import: 'default',
+}) as Record<string, string>;
+export const EVENT_SHOWCASE = Object.keys(showcaseFiles).sort().map((p) => ({ src: showcaseFiles[p], alt: 'MICE Media event production' }));
+
 /** Look up specific gallery photos by file name (e.g. 'dsc09020.webp'), in the order given. */
 export function pickPhotos(fileNames: string[]): { src: string; alt: string }[] {
   const all = { ...eventFiles, ...exhibitionFiles };

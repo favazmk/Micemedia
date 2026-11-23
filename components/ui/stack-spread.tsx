@@ -13,6 +13,7 @@ import {
   useMotionValue,
   useSpring,
   useMotionValueEvent,
+  useAnimationFrame,
   type MotionValue,
 } from "motion/react";
 import { useEffect, useRef, useState, type ReactNode } from "react";
@@ -144,38 +145,26 @@ function useResponsive() {
   return r;
 }
 
-function usePointerParallax(active: boolean, enabled: boolean) {
+// Once spread, the cards drift on their own in a slow loop (client asked for no
+// mouse control). Same -1..1 range the old pointer parallax used.
+function useAutoDrift(active: boolean, enabled: boolean) {
   const rawX = useMotionValue(0);
   const rawY = useMotionValue(0);
   const x = useSpring(rawX, PARALLAX_SPRING);
   const y = useSpring(rawY, PARALLAX_SPRING);
+  const on = active && enabled;
 
+  useAnimationFrame((t) => {
+    if (!on) return;
+    rawX.set(Math.sin(t / 4200));
+    rawY.set(Math.sin(t / 5600 + 1) * 0.8);
+  });
   useEffect(() => {
-    if (!enabled) return;
-
-    if (!active) {
+    if (!on) {
       rawX.set(0);
       rawY.set(0);
-      return;
     }
-
-    const onMove = (event: PointerEvent) => {
-      rawX.set((event.clientX / window.innerWidth) * 2 - 1);
-      rawY.set((event.clientY / window.innerHeight) * 2 - 1);
-    };
-    const onLeave = () => {
-      rawX.set(0);
-      rawY.set(0);
-    };
-
-    window.addEventListener("pointermove", onMove, { passive: true });
-    document.addEventListener("pointerleave", onLeave);
-
-    return () => {
-      window.removeEventListener("pointermove", onMove);
-      document.removeEventListener("pointerleave", onLeave);
-    };
-  }, [active, enabled, rawX, rawY]);
+  }, [on, rawX, rawY]);
 
   return { x, y };
 }
@@ -369,7 +358,23 @@ function StackSpreadStage({
     setSpread((was) => (was ? p > 0.985 : p >= 0.999));
   });
   const parallaxEnabled = reduce !== true && !isSmall;
-  const pointer = usePointerParallax(spread, parallaxEnabled);
+  const pointer = useAutoDrift(spread, parallaxEnabled);
+
+  // after the scatter, the whole spread keeps slowly zooming out and back in on its own
+  const zoom = useMotionValue(1);
+  useEffect(() => {
+    if (!spread || reduce === true) {
+      const c = animate(zoom, 1, { duration: 0.6 });
+      return () => c.stop();
+    }
+    const c = animate(zoom, [1, 0.9], {
+      duration: 7,
+      ease: "easeInOut",
+      repeat: Infinity,
+      repeatType: "mirror",
+    });
+    return () => c.stop();
+  }, [spread, reduce, zoom]);
 
   const noScale = reduce === true;
   const copyOpacity = useTransform(progress, [textFadeStart, textFadeStart + 0.35], [0, 1]);
@@ -407,7 +412,7 @@ function StackSpreadStage({
         </motion.div>
 
         {/* scattering cards */}
-        <div className="absolute inset-0 z-10">
+        <motion.div className="absolute inset-0 z-10" style={{ scale: zoom }}>
           {cards.map((card, i) => (
             <Card
               key={i}
@@ -425,7 +430,7 @@ function StackSpreadStage({
               depth={parallaxEnabled ? parallaxDepth(i, cards.length) : 0}
             />
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );
