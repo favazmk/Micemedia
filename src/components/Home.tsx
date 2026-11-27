@@ -818,10 +818,8 @@ export default function Home({
         </div>
       </div>
 
-      {/* SECTION 3B: PARTY VIDEO → EXHIBITION PAGE
-          Sources are tried in order: a self-hosted public/videos/party.mp4 if one is added, then the
-          hotlinked Mixkit clip ("Front of a concert with the crowd dancing in slow motion", free under
-          the Mixkit License), then the existing event reel if the remote file can't be reached. */}
+      {/* SECTION 3B: SHOWREEL VIDEO → EXHIBITION PAGE
+          The client's 50s showreel (720p), self-hosted at public/videos/showreel.mp4. */}
       <motion.section id="home-video" initial={{ opacity: 0, y: 80, scale: 0.94 }} whileInView={{ opacity: 1, y: 0, scale: 1 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }} className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 my-16 md:my-24">
         <button
           type="button"
@@ -835,13 +833,10 @@ export default function Home({
             loop
             playsInline
             preload="metadata"
-            poster="./images/services/service_gala_1783333277608.webp"
+            poster="./videos/showreel-poster.webp"
             className="absolute inset-0 w-full h-full object-cover transition-transform duration-[1.5s] group-hover:scale-105"
           >
-            <source src="./videos/party.mp4" type="video/mp4" />
-            <source src="https://assets.mixkit.co/videos/48513/48513-720.mp4" type="video/mp4" />
-            <source src="https://assets.mixkit.co/videos/preview/mixkit-front-of-a-concert-with-the-crowd-dancing-in-slow-48513-large.mp4" type="video/mp4" />
-            <source src="./images/hero-color.mp4" type="video/mp4" />
+            <source src="./videos/showreel.mp4" type="video/mp4" />
           </video>
           <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-black/20" />
 
